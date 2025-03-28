@@ -3,7 +3,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 地址信息实体类
+ * 地址信息实体类.
  */
 @Data
 public class Address {
