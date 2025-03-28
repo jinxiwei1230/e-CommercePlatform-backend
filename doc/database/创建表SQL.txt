@@ -1,0 +1,164 @@
+-- 没有数据库的话创建数据库
+-- CREATE DATABASE e_commerce;
+
+USE e_commerce;
+DROP TABLE IF EXISTS OperationLog;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS Address;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS Cart;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS OrderDetail;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS Review;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS Product;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS Category;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS CouponDistribution;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS `Order`;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS Coupon;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS `User`;  -- 删除表（如果存在）
+
+
+-- 创建用户表
+CREATE TABLE `User` (
+    user_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 用户唯一标识
+    username VARCHAR(50) UNIQUE NOT NULL,  -- 用户名（需唯一）
+    password VARCHAR(255) NOT NULL,  -- 加密存储的用户密码
+    email VARCHAR(100) UNIQUE,  -- 绑定的邮箱（支持解绑）
+    phone VARCHAR(20) UNIQUE,  -- 绑定的手机号（支持解绑）
+    gender ENUM('男', '女', '保密'),  -- 性别
+    age INT,  -- 年龄
+    is_vip BOOLEAN DEFAULT FALSE,  -- 是否为 VIP 用户
+		role ENUM('普通用户', '管理员') DEFAULT '普通用户',  -- 用户角色，默认是普通用户
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 注册时间
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 信息更新时间
+);
+
+-- 创建地址表
+CREATE TABLE Address (
+    address_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 地址唯一标识
+    user_id BIGINT NOT NULL,  -- 用户 ID
+    recipient_name VARCHAR(50) NOT NULL,  -- 收货人姓名
+    phone VARCHAR(20) NOT NULL,  -- 收货人电话
+    address_detail VARCHAR(255) NOT NULL,  -- 详细地址
+    city VARCHAR(50) NOT NULL,  -- 城市
+    state VARCHAR(50) NOT NULL,  -- 省份 / 州
+    postal_code VARCHAR(20) NOT NULL,  -- 邮政编码
+    is_default BOOLEAN DEFAULT FALSE,  -- 是否为默认地址
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+    FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE
+);
+
+-- 创建商品分类表
+CREATE TABLE Category (
+    category_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 分类唯一标识
+    name VARCHAR(100) NOT NULL,  -- 分类名称
+    parent_id BIGINT DEFAULT 0,  -- 父分类 ID，顶级分类为 0
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP  -- 创建时间
+);
+
+-- 创建商品表
+CREATE TABLE Product (
+    product_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 商品唯一标识
+    name VARCHAR(255) NOT NULL,  -- 商品名称
+    description TEXT,  -- 商品简介
+    price DECIMAL(10,2) NOT NULL,  -- 单价
+    stock INT NOT NULL,  -- 库存数量
+    freight DECIMAL(10,2) DEFAULT 0,  -- 运费
+    category_id BIGINT NOT NULL,  -- 所属分类 ID
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 信息更新时间
+    FOREIGN KEY (category_id) REFERENCES Category(category_id) ON DELETE CASCADE
+);
+
+
+-- 创建购物车表
+CREATE TABLE Cart (
+    cart_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 购物车 ID
+    user_id BIGINT NOT NULL,  -- 用户 ID
+    product_id BIGINT NOT NULL,  -- 商品 ID
+    quantity INT NOT NULL DEFAULT 1,  -- 商品数量
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+    FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE
+);
+
+
+-- 创建优惠券表
+CREATE TABLE Coupon (
+    coupon_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 优惠券唯一标识
+    type ENUM('满减', '折扣', '固定金额') NOT NULL,  -- 类型
+    discount_value DECIMAL(10,2) NOT NULL,  -- 折扣值
+    min_order_amount DECIMAL(10,2) NOT NULL,  -- 最低使用金额
+    start_time DATETIME NOT NULL,  -- 生效时间
+    end_time DATETIME NOT NULL,  -- 失效时间
+    status ENUM('未使用', '已使用', '已过期') NOT NULL,  -- 状态
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 更新时间
+);
+
+-- 创建订单表
+CREATE TABLE `Order` (
+    order_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 订单唯一标识
+    user_id BIGINT NOT NULL,  -- 用户 ID
+    total_amount DECIMAL(10,2) NOT NULL,  -- 订单总金额
+    status ENUM('待支付', '已支付', '已发货', '已完成', '已退款') NOT NULL,  -- 订单状态
+    payment_method VARCHAR(50),  -- 支付方式
+    coupon_id BIGINT,  -- 订单使用的优惠券 ID
+    discount_amount DECIMAL(10,2) DEFAULT 1,  -- 订单折扣
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 状态更新时间
+    FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (coupon_id) REFERENCES Coupon(coupon_id) ON DELETE SET NULL
+);
+
+-- 创建订单明细表
+CREATE TABLE OrderDetail (
+    order_detail_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 订单明细唯一标识
+    order_id BIGINT NOT NULL,  -- 订单 ID
+    product_id BIGINT NOT NULL,  -- 商品 ID
+    quantity INT NOT NULL,  -- 购买数量
+    unit_price DECIMAL(10,2) NOT NULL,  -- 商品单价
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+    FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE
+);
+
+
+-- 创建评价表
+CREATE TABLE Review (
+    review_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 评价唯一标识
+    product_id BIGINT NOT NULL,  -- 商品 ID
+    user_id BIGINT NOT NULL,  -- 用户 ID
+    order_id BIGINT NOT NULL,  -- 订单 ID
+    rating INT CHECK (rating BETWEEN 1 AND 5),  -- 评分（1-5 星）
+    content TEXT,  -- 评价内容
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+    FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE
+);
+
+
+-- 创建优惠券发放记录表
+CREATE TABLE CouponDistribution (
+    distribution_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 发放记录唯一标识
+    coupon_id BIGINT NOT NULL,  -- 优惠券 ID
+    user_id BIGINT NOT NULL,  -- 用户 ID
+    gender_filter VARCHAR(10),  -- 性别筛选条件
+    region_filter VARCHAR(50),  -- 地区筛选条件
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 发放时间
+    FOREIGN KEY (coupon_id) REFERENCES Coupon(coupon_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE
+);
+
+
+-- 创建操作日志表
+CREATE TABLE OperationLog (
+    log_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 日志唯一标识
+    user_id BIGINT NOT NULL,  -- 用户 ID
+    action VARCHAR(100) NOT NULL,  -- 操作类型，例如 '添加商品', '修改用户角色'
+    target_table VARCHAR(50),  -- 操作对象的表名，例如 'Product', '`Order`'
+    target_id BIGINT,  -- 操作对象的ID，例如被修改或删除的商品ID、订单ID等
+    description TEXT,  -- 操作的描述，例如 '添加了商品A'、'修改了订单ID为1001的状态'
+    result ENUM('成功', '失败') DEFAULT '成功',  -- 操作结果（成功/失败）
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 操作时间
+    FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE
+);
+

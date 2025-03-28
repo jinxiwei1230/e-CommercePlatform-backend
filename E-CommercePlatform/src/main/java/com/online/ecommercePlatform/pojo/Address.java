@@ -11,7 +11,7 @@ public class Address {
     private Long userId; // 用户 ID（外键关联用户表）
     private String recipientName; // 收货人姓名
     private String phone; // 收货人电话
-    private String addressLine1; // 详细地址（街道 / 门牌号）
+    private String addressDetail; // 详细地址（街道 / 门牌号）
     private String city; // 城市
     private String state; // 省份 / 州
     private String postalCode; // 邮政编码
