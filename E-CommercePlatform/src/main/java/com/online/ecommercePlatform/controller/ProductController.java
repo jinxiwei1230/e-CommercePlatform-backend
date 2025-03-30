@@ -12,7 +12,7 @@ import java.util.List;
  * 产品控制器，处理产品相关的 HTTP 请求
  */
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/product")
 public class ProductController {
 
     @Autowired
