@@ -5,17 +5,16 @@ DELETE FROM OperationLog;
 DELETE FROM CouponDistribution;
 DELETE FROM Review;
 DELETE FROM OrderDetail;
+DELETE FROM Productimage;
 DELETE FROM `Order`;
 DELETE FROM Coupon;
 DELETE FROM Cart;
 DELETE FROM Product;
-DELETE FROM Category;
 DELETE FROM Address;
 DELETE FROM `User`;
 
 ALTER TABLE `User` AUTO_INCREMENT = 1;
 ALTER TABLE Address AUTO_INCREMENT = 1;
-ALTER TABLE Category AUTO_INCREMENT = 1;
 ALTER TABLE Product AUTO_INCREMENT = 1;
 ALTER TABLE Cart AUTO_INCREMENT = 1;
 ALTER TABLE Coupon AUTO_INCREMENT = 1;
@@ -24,6 +23,7 @@ ALTER TABLE OrderDetail AUTO_INCREMENT = 1;
 ALTER TABLE Review AUTO_INCREMENT = 1;
 ALTER TABLE CouponDistribution AUTO_INCREMENT = 1;
 ALTER TABLE OperationLog AUTO_INCREMENT = 1;
+ALTER TABLE Productimage AUTO_INCREMENT = 1;
 
 -- 插入用户表（User）数据
 INSERT INTO `User` (username, password, email, phone, gender, age, is_vip, role)
@@ -43,15 +43,6 @@ VALUES
 (4, '赵六', '4567890123', '深圳市福田区aa路40号', '深圳市', '广东省', '518000', FALSE),
 (5, '孙七', '5678901234', '杭州市西湖区bb路50号', '杭州市', '浙江省', '310000', TRUE);
 
--- 插入商品分类表（Category）数据 - 修改为新的六大类
-INSERT INTO Category (name, parent_id)
-VALUES 
-('服装配饰', 0),
-('美妆护肤', 0),
-('食品饮料', 0),
-('家居日用', 0),
-('数码家电', 0),
-('运动户外', 0);
 
 -- 插入商品表（Product）数据 - 调整category_id以匹配新的分类
 INSERT INTO Product (name, description, price, stock, freight, category_id)
@@ -115,6 +106,19 @@ VALUES
 (3, 3, '男', '广东省'),
 (4, 4, '女', '浙江省'),
 (5, 5, '保密', '江苏省');
+
+
+-- 为智能手机(商品ID=1)添加图片
+INSERT INTO ProductImage (product_id, image_url, is_main, sort_order) VALUES
+(1, 'https://example.com/images/products/phone1.jpg', TRUE, 1),
+(1, 'https://example.com/images/products/phone2.jpg', FALSE, 2),
+(1, 'https://example.com/images/products/phone3.jpg', FALSE, 3);
+
+-- 为沙发(商品ID=2)添加图片
+INSERT INTO ProductImage (product_id, image_url, is_main, sort_order) VALUES
+(2, 'https://example.com/images/products/sofa1.jpg', TRUE, 1),
+(2, 'https://example.com/images/products/sofa2.jpg', FALSE, 2);
+
 
 -- 插入操作日志表（OperationLog）数据
 INSERT INTO OperationLog (user_id, action, target_table, target_id, description, result)

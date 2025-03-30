@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS Review;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS Product;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS Category;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS CouponDistribution;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS ProductImage;
 DROP TABLE IF EXISTS `Order`;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS Coupon;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS `User`;  -- 删除表（如果存在）
@@ -146,6 +147,17 @@ CREATE TABLE CouponDistribution (
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 发放时间
     FOREIGN KEY (coupon_id) REFERENCES Coupon(coupon_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE
+);
+
+-- 创建商品图片表
+CREATE TABLE ProductImage (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,  -- 图片url
+    sort_order INT DEFAULT 0, -- 图片排序
+    is_main BOOLEAN DEFAULT FALSE,  -- 是否为主图
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE
 );
 
 
