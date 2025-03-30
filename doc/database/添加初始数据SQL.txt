@@ -25,8 +25,6 @@ ALTER TABLE Review AUTO_INCREMENT = 1;
 ALTER TABLE CouponDistribution AUTO_INCREMENT = 1;
 ALTER TABLE OperationLog AUTO_INCREMENT = 1;
 
--- TRUNCATE TABLE 会删除表中所有数据并重置 AUTO_INCREMENT 为 1
-
 -- 插入用户表（User）数据
 INSERT INTO `User` (username, password, email, phone, gender, age, is_vip, role)
 VALUES 
@@ -45,23 +43,24 @@ VALUES
 (4, '赵六', '4567890123', '深圳市福田区aa路40号', '深圳市', '广东省', '518000', FALSE),
 (5, '孙七', '5678901234', '杭州市西湖区bb路50号', '杭州市', '浙江省', '310000', TRUE);
 
--- 插入商品分类表（Category）数据
+-- 插入商品分类表（Category）数据 - 修改为新的六大类
 INSERT INTO Category (name, parent_id)
 VALUES 
-('电子产品', 0),  -- 修改 parent_id 为 0，因为顶级分类应为 0
-('家居用品', 0),
-('服饰', 0),
-('美妆', 0),
-('食品', 0);
+('服装配饰', 0),
+('美妆护肤', 0),
+('食品饮料', 0),
+('家居日用', 0),
+('数码家电', 0),
+('运动户外', 0);
 
--- 插入商品表（Product）数据
+-- 插入商品表（Product）数据 - 调整category_id以匹配新的分类
 INSERT INTO Product (name, description, price, stock, freight, category_id)
 VALUES 
-('智能手机', '最新款智能手机', 2999.99, 100, 50.00, 1),
-('沙发', '舒适的沙发', 899.99, 50, 100.00, 2),
-('T恤', '棉质T恤', 199.99, 200, 20.00, 3),
-('口红', '高端口红', 199.00, 150, 30.00, 4),
-('巧克力', '美味巧克力', 59.99, 500, 10.00, 5);
+('智能手机', '最新款智能手机', 2999.99, 100, 50.00, 5),  -- 数码家电
+('沙发', '舒适的沙发', 899.99, 50, 100.00, 4),      -- 家居日用
+('T恤', '棉质T恤', 199.99, 200, 20.00, 1),         -- 服装配饰
+('口红', '高端口红', 199.00, 150, 30.00, 2),       -- 美妆护肤
+('巧克力', '美味巧克力', 59.99, 500, 10.00, 3);    -- 食品饮料
 
 -- 插入购物车表（Cart）数据
 INSERT INTO Cart (user_id, product_id, quantity)
