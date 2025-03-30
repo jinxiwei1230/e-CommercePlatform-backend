@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
  * 管理员控制器，处理管理员对产品的管理操作
  */
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/admin")
 public class AdminController {
 
-    
+
 }
