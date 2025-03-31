@@ -39,12 +39,6 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductById(Long id) {
         return productMapper.findById(id);
     }
-
-
-
-    /**
-     * 产品服务实现类，处理管理员对产品的增、删、改操作
-     */
     /**
      * 添加新产品
      * @param product 产品对象

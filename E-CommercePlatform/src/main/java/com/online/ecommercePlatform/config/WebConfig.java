@@ -28,15 +28,19 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        /*
         // 注册登录拦截器并配置排除路径
         registry.addInterceptor(loginInterceptors)
                 // 排除不需要拦截的路径
                 .excludePathPatterns(
+                        "/api/categories",
                         "/user/login",    // 用户登录接口
                         "/user/register" // 用户注册接口
                 );
 
         // 可以继续添加其他拦截器配置...
         // registry.addInterceptor(otherInterceptor)...;
+         */
     }
+
 }
