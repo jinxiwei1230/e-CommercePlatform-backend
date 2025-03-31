@@ -7,12 +7,12 @@ DROP TABLE IF EXISTS Address;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS Cart;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS OrderDetail;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS Review;  -- 删除表（如果存在）
-DROP TABLE IF EXISTS Product;  -- 删除表（如果存在）
-DROP TABLE IF EXISTS Category;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS CouponDistribution;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS ProductImage;
 DROP TABLE IF EXISTS `Order`;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS Coupon;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS Product;  -- 删除表（如果存在）
+DROP TABLE IF EXISTS Category;  -- 删除表（如果存在）
 DROP TABLE IF EXISTS `User`;  -- 删除表（如果存在）
 
 
@@ -61,6 +61,7 @@ CREATE TABLE Product (
     description TEXT,  -- 商品简介
     price DECIMAL(10,2) NOT NULL,  -- 单价
     stock INT NOT NULL,  -- 库存数量
+		sales INT DEFAULT 0,  -- 销量
     freight DECIMAL(10,2) DEFAULT 0,  -- 运费
     category_id BIGINT NOT NULL,  -- 所属分类 ID
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
