@@ -13,6 +13,7 @@ public class Product {
     private String description; // 商品简介
     private Double price; // 单价
     private Integer stock; // 库存数量
+    private Integer sales; // 销量
     private Double freight; // 运费
     private Long categoryId; // 所属分类 ID（外键关联商品分类表）
     private LocalDateTime createTime; // 创建时间
