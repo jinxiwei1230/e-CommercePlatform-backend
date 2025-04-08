@@ -1,9 +1,13 @@
 package com.online.ecommercePlatform.service;
+import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
+import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
 import com.online.ecommercePlatform.mapper.ProductMapper;
 import com.online.ecommercePlatform.pojo.Product;
+import com.online.ecommercePlatform.pojo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 产品服务接口，定义产品的业务逻辑方法
@@ -51,4 +55,17 @@ public interface ProductService {
      * @param id 产品 ID
      */
     void deleteProduct(Long id);
+
+    /**
+     * 获取热门产品
+     * @param limit 返回数量
+     */
+    Result<List<ProductBasicInfoDTO>> getHotProducts(int limit);
+
+
+    /**
+     * 获取热门类别及其热门商品列表实现
+     * @return 统一响应结果，包含热门类别及其商品列表
+     */
+    Result<List<CategoryHotProductsDTO>> getHotCategoriesAndProducts();
 }

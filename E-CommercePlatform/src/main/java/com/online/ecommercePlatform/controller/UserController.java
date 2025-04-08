@@ -53,7 +53,7 @@ public class UserController {
      * @return 用户信息查询结果
      */
     @GetMapping("/{id}")
-    public Result<User> getUser(@PathVariable Long id) {
+    public Result<User> getUserById(@PathVariable Long id) {
         try {
             User user = userService.getUserById(id);
             if (user != null) {

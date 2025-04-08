@@ -1,14 +1,16 @@
 package com.online.ecommercePlatform.controller;
 
+import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
+import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
 import com.online.ecommercePlatform.pojo.Category;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.CategoryService;
+import com.online.ecommercePlatform.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品分类控制器
@@ -32,5 +34,4 @@ public class CategoryController {
         List<Category> cs = categoryService.getCategories(true);
         return Result.success(cs);
     }
-
 }

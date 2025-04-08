@@ -1,5 +1,7 @@
 package com.online.ecommercePlatform.controller;
 
+import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
+import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.ProductService;
@@ -7,16 +9,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 产品控制器，处理产品相关的 HTTP 请求
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api")
 public class ProductController {
 
     @Autowired
     private ProductService productService; // 产品服务，用于处理产品业务逻辑
+
+    /**
+     * 获取首页轮播展示的热门商品
+     * @param limit 查询数量(可选，默认5)
+     * @return Result包装的热门商品列表
+     */
+    @GetMapping("/products/hot")
+    public Result<List<ProductBasicInfoDTO>> getHotProducts(
+                    @RequestParam(required = false,
+                    defaultValue = "5") int limit) {
+        return productService.getHotProducts(limit);
+    }
+
+    /**
+     * 获取热门类别及其热门商品API
+     * @return 统一响应结果，包含4个热门类别及其各自5个热门商品
+     */
+    @GetMapping("/categories/products/hot")
+    public Result<List<CategoryHotProductsDTO>> getHotCategoriesAndProducts() {
+        return productService.getHotCategoriesAndProducts();
+    }
+
 
     /**
      * 搜索产品
@@ -44,21 +69,4 @@ public class ProductController {
         }
     }
 
-    /**
-     * 根据产品 ID 获取产品信息
-     * @param id 产品 ID
-     * @return 封装后的产品查询结果
-     */
-    @GetMapping("/{id}")
-    public Result<Product> getProduct(@PathVariable Long id) {
-        try {
-            Product product = productService.getProductById(id);
-            if (product == null) {
-                return Result.error("未找到ID为 " + id + " 的产品");
-            }
-            return Result.success(product);
-        } catch (Exception e) {
-            return Result.error("获取产品信息时发生错误: " + e.getMessage());
-        }
-    }
 }
