@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.online.ecommercePlatform.mapper.UserMapper">
+    
+    <!-- 基础列映射，可在各个查询语句中重用 -->
+    <resultMap id="BaseResultMap" type="com.online.ecommercePlatform.pojo.User">
+        <id column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="gender" property="gender"/>
+        <result column="age" property="age"/>
+        <result column="is_vip" property="isVip"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <!-- 根据用户ID查询用户 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM users WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 根据用户名查询用户 -->
+    <select id="findByUsername" resultMap="BaseResultMap">
+        SELECT * FROM users WHERE username = #{username}
+    </select>
+    
+    <!-- 根据邮箱查询用户 -->
+    <select id="findByEmail" resultMap="BaseResultMap">
+        SELECT * FROM users WHERE email = #{email}
+    </select>
+    
+    <!-- 根据手机号查询用户 -->
+    <select id="findByPhone" resultMap="BaseResultMap">
+        SELECT * FROM users WHERE phone = #{phone}
+    </select>
+    
+    <!-- 检查用户名是否存在 -->
+    <select id="existsByUsername" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM users WHERE username = #{username}
+    </select>
+    
+    <!-- 检查邮箱是否存在 -->
+    <select id="existsByEmail" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM users WHERE email = #{email}
+    </select>
+    
+    <!-- 检查手机号是否存在 -->
+    <select id="existsByPhone" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM users WHERE phone = #{phone}
+    </select>
+    
+    <!-- 插入新用户 -->
+    <insert id="insert" parameterType="com.online.ecommercePlatform.pojo.User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO users (
+            username, password, email, phone, gender, age, is_vip, create_time, update_time
+        ) VALUES (
+            #{username}, #{password}, #{email}, #{phone}, #{gender}, #{age}, #{isVip}, #{createTime}, #{updateTime}
+        )
+    </insert>
+    
+    <!-- 更新用户信息 -->
+    <update id="update" parameterType="com.online.ecommercePlatform.pojo.User">
+        UPDATE users
+        <set>
+            <if test="password != null">password = #{password},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="isVip != null">is_vip = #{isVip},</if>
+            update_time = #{updateTime}
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+    
+</mapper> 
