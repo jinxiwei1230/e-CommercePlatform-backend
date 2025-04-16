@@ -1,4 +1,4 @@
-package com.online.ecommercePlatform.util;
+package com.online.ecommercePlatform.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;

@@ -2,7 +2,10 @@ package com.online.ecommercePlatform.service;
 
 import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.UserLoginDTO;
+import com.online.ecommercePlatform.dto.UserLoginResponseDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
+import com.online.ecommercePlatform.dto.UserUpdateDTO;
+import com.online.ecommercePlatform.pojo.User;
 
 /**
  * 用户服务接口
@@ -20,9 +23,9 @@ public interface UserService {
     /**
      * 用户登录
      * @param loginDTO 登录信息
-     * @return 登录结果，成功时包含JWT令牌
+     * @return 登录结果，成功时包含JWT令牌和用户信息
      */
-    Result<String> login(UserLoginDTO loginDTO);
+    Result<UserLoginResponseDTO> login(UserLoginDTO loginDTO);
     
     /**
      * 获取用户信息
@@ -30,6 +33,13 @@ public interface UserService {
      * @return 用户信息
      */
     Result<?> getUserInfo(Long userId);
+    
+    /**
+     * 更新用户信息
+     * @param updateDTO 用户更新信息
+     * @return 更新结果，包含更新后的用户信息
+     */
+    Result<User> updateUserInfo(UserUpdateDTO updateDTO);
     
     /**
      * 验证码校验

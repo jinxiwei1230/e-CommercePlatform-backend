@@ -1,6 +1,6 @@
 package com.online.ecommercePlatform.config;
 
-import com.online.ecommercePlatform.util.JwtUtil;
+import com.online.ecommercePlatform.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

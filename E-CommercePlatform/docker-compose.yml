@@ -6,6 +6,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "123456"  # 对应你的Spring配置中的密码
       MYSQL_DATABASE: e_commerce     # 数据库名需与url中的一致
+      LANG: "C.UTF-8"
     ports:
       - "3306:3306"
     volumes:
