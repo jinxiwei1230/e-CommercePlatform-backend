@@ -23,7 +23,7 @@ public class Result<T> {
      * @return 封装好的响应结果
      */
     public static <E> Result<E> success(E data) {
-        return new Result<>(0, "操作成功", data);
+        return new Result<>(200, "操作成功", data);
     }
 
     /**
@@ -31,7 +31,7 @@ public class Result<T> {
      * @return 封装好的响应结果
      */
     public static Result success() {
-        return new Result(0, "操作成功", null);
+        return new Result(200, "操作成功", null);
     }
 
     /**
@@ -40,6 +40,6 @@ public class Result<T> {
      * @return 封装好的响应结果
      */
     public static Result error(String message) {
-        return new Result(1, message, null);
+        return new Result(422, message, null);
     }
 }

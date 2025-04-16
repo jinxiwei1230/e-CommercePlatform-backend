@@ -96,87 +96,64 @@ public class UserController {
         }
     }
 
-//    /**
-//     * 更新用户信息
-//     * @param user 更新后的用户对象
-//     * @return 更新结果
-//     */
-//    @PutMapping("/update")
-//    public Result<User> update(@RequestBody User user) {
-//        try {
-//            User updatedUser = userService.updateUser(user);
-//            return Result.success(updatedUser);
-//        } catch (Exception e) {
-//            return Result.error(e.getMessage());
-//        }
-//    }
-//
-//    /**
-//     * 删除用户
-//     * @param id 用户ID
-//     * @return 删除结果
-//     */
-//    @DeleteMapping("/delete/{id}")
-//    public Result<Boolean> delete(@PathVariable Long id) {
-//        try {
-//            boolean result = userService.deleteUser(id);
-//            if (result) {
-//                return Result.success(true);
-//            } else {
-//                return Result.error("删除失败，用户可能不存在");
-//            }
-//        } catch (Exception e) {
-//            return Result.error(e.getMessage());
-//        }
-//    }
-//
-//    /**
-//     * 批量删除用户
-//     * @param ids 用户ID列表
-//     * @return 删除结果
-//     */
-//    @DeleteMapping("/delete/batch")
-//    public Result<Integer> deleteBatch(@RequestBody List<Long> ids) {
-//        try {
-//            int count = userService.deleteUserBatch(ids);
-//            return Result.success(count);
-//        } catch (Exception e) {
-//            return Result.error(e.getMessage());
-//        }
-//    }
-//
-//    /**
-//     * 查询所有用户
-//     * @return 用户列表
-//     */
-//    @GetMapping("/selectAll")
-//    public Result<List<User>> selectAll(User user) {
-//        try {
-//            List<User> users = userService.getAllUsers();
-//            return Result.success(users);
-//        } catch (Exception e) {
-//            return Result.error(e.getMessage());
-//        }
-//    }
-//
-//    /**
-//     * 分页查询用户
-//     * @param user 查询条件，包含用户名、角色、邮箱等筛选条件
-//     * @param pageNum 页码
-//     * @param pageSize 每页条数
-//     * @return 分页结果
-//     */
-//    @GetMapping("/selectPage")
-//    public Result<PageBean<User>> selectPage(
-//            User user,
-//            @RequestParam(defaultValue = "1") int pageNum,
-//            @RequestParam(defaultValue = "10") int pageSize) {
-//        try {
-//            PageBean<User> pageBean = userService.getUsersByPage(pageNum, pageSize, user);
-//            return Result.success(pageBean);
-//        } catch (Exception e) {
-//            return Result.error(e.getMessage());
-//        }
-//    }
+    /**
+     * 更新用户信息
+     * @param user 更新后的用户对象
+     * @return 更新结果
+     */
+    @PutMapping("/updateUser")
+    public Result<User> updateUser(@RequestBody User user) {
+        // 确保密码字段不被更新
+        user.setPassword(null);
+        User updatedUser = userService.updateUser(user);
+        return Result.success("用户信息更新成功", updatedUser);
+        // 错误或者异常被全局异常类GlobalExceptionHandler捕获
+    }
+
+    /**
+     * 更新用户密码
+     */
+    @PutMapping("/updatePassword")
+    public Result<User> updatePassword(
+            @RequestParam Long userId,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword) {
+        User updatedUser = userService.updatePassword(userId, oldPassword, newPassword);
+        return Result.success("密码更新成功", updatedUser);
+        // 错误或者异常被全局异常类GlobalExceptionHandler捕获
+    }
+
+    /**
+     * 删除用户
+     * @param id 用户ID
+     * @return 删除结果
+     */
+    @DeleteMapping("/delete/{id}")
+    public Result<Boolean> delete(@PathVariable Long id) {
+        boolean result = userService.deleteUser(id);
+        return Result.success("用户删除成功", result);
+    }
+
+    /**
+     * 批量删除用户
+     * @param ids 用户ID列表
+     * @return 删除结果
+     */
+    @DeleteMapping("/delete/batch")
+    public Result<Integer> deleteBatch(@RequestBody List<Long> ids) {
+        int count = userService.deleteUserBatch(ids);
+        return Result.success("批量删除成功，删除了 " + count + " 个用户", count);
+    }
+
+    /**
+     * 查询所有用户
+     * @return 用户列表
+     */
+    @GetMapping("/selectAll")
+    public Result<List<User>> selectAll(User user) {
+        List<User> users = userService.getAllUsers();
+        return Result.success("查询所有用户成功", users);
+    }
+
 
 }

@@ -4,6 +4,8 @@ import com.online.ecommercePlatform.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 用户数据访问层接口
  */
@@ -72,4 +74,37 @@ public interface UserMapper {
      * @return 是否存在
      */
     boolean existsByPhone(String phone);
+
+    /**
+     * 删除用户
+     * @param id 用户ID
+     * @return 删除结果
+     */
+    int deleteById(Long id);
+
+    /**
+     * 批量删除用户
+     * @param ids 用户ID列表
+     * @return 删除结果
+     */
+    int deleteBatch(List<Long> ids);
+
+    /**
+     * 查询所有用户
+     * @return 用户列表
+     */
+    List<User> findAll();
+
+    /**
+     * 分页查询用户
+     * @return
+     */
+    List<User> findByPage();
+
+    /**
+     * 带条件的分页查询用户
+     * @param user
+     * @return
+     */
+    List<User> findByPageWithCondition(User user);
 }
