@@ -1,0 +1,59 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ecommerce-mysql
+    pull_policy: never  # 禁止拉取镜像，强制使用本地
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"  # 对应你的Spring配置中的密码
+      MYSQL_DATABASE: e_commerce     # 数据库名需与url中的一致
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p123456"]  # 添加密码参数
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7.0
+    container_name: ecommerce-redis
+    pull_policy: never  # 禁止拉取镜像，强制使用本地
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # 关键修改：使用Docker网络别名替代localhost
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/e_commerce?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "123456"
+      SPRING_REDIS_HOST: redis
+    volumes:
+      - .:/app
+      - ~/.m2:/root/.m2
+
+volumes:
+  mysql_data:
+  redis_data:
+
+# docker-compose exec mysql mysql -u root -p123456 e_commerce

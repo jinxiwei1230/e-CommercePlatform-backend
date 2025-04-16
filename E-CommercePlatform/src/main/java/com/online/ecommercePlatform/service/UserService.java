@@ -1,37 +1,41 @@
 package com.online.ecommercePlatform.service;
-import com.online.ecommercePlatform.pojo.User;
+
+import com.online.ecommercePlatform.dto.Result;
+import com.online.ecommercePlatform.dto.UserLoginDTO;
+import com.online.ecommercePlatform.dto.UserRegisterDTO;
 
 /**
- * 用户服务接口，定义用户相关的业务逻辑
+ * 用户服务接口
+ * 定义用户相关的业务操作
  */
 public interface UserService {
-
+    
     /**
      * 用户注册
-     * @param user 用户对象
-     * @return 注册成功的用户对象
+     * @param registerDTO 注册信息
+     * @return 注册结果
      */
-    User register(User user);
-
+    Result<?> register(UserRegisterDTO registerDTO);
+    
     /**
      * 用户登录
-     * @param username 用户名
-     * @param password 密码
-     * @return 登录成功的用户对象
+     * @param loginDTO 登录信息
+     * @return 登录结果，成功时包含JWT令牌
      */
-    User login(String username, String password);
-
+    Result<String> login(UserLoginDTO loginDTO);
+    
     /**
-     * 通过用户 ID 获取用户信息
-     * @param id 用户 ID
-     * @return 用户对象
+     * 获取用户信息
+     * @param userId 用户ID
+     * @return 用户信息
      */
-    User getUserById(Long id);
-
+    Result<?> getUserInfo(Long userId);
+    
     /**
-     * 更新用户信息
-     * @param user 用户对象
-     * @return 更新后的用户对象
+     * 验证码校验
+     * @param email 邮箱
+     * @param code 验证码
+     * @return 校验结果
      */
-    User updateUser(User user);
+    boolean verifyCode(String email, String code);
 }

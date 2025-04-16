@@ -3,7 +3,7 @@ package com.online.ecommercePlatform.pojo;
 import lombok.Data;
 import java.time.LocalDateTime;
 /**
- * 用户基本信息实体类
+ * 用户实体类
  */
 @Data
 public class User {
@@ -15,7 +15,7 @@ public class User {
     private String gender; // 性别（男 / 女 / 保密）
     private Integer age; // 年龄
     private Boolean isVip; // 是否为 VIP 用户（管理员分配）
+    private String role; // 用户角色（普通用户/管理员）
     private LocalDateTime createTime; // 注册时间
     private LocalDateTime updateTime; // 信息更新时间
-
 }

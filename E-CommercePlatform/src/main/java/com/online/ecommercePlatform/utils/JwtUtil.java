@@ -1,62 +1,108 @@
 package com.online.ecommercePlatform.utils;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
 /**
  * JWT工具类
- * 用于生成和解析JSON Web Token
+ * 用于生成和验证JWT令牌
  */
+@Component
 public class JwtUtil {
 
-    // JWT加密密钥（实际项目中应该从配置中读取）
-    private static final String KEY = "chj";
+    // JWT密钥，实际应配置在application.yml中
+    @Value("${jwt.secret:defaultSecretKey}")
+    private String secret;
 
-    // JSON序列化/反序列化工具
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    /**
-     * 生成JWT Token
-     * @param claims 要存储在Token中的业务数据（键值对）
-     * @return 生成的JWT Token字符串
-     * @throws JsonProcessingException 如果JSON序列化失败
-     */
-    public static String genToken(Map<String, Object> claims) throws JsonProcessingException {
-        // 将业务数据Map转换为JSON字符串
-        String claimsJson = objectMapper.writeValueAsString(claims);
-
-        // 使用JWT库创建Token
-        return JWT.create()
-                // 设置自定义声明（payload）
-                .withClaim("claims", claimsJson)
-                // 设置过期时间（当前时间+12小时）
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
-                // 使用HS256算法和密钥签名
-                .sign(Algorithm.HMAC256(KEY));
-    }
+    // JWT过期时间（小时），默认24小时
+    @Value("${jwt.expiration:24}")
+    private int expiration;
 
     /**
-     * 解析JWT Token并返回业务数据
-     * @param token 要解析的JWT Token字符串
-     * @return 包含业务数据的Map
-     * @throws JsonProcessingException 如果JSON反序列化失败
-     * @throws com.auth0.jwt.exceptions.JWTVerificationException 如果Token验证失败
+     * 生成JWT令牌
+     * @param payload 载荷信息（claim键值对）
+     * @return JWT令牌
      */
-    public static Map<String, Object> parseToken(String token) throws JsonProcessingException {
-        // 验证Token并提取claims JSON字符串
-        String claimsJson = JWT.require(Algorithm.HMAC256(KEY))
-                .build()
-                .verify(token)
-                .getClaim("claims")
-                .asString();
-
-        // 将JSON字符串反序列化为Map对象
-        return objectMapper.readValue(claimsJson, new TypeReference<Map<String, Object>>() {});
+    public String generateToken(Map<String, String> payload) {
+        // 创建JWT Builder
+        JWTCreator.Builder builder = JWT.create();
+        
+        // 添加payload
+        payload.forEach(builder::withClaim);
+        
+        // 设置过期时间
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, expiration);
+        
+        // 生成令牌
+        return builder.withExpiresAt(calendar.getTime())
+                .sign(Algorithm.HMAC256(secret));
     }
-}
+    
+    /**
+     * 验证并解析JWT令牌
+     * @param token JWT令牌
+     * @return 解析后的JWT对象，如果验证失败返回null
+     */
+    public DecodedJWT verifyToken(String token) {
+        try {
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).build();
+            return verifier.verify(token);
+        } catch (JWTVerificationException e) {
+            // 验证失败时记录错误并返回null
+            System.err.println("JWT验证失败: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * 判断令牌是否过期或无效
+     * @param token JWT令牌
+     * @return 是否过期或无效
+     */
+    public boolean isTokenExpired(String token) {
+        try {
+            DecodedJWT jwt = verifyToken(token);
+            if (jwt == null) {
+                System.err.println("令牌验证失败，无法解析");
+                return true;  // 验证失败视为过期
+            }
+            
+            Date expiresAt = jwt.getExpiresAt();
+            boolean expired = expiresAt == null || expiresAt.before(new Date());
+            
+            if (expired) {
+                System.err.println("令牌已过期: " + expiresAt);
+            }
+            
+            return expired;
+        } catch (Exception e) {
+            System.err.println("检查令牌过期时发生异常: " + e.getMessage());
+            e.printStackTrace();
+            return true;  // 发生异常视为过期
+        }
+    }
+    
+    /**
+     * 从令牌中获取用户名
+     * @param token JWT令牌
+     * @return 用户名，如果验证失败返回null
+     */
+    public String getUsernameFromToken(String token) {
+        DecodedJWT jwt = verifyToken(token);
+        if (jwt == null) {
+            return null;
+        }
+        return jwt.getClaim("username").asString();
+    }
+} 
