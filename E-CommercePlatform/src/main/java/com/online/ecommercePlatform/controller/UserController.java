@@ -115,7 +115,7 @@ public class UserController {
      * @param request HTTP请求
      * @return 用户信息
      */
-    @GetMapping("/info")
+    @GetMapping("/selectById/current")
     public Result<?> getUserInfo(HttpServletRequest request) {
         // 从请求头中获取token
         String token = request.getHeader("Authorization");
