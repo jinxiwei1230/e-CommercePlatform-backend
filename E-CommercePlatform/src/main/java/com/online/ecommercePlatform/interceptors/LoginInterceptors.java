@@ -2,7 +2,7 @@ package com.online.ecommercePlatform.interceptors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.online.ecommercePlatform.dto.Result;
-import com.online.ecommercePlatform.util.JwtUtil;
+import com.online.ecommercePlatform.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

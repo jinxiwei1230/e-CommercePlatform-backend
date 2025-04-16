@@ -6,7 +6,7 @@ import com.online.ecommercePlatform.dto.UserRegisterDTO;
 import com.online.ecommercePlatform.mapper.UserMapper;
 import com.online.ecommercePlatform.pojo.User;
 import com.online.ecommercePlatform.service.UserService;
-import com.online.ecommercePlatform.util.JwtUtil;
+import com.online.ecommercePlatform.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 用户服务实现类

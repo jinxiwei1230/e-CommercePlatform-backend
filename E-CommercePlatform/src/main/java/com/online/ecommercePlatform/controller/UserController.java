@@ -4,13 +4,17 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.UserLoginDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
+import com.online.ecommercePlatform.pojo.PageBean;
+import com.online.ecommercePlatform.pojo.User;
 import com.online.ecommercePlatform.service.UserService;
-import com.online.ecommercePlatform.util.JwtUtil;
+import com.online.ecommercePlatform.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 用户控制器
@@ -91,4 +95,88 @@ public class UserController {
             return Result.error("登录已过期或Token无效");
         }
     }
+
+//    /**
+//     * 更新用户信息
+//     * @param user 更新后的用户对象
+//     * @return 更新结果
+//     */
+//    @PutMapping("/update")
+//    public Result<User> update(@RequestBody User user) {
+//        try {
+//            User updatedUser = userService.updateUser(user);
+//            return Result.success(updatedUser);
+//        } catch (Exception e) {
+//            return Result.error(e.getMessage());
+//        }
+//    }
+//
+//    /**
+//     * 删除用户
+//     * @param id 用户ID
+//     * @return 删除结果
+//     */
+//    @DeleteMapping("/delete/{id}")
+//    public Result<Boolean> delete(@PathVariable Long id) {
+//        try {
+//            boolean result = userService.deleteUser(id);
+//            if (result) {
+//                return Result.success(true);
+//            } else {
+//                return Result.error("删除失败，用户可能不存在");
+//            }
+//        } catch (Exception e) {
+//            return Result.error(e.getMessage());
+//        }
+//    }
+//
+//    /**
+//     * 批量删除用户
+//     * @param ids 用户ID列表
+//     * @return 删除结果
+//     */
+//    @DeleteMapping("/delete/batch")
+//    public Result<Integer> deleteBatch(@RequestBody List<Long> ids) {
+//        try {
+//            int count = userService.deleteUserBatch(ids);
+//            return Result.success(count);
+//        } catch (Exception e) {
+//            return Result.error(e.getMessage());
+//        }
+//    }
+//
+//    /**
+//     * 查询所有用户
+//     * @return 用户列表
+//     */
+//    @GetMapping("/selectAll")
+//    public Result<List<User>> selectAll(User user) {
+//        try {
+//            List<User> users = userService.getAllUsers();
+//            return Result.success(users);
+//        } catch (Exception e) {
+//            return Result.error(e.getMessage());
+//        }
+//    }
+//
+//    /**
+//     * 分页查询用户
+//     * @param user 查询条件，包含用户名、角色、邮箱等筛选条件
+//     * @param pageNum 页码
+//     * @param pageSize 每页条数
+//     * @return 分页结果
+//     */
+//    @GetMapping("/selectPage")
+//    public Result<PageBean<User>> selectPage(
+//            User user,
+//            @RequestParam(defaultValue = "1") int pageNum,
+//            @RequestParam(defaultValue = "10") int pageSize) {
+//        try {
+//            PageBean<User> pageBean = userService.getUsersByPage(pageNum, pageSize, user);
+//            return Result.success(pageBean);
+//        } catch (Exception e) {
+//            return Result.error(e.getMessage());
+//        }
+//    }
+
 }

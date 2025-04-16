@@ -7,14 +7,15 @@ import java.time.LocalDateTime;
  */
 @Data
 public class User {
-    private Long userId; // 用户ID
-    private String username; // 用户名
-    private String password; // 密码（加密存储）
-    private String email; // 电子邮箱
-    private String phone; // 手机号
-    private String gender; // 性别
+    private Long userId; // 用户唯一标识（主键）
+    private String username; // 用户名（需唯一）
+    private String password; // 加密存储的用户密码
+    private String email; // 绑定的邮箱（支持解绑）
+    private String phone; // 绑定的手机号（支持解绑）
+    private String gender; // 性别（男 / 女 / 保密）
     private Integer age; // 年龄
-    private Boolean isVip; // 是否为VIP用户
-    private LocalDateTime createTime; // 创建时间
-    private LocalDateTime updateTime; // 更新时间
+    private Boolean isVip; // 是否为 VIP 用户（管理员分配）
+    private String role; // 用户角色（普通用户/管理员）
+    private LocalDateTime createTime; // 注册时间
+    private LocalDateTime updateTime; // 信息更新时间
 }
