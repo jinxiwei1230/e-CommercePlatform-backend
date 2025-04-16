@@ -1,6 +1,7 @@
 package com.online.ecommercePlatform.controller;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.online.ecommercePlatform.dto.PasswordUpdateDTO;
 import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.UserLoginDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
@@ -55,12 +56,12 @@ public class UserController {
      * @param request HTTP请求
      * @return 用户信息
      */
-    @GetMapping("/info")
+    @GetMapping("/selectById/current")
     public Result<?> getUserInfo(HttpServletRequest request) {
         // 从请求头中获取token
         String token = request.getHeader("Authorization");
         if (!StringUtils.hasText(token)) {
-            return Result.error("未登录");
+            return Result.error(401,"未登录");
         }
         
         // 解析token获取用户ID
@@ -73,18 +74,18 @@ public class UserController {
             // 验证Token
             DecodedJWT jwt = jwtUtil.verifyToken(token);
             if (jwt == null) {
-                return Result.error("登录已过期或Token无效");
+                return Result.error(403,"登录已过期或Token无效");
             }
             
             // 检查令牌是否过期
             if (jwtUtil.isTokenExpired(token)) {
-                return Result.error("登录已过期，请重新登录");
+                return Result.error(403,"登录已过期，请重新登录");
             }
             
             // 获取用户ID
             String userIdStr = jwt.getClaim("userId").asString();
             if (!StringUtils.hasText(userIdStr)) {
-                return Result.error("Token中缺少用户信息");
+                return Result.error(422,"Token中缺少用户信息");
             }
             
             // 获取用户信息
@@ -92,7 +93,7 @@ public class UserController {
             return userService.getUserInfo(userId);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error("登录已过期或Token无效");
+            return Result.error(403,"登录已过期或Token无效");
         }
     }
 
@@ -101,7 +102,7 @@ public class UserController {
      * @param user 更新后的用户对象
      * @return 更新结果
      */
-    @PutMapping("/updateUser")
+    @PutMapping("/update")
     public Result<User> updateUser(@RequestBody User user) {
         // 确保密码字段不被更新
         user.setPassword(null);
@@ -115,13 +116,47 @@ public class UserController {
      */
     @PutMapping("/updatePassword")
     public Result<User> updatePassword(
-            @RequestParam Long userId,
-            @RequestParam String oldPassword,
-            @RequestParam String newPassword) {
-        User updatedUser = userService.updatePassword(userId, oldPassword, newPassword);
-        return Result.success("密码更新成功", updatedUser);
-        // 错误或者异常被全局异常类GlobalExceptionHandler捕获
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody PasswordUpdateDTO passwordUpdateRequest) {
+
+        // 1. 从请求头中获取 Token
+        String token = authHeader;
+        if (!StringUtils.hasText(token)) {
+            return Result.error(401,"未登录");
+        }
+
+        // 2. 去掉 "Bearer " 前缀（如果存在）
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        // 3. 验证 Token 并获取用户ID
+        try {
+            DecodedJWT jwt = jwtUtil.verifyToken(token);
+            if (jwt == null || jwtUtil.isTokenExpired(token)) {
+                return Result.error(403,"登录已过期或Token无效");
+            }
+
+            String userIdStr = jwt.getClaim("userId").asString();
+            if (!StringUtils.hasText(userIdStr)) {
+                return Result.error(422,"Token中缺少用户信息");
+            }
+
+            Long userId = Long.valueOf(userIdStr);
+
+            // 4. 调用 Service 更新密码
+            User updatedUser = userService.updatePassword(
+                    userId,
+                    passwordUpdateRequest.getOldPassword(),
+                    passwordUpdateRequest.getNewPassword()
+            );
+            return Result.success("密码更新成功", updatedUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(403,"登录已过期或Token无效");
+        }
     }
+
 
     /**
      * 删除用户

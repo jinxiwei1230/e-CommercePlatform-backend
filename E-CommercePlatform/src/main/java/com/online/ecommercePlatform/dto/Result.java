@@ -46,6 +46,14 @@ public class Result<T> {
         result.setMessage(message);
         return result;
     }
+
+    // 失败响应（自定义错误码+消息）
+    public static <T> Result<T> error(int code, String message) {
+        Result<T> result = new Result<>();
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
+    }
     
     /**
      * 自定义响应，支持自定义响应码、消息和数据
