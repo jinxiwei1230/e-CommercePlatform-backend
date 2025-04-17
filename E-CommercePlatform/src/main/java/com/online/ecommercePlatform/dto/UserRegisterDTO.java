@@ -28,6 +28,14 @@ public class UserRegisterDTO {
     @Pattern(regexp = "^$|^1[3-9]\\d{9}$", message = "手机号格式不正确")
     private String phone;
     
+    @Pattern(regexp = "^(男|女|保密)$", message = "性别只能是男、女或保密")
+    private String gender;
+    
+    private String address;
+    
+    @Pattern(regexp = "^(普通用户|管理员)$", message = "角色只能是普通用户或管理员")
+    private String role = "普通用户"; // 默认为普通用户
+    
     @NotBlank(message = "验证码不能为空")
     @Size(min = 6, max = 6, message = "验证码必须是6位")
     @Pattern(regexp = "^[a-zA-Z0-9]{6}$", message = "验证码只能包含字母和数字")

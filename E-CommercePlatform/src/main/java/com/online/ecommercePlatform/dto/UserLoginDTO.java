@@ -19,6 +19,9 @@ public class UserLoginDTO {
     @Size(min = 6, max = 18, message = "密码长度必须在6-18位之间")
     private String password;
     
+    /**
+     * 登录类型：password-密码登录，wechat-微信登录，alipay-支付宝登录
+     */
     @Pattern(regexp = "^(password|wechat|alipay)$", message = "登录类型不正确")
     private String loginType = "password"; // 默认密码登录
 } 
