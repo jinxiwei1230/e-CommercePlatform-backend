@@ -23,7 +23,6 @@ CREATE TABLE `User` (
     password VARCHAR(255) NOT NULL,  -- 加密存储的用户密码
     email VARCHAR(100) UNIQUE,  -- 绑定的邮箱（支持解绑）
     phone VARCHAR(20) UNIQUE,  -- 绑定的手机号（支持解绑）
-    address VARCHAR(50),
     gender ENUM('男', '女', '保密'),  -- 性别
     age INT,  -- 年龄
     is_vip BOOLEAN DEFAULT FALSE,  -- 是否为 VIP 用户

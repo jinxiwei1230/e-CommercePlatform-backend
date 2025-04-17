@@ -276,3 +276,291 @@ This generated password is for development use only. Your security configuration
 2025-04-17T00:25:02.254+08:00  INFO 9764 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-04-17T00:25:02.257+08:00  INFO 9764 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-04-17T00:25:02.264+08:00  INFO 9764 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-04-17T00:40:02.028+08:00  INFO 19519 --- [main] c.o.e.ECommercePlatformApplication       : Starting ECommercePlatformApplication using Java 17.0.14 with PID 19519 (/home/lvcan/e-CommercePlatform-backend/E-CommercePlatform/target/classes started by lvcan in /home/lvcan/e-CommercePlatform-backend/E-CommercePlatform)
+2025-04-17T00:40:02.030+08:00 DEBUG 19519 --- [main] c.o.e.ECommercePlatformApplication       : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-17T00:40:02.031+08:00  INFO 19519 --- [main] c.o.e.ECommercePlatformApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-04-17T00:40:02.852+08:00  INFO 19519 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T00:40:02.854+08:00  INFO 19519 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-17T00:40:02.875+08:00  INFO 19519 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 0 JPA repository interfaces.
+2025-04-17T00:40:02.893+08:00  INFO 19519 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T00:40:02.894+08:00  INFO 19519 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-04-17T00:40:02.909+08:00  INFO 19519 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 6 ms. Found 0 Redis repository interfaces.
+2025-04-17T00:40:03.559+08:00  INFO 19519 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-04-17T00:40:03.570+08:00  INFO 19519 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-17T00:40:03.571+08:00  INFO 19519 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-17T00:40:03.622+08:00  INFO 19519 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-04-17T00:40:03.622+08:00  INFO 19519 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1541 ms
+2025-04-17T00:40:03.695+08:00 DEBUG 19519 --- [main] c.o.e.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2025-04-17T00:40:03.779+08:00  INFO 19519 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-17T00:40:03.934+08:00  INFO 19519 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@19ae36f4
+2025-04-17T00:40:03.937+08:00  INFO 19519 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-04-17T00:40:03.973+08:00  INFO 19519 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-17T00:40:04.017+08:00  INFO 19519 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-04-17T00:40:04.050+08:00  INFO 19519 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-17T00:40:04.291+08:00  INFO 19519 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-17T00:40:04.397+08:00  INFO 19519 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.4.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-17T00:40:04.638+08:00  INFO 19519 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-17T00:40:04.642+08:00  INFO 19519 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T00:40:05.195+08:00  WARN 19519 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-17T00:40:05.223+08:00  WARN 19519 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: a1fb84aa-78dd-44c3-922b-3c38b6a29127
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-04-17T00:40:05.232+08:00  INFO 19519 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-04-17T00:40:05.893+08:00  INFO 19519 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/api'
+2025-04-17T00:40:05.904+08:00  INFO 19519 --- [main] c.o.e.ECommercePlatformApplication       : Started ECommercePlatformApplication in 4.369 seconds (process running for 4.692)
+2025-04-17T00:40:17.193+08:00  INFO 19519 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-17T00:40:17.194+08:00  INFO 19519 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-17T00:40:17.197+08:00  INFO 19519 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-04-17T00:40:17.265+08:00  INFO 19519 --- [http-nio-8080-exec-1] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T00:40:31.017+08:00  INFO 19519 --- [http-nio-8080-exec-2] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T00:40:33.440+08:00  INFO 19519 --- [http-nio-8080-exec-3] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T00:40:42.443+08:00  INFO 19519 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-17T00:40:42.448+08:00  INFO 19519 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-04-17T00:40:42.477+08:00  INFO 19519 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T00:40:42.481+08:00  INFO 19519 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-04-17T00:40:42.492+08:00  INFO 19519 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-04-17T13:52:57.342+08:00  INFO 9888 --- [main] c.o.e.ECommercePlatformApplication       : Starting ECommercePlatformApplication using Java 17.0.14 with PID 9888 (/home/lvcan/e-CommercePlatform-backend/E-CommercePlatform/target/classes started by lvcan in /home/lvcan/e-CommercePlatform-backend/E-CommercePlatform)
+2025-04-17T13:52:57.344+08:00 DEBUG 9888 --- [main] c.o.e.ECommercePlatformApplication       : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-17T13:52:57.345+08:00  INFO 9888 --- [main] c.o.e.ECommercePlatformApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-04-17T13:52:58.319+08:00  INFO 9888 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T13:52:58.321+08:00  INFO 9888 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-17T13:52:58.354+08:00  INFO 9888 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 21 ms. Found 0 JPA repository interfaces.
+2025-04-17T13:52:58.377+08:00  INFO 9888 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T13:52:58.379+08:00  INFO 9888 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-04-17T13:52:58.397+08:00  INFO 9888 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 0 Redis repository interfaces.
+2025-04-17T13:52:59.043+08:00  INFO 9888 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-04-17T13:52:59.058+08:00  INFO 9888 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-17T13:52:59.058+08:00  INFO 9888 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-17T13:52:59.126+08:00  INFO 9888 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-04-17T13:52:59.127+08:00  INFO 9888 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1725 ms
+2025-04-17T13:52:59.194+08:00 DEBUG 9888 --- [main] c.o.e.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2025-04-17T13:52:59.295+08:00  INFO 9888 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-17T13:52:59.479+08:00  INFO 9888 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1c7cd434
+2025-04-17T13:52:59.482+08:00  INFO 9888 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-04-17T13:52:59.529+08:00  INFO 9888 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-17T13:52:59.608+08:00  INFO 9888 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-04-17T13:52:59.659+08:00  INFO 9888 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-17T13:52:59.963+08:00  INFO 9888 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-17T13:53:00.076+08:00  INFO 9888 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.4.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-17T13:53:00.373+08:00  INFO 9888 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-17T13:53:00.378+08:00  INFO 9888 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T13:53:01.061+08:00  WARN 9888 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-17T13:53:01.089+08:00  WARN 9888 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 619c7e72-accf-4d84-9391-801f61c5c4bc
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-04-17T13:53:01.098+08:00  INFO 9888 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-04-17T13:53:01.749+08:00  INFO 9888 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/api'
+2025-04-17T13:53:01.760+08:00  INFO 9888 --- [main] c.o.e.ECommercePlatformApplication       : Started ECommercePlatformApplication in 4.956 seconds (process running for 5.318)
+2025-04-17T13:54:08.282+08:00  INFO 9888 --- [http-nio-8080-exec-6] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-17T13:54:08.284+08:00  INFO 9888 --- [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-17T13:54:08.288+08:00  INFO 9888 --- [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2025-04-17T13:54:08.345+08:00  INFO 9888 --- [http-nio-8080-exec-6] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T13:57:45.999+08:00  INFO 9888 --- [http-nio-8080-exec-1] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T13:57:52.927+08:00  INFO 9888 --- [http-nio-8080-exec-2] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T13:57:55.220+08:00  INFO 9888 --- [http-nio-8080-exec-3] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T13:58:02.307+08:00  WARN 9888 --- [http-nio-8080-exec-4] c.o.e.config.JwtAuthenticationFilter     : 无效的JWT令牌
+2025-04-17T13:58:06.500+08:00  INFO 9888 --- [http-nio-8080-exec-5] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T13:58:17.517+08:00  INFO 9888 --- [http-nio-8080-exec-6] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T13:58:21.642+08:00  INFO 9888 --- [http-nio-8080-exec-7] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T13:58:26.467+08:00  INFO 9888 --- [http-nio-8080-exec-8] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T13:59:34.102+08:00  INFO 9888 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-17T13:59:34.105+08:00  INFO 9888 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-04-17T13:59:34.131+08:00  INFO 9888 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T13:59:34.134+08:00  INFO 9888 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-04-17T13:59:34.140+08:00  INFO 9888 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-04-17T13:59:44.105+08:00  INFO 14702 --- [main] c.o.e.ECommercePlatformApplication       : Starting ECommercePlatformApplication using Java 17.0.14 with PID 14702 (/home/lvcan/e-CommercePlatform-backend/E-CommercePlatform/target/classes started by lvcan in /home/lvcan/e-CommercePlatform-backend/E-CommercePlatform)
+2025-04-17T13:59:44.107+08:00 DEBUG 14702 --- [main] c.o.e.ECommercePlatformApplication       : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-17T13:59:44.109+08:00  INFO 14702 --- [main] c.o.e.ECommercePlatformApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-04-17T13:59:45.013+08:00  INFO 14702 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T13:59:45.014+08:00  INFO 14702 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-17T13:59:45.036+08:00  INFO 14702 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 0 JPA repository interfaces.
+2025-04-17T13:59:45.056+08:00  INFO 14702 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T13:59:45.058+08:00  INFO 14702 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-04-17T13:59:45.074+08:00  INFO 14702 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 6 ms. Found 0 Redis repository interfaces.
+2025-04-17T13:59:45.704+08:00  INFO 14702 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-04-17T13:59:45.718+08:00  INFO 14702 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-17T13:59:45.718+08:00  INFO 14702 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-17T13:59:45.772+08:00  INFO 14702 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-04-17T13:59:45.772+08:00  INFO 14702 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1615 ms
+2025-04-17T13:59:45.850+08:00 DEBUG 14702 --- [main] c.o.e.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2025-04-17T13:59:45.946+08:00  INFO 14702 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-17T13:59:46.104+08:00  INFO 14702 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@216f01
+2025-04-17T13:59:46.107+08:00  INFO 14702 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-04-17T13:59:46.143+08:00  INFO 14702 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-17T13:59:46.189+08:00  INFO 14702 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-04-17T13:59:46.221+08:00  INFO 14702 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-17T13:59:46.452+08:00  INFO 14702 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-17T13:59:46.550+08:00  INFO 14702 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.4.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-17T13:59:46.832+08:00  INFO 14702 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-17T13:59:46.836+08:00  INFO 14702 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T13:59:47.402+08:00  WARN 14702 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-17T13:59:47.429+08:00  WARN 14702 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 99863d59-cee6-44ab-a73c-86dbcceb7d64
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-04-17T13:59:47.438+08:00  INFO 14702 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-04-17T13:59:48.131+08:00  INFO 14702 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/api'
+2025-04-17T13:59:48.144+08:00  INFO 14702 --- [main] c.o.e.ECommercePlatformApplication       : Started ECommercePlatformApplication in 4.532 seconds (process running for 4.813)
+2025-04-17T14:00:01.607+08:00  INFO 14702 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-17T14:00:01.608+08:00  INFO 14702 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-17T14:00:01.609+08:00  INFO 14702 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-04-17T14:00:01.670+08:00  INFO 14702 --- [http-nio-8080-exec-1] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:00:05.611+08:00  INFO 14702 --- [http-nio-8080-exec-2] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:00:22.091+08:00  INFO 14702 --- [http-nio-8080-exec-3] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:00:29.521+08:00  INFO 14702 --- [http-nio-8080-exec-4] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:01:16.565+08:00  INFO 14702 --- [http-nio-8080-exec-5] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:02:43.077+08:00  INFO 14702 --- [http-nio-8080-exec-7] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:02:57.958+08:00  INFO 14702 --- [http-nio-8080-exec-8] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:03:05.004+08:00  INFO 14702 --- [http-nio-8080-exec-9] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:05:02.277+08:00  INFO 14702 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-17T14:05:02.281+08:00  INFO 14702 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-04-17T14:05:02.308+08:00  INFO 14702 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T14:05:02.312+08:00  INFO 14702 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-04-17T14:05:02.322+08:00  INFO 14702 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-04-17T14:05:04.604+08:00  INFO 19151 --- [main] c.o.e.ECommercePlatformApplication       : Starting ECommercePlatformApplication using Java 17.0.14 with PID 19151 (/home/lvcan/e-CommercePlatform-backend/E-CommercePlatform/target/classes started by lvcan in /home/lvcan/e-CommercePlatform-backend/E-CommercePlatform)
+2025-04-17T14:05:04.606+08:00 DEBUG 19151 --- [main] c.o.e.ECommercePlatformApplication       : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-17T14:05:04.608+08:00  INFO 19151 --- [main] c.o.e.ECommercePlatformApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-04-17T14:05:05.559+08:00  INFO 19151 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T14:05:05.561+08:00  INFO 19151 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-17T14:05:05.580+08:00  INFO 19151 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 0 JPA repository interfaces.
+2025-04-17T14:05:05.599+08:00  INFO 19151 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T14:05:05.600+08:00  INFO 19151 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-04-17T14:05:05.614+08:00  INFO 19151 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 6 ms. Found 0 Redis repository interfaces.
+2025-04-17T14:05:06.277+08:00  INFO 19151 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-04-17T14:05:06.288+08:00  INFO 19151 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-17T14:05:06.289+08:00  INFO 19151 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-17T14:05:06.342+08:00  INFO 19151 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-04-17T14:05:06.343+08:00  INFO 19151 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1635 ms
+2025-04-17T14:05:06.404+08:00 DEBUG 19151 --- [main] c.o.e.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2025-04-17T14:05:06.488+08:00  INFO 19151 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-17T14:05:06.628+08:00  INFO 19151 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@edb83f8
+2025-04-17T14:05:06.631+08:00  INFO 19151 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-04-17T14:05:06.665+08:00  INFO 19151 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-17T14:05:06.705+08:00  INFO 19151 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-04-17T14:05:06.745+08:00  INFO 19151 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-17T14:05:07.055+08:00  INFO 19151 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-17T14:05:07.149+08:00  INFO 19151 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.4.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-17T14:05:07.391+08:00  INFO 19151 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-17T14:05:07.395+08:00  INFO 19151 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T14:05:08.011+08:00  WARN 19151 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-17T14:05:08.034+08:00  WARN 19151 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: a82f0b9d-4009-4c28-a098-e5c4ac9c813a
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-04-17T14:05:08.041+08:00  INFO 19151 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-04-17T14:05:08.696+08:00  INFO 19151 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/api'
+2025-04-17T14:05:08.707+08:00  INFO 19151 --- [main] c.o.e.ECommercePlatformApplication       : Started ECommercePlatformApplication in 4.631 seconds (process running for 4.923)
+2025-04-17T14:05:27.835+08:00  INFO 19151 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-17T14:05:27.835+08:00  INFO 19151 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-17T14:05:27.837+08:00  INFO 19151 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-04-17T14:05:27.888+08:00  INFO 19151 --- [http-nio-8080-exec-1] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:05:33.206+08:00  INFO 19151 --- [http-nio-8080-exec-2] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:05:37.686+08:00  INFO 19151 --- [http-nio-8080-exec-3] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:05:47.354+08:00  INFO 19151 --- [http-nio-8080-exec-4] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:05:49.725+08:00  INFO 19151 --- [http-nio-8080-exec-5] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:08:15.491+08:00  INFO 19151 --- [http-nio-8080-exec-7] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:08:19.862+08:00  INFO 19151 --- [http-nio-8080-exec-8] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:08:28.239+08:00  INFO 19151 --- [http-nio-8080-exec-9] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:09:46.896+08:00  INFO 19151 --- [http-nio-8080-exec-1] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T14:09:59.572+08:00  INFO 19151 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-17T14:09:59.576+08:00  INFO 19151 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-04-17T14:09:59.595+08:00  INFO 19151 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T14:09:59.598+08:00  INFO 19151 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-04-17T14:09:59.605+08:00  INFO 19151 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-04-17T16:21:44.486+08:00  INFO 7839 --- [main] c.o.e.ECommercePlatformApplication       : Starting ECommercePlatformApplication using Java 17.0.14 with PID 7839 (/home/lvcan/e-CommercePlatform-backend/E-CommercePlatform/target/classes started by lvcan in /home/lvcan/e-CommercePlatform-backend/E-CommercePlatform)
+2025-04-17T16:21:44.490+08:00 DEBUG 7839 --- [main] c.o.e.ECommercePlatformApplication       : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-17T16:21:44.492+08:00  INFO 7839 --- [main] c.o.e.ECommercePlatformApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-04-17T16:21:45.449+08:00  INFO 7839 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T16:21:45.451+08:00  INFO 7839 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-17T16:21:45.475+08:00  INFO 7839 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 12 ms. Found 0 JPA repository interfaces.
+2025-04-17T16:21:45.494+08:00  INFO 7839 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-17T16:21:45.496+08:00  INFO 7839 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-04-17T16:21:45.517+08:00  INFO 7839 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 6 ms. Found 0 Redis repository interfaces.
+2025-04-17T16:21:46.177+08:00  INFO 7839 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-04-17T16:21:46.202+08:00  INFO 7839 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-17T16:21:46.203+08:00  INFO 7839 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-17T16:21:46.296+08:00  INFO 7839 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-04-17T16:21:46.297+08:00  INFO 7839 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1735 ms
+2025-04-17T16:21:46.381+08:00 DEBUG 7839 --- [main] c.o.e.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2025-04-17T16:21:46.478+08:00  INFO 7839 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-17T16:21:46.670+08:00  INFO 7839 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7de35070
+2025-04-17T16:21:46.672+08:00  INFO 7839 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-04-17T16:21:46.712+08:00  INFO 7839 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-17T16:21:46.763+08:00  INFO 7839 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-04-17T16:21:46.799+08:00  INFO 7839 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-17T16:21:47.090+08:00  INFO 7839 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-17T16:21:47.212+08:00  INFO 7839 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.4.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-17T16:21:47.491+08:00  INFO 7839 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-17T16:21:47.495+08:00  INFO 7839 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T16:21:48.191+08:00  WARN 7839 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-17T16:21:48.218+08:00  WARN 7839 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: b3db5f63-42ef-482b-8cd5-ed6ce616bd7a
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-04-17T16:21:48.226+08:00  INFO 7839 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-04-17T16:21:48.904+08:00  INFO 7839 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/api'
+2025-04-17T16:21:48.915+08:00  INFO 7839 --- [main] c.o.e.ECommercePlatformApplication       : Started ECommercePlatformApplication in 5.062 seconds (process running for 5.58)
+2025-04-17T16:21:57.031+08:00  INFO 7839 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-17T16:21:57.032+08:00  INFO 7839 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-17T16:21:57.033+08:00  INFO 7839 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-04-17T16:21:57.084+08:00  INFO 7839 --- [http-nio-8080-exec-1] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:23:56.577+08:00  INFO 7839 --- [http-nio-8080-exec-3] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:26:23.773+08:00  INFO 7839 --- [http-nio-8080-exec-5] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:26:38.244+08:00  INFO 7839 --- [http-nio-8080-exec-6] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:26:46.714+08:00  INFO 7839 --- [http-nio-8080-exec-7] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:26:55.999+08:00  INFO 7839 --- [http-nio-8080-exec-8] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:29:09.003+08:00  INFO 7839 --- [http-nio-8080-exec-10] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:29:11.316+08:00  INFO 7839 --- [http-nio-8080-exec-1] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:29:47.623+08:00  INFO 7839 --- [http-nio-8080-exec-2] c.o.e.config.JwtAuthenticationFilter     : 认证用户: zhangsan1
+2025-04-17T16:31:04.227+08:00  INFO 7839 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-17T16:31:04.230+08:00  INFO 7839 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-04-17T16:31:04.255+08:00  INFO 7839 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-17T16:31:04.258+08:00  INFO 7839 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-04-17T16:31:04.267+08:00  INFO 7839 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

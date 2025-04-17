@@ -80,26 +80,19 @@ public class UserController {
                 return Result.error(Result.TOKEN_EXPIRED, "登录已过期，请重新登录");
             }
             
-            // 获取用户名并验证权限
-            String tokenUsername = jwt.getClaim("username").asString();
-            if (!StringUtils.hasText(tokenUsername)) {
-                return Result.error(Result.BAD_REQUEST, "Token中缺少用户信息");
-            }
-            
-            String updateUsername = updateDTO.getUsername();
-            
-            // 验证操作权限（只能更新自己的信息，管理员除外）
-            if (!tokenUsername.equals(updateUsername)) {
-                // 这里可以加入管理员权限判断逻辑
-                return Result.error(Result.UNAUTHORIZED, "无权更新他人信息");
-            }
-            
             // 从token中获取userId并设置到DTO中
             String userIdStr = jwt.getClaim("userId").asString();
-            if (StringUtils.hasText(userIdStr)) {
-                updateDTO.setUserId(Long.valueOf(userIdStr));
-            } else {
+            if (!StringUtils.hasText(userIdStr)) {
                 return Result.error(Result.BAD_REQUEST, "Token中缺少用户ID信息");
+            }
+            
+            Long tokenUserId = Long.valueOf(userIdStr);
+            Long updateUserId = updateDTO.getUserId();
+            
+            // 验证操作权限（只能更新自己的信息，管理员除外）
+            if (!tokenUserId.equals(updateUserId)) {
+                // 这里可以加入管理员权限判断逻辑
+                return Result.error(Result.UNAUTHORIZED, "无权更新他人信息");
             }
             
             // 执行更新操作
