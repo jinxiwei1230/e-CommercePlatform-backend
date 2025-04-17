@@ -1,11 +1,14 @@
 package com.online.ecommercePlatform.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.UserLoginDTO;
 import com.online.ecommercePlatform.dto.UserLoginResponseDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
 import com.online.ecommercePlatform.dto.UserUpdateDTO;
 import com.online.ecommercePlatform.mapper.UserMapper;
+import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.User;
 import com.online.ecommercePlatform.service.UserService;
 import com.online.ecommercePlatform.utils.JwtUtil;
@@ -13,12 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
 
 /**
  * 用户服务实现类
@@ -101,7 +106,7 @@ public class UserServiceImpl implements UserService {
         
         return Result.success(userMap);
     }
-    
+
     /**
      * 用户登录
      */

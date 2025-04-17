@@ -15,7 +15,7 @@ import java.util.Map;
  * 产品控制器，处理产品相关的 HTTP 请求
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class ProductController {
      * @param limit 查询数量(可选，默认5)
      * @return Result包装的热门商品列表
      */
-    @GetMapping("/products/hot")
+    @GetMapping("/hot")
     public Result<List<ProductBasicInfoDTO>> getHotProducts(
                     @RequestParam(required = false,
                     defaultValue = "5") int limit) {
@@ -37,7 +37,7 @@ public class ProductController {
      * 获取热门类别及其热门商品API
      * @return 统一响应结果，包含4个热门类别及其各自5个热门商品
      */
-    @GetMapping("/categories/products/hot")
+    @GetMapping("/categories/hot")
     public Result<List<CategoryHotProductsDTO>> getHotCategoriesAndProducts() {
         return productService.getHotCategoriesAndProducts();
     }

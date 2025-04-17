@@ -1,10 +1,12 @@
 package com.online.ecommercePlatform.controller;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.online.ecommercePlatform.dto.PasswordUpdateDTO;
 import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.UserLoginDTO;
 import com.online.ecommercePlatform.dto.UserLoginResponseDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
+import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.dto.UserUpdateDTO;
 import com.online.ecommercePlatform.pojo.User;
 import com.online.ecommercePlatform.service.UserService;
@@ -14,6 +16,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 用户控制器
@@ -48,7 +52,7 @@ public class UserController {
     public Result<UserLoginResponseDTO> login(@Valid @RequestBody UserLoginDTO loginDTO) {
         return userService.login(loginDTO);
     }
-    
+
     /**
      * 更新用户信息接口
      * @param updateDTO 用户更新信息DTO
@@ -61,20 +65,20 @@ public class UserController {
         if (!StringUtils.hasText(token)) {
             return Result.error(Result.UNAUTHORIZED);
         }
-        
+
         // 解析token获取用户名
         try {
             // 如果token以Bearer 开头，需要去掉前缀
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
-            
+
             // 验证Token
             DecodedJWT jwt = jwtUtil.verifyToken(token);
             if (jwt == null) {
                 return Result.error(Result.TOKEN_EXPIRED);
             }
-            
+
             // 检查令牌是否过期
             if (jwtUtil.isTokenExpired(token)) {
                 return Result.error(Result.TOKEN_EXPIRED);
@@ -148,4 +152,7 @@ public class UserController {
             return Result.error(Result.TOKEN_EXPIRED);
         }
     }
+
+
+
 }
