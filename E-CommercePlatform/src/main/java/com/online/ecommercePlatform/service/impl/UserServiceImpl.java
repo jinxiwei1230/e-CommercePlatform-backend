@@ -7,6 +7,7 @@ import com.online.ecommercePlatform.dto.UserLoginDTO;
 import com.online.ecommercePlatform.dto.UserLoginResponseDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
 import com.online.ecommercePlatform.dto.UserUpdateDTO;
+import com.online.ecommercePlatform.dto.PasswordUpdateDTO;
 import com.online.ecommercePlatform.mapper.UserMapper;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.User;
@@ -241,4 +242,57 @@ public class UserServiceImpl implements UserService {
         // 9. 返回更新后的用户信息
         return Result.success(user);
     }
+    
+    /**
+     * 更新用户密码
+     */
+    @Override
+    public Result<User> updatePassword(Long userId, PasswordUpdateDTO passwordUpdateDTO) {
+        // 1. 参数校验
+        String oldPassword = passwordUpdateDTO.getOldPassword();
+        String newPassword = passwordUpdateDTO.getNewPassword();
+        
+        if (!StringUtils.hasText(oldPassword) || !StringUtils.hasText(newPassword)) {
+            return Result.error(Result.BAD_REQUEST, "旧密码和新密码不能为空");
+        }
+        
+        // 2. 新密码长度校验
+        if (newPassword.length() < 6) {
+            return Result.error(422, "新密码长度至少6位");
+        }
+        
+        // 3. 查询用户信息
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            return Result.error(Result.NOT_FOUND, "用户不存在");
+        }
+        
+        // 4. 验证旧密码
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            return Result.error(Result.UNAUTHORIZED, "原密码错误");
+        }
+        
+        // 5. 检查新旧密码是否相同
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            return Result.error(422, "新密码与旧密码不能相同");
+        }
+        
+        // 6. 加密新密码
+        String encryptedPassword = passwordEncoder.encode(newPassword);
+        
+        // 7. 更新用户密码
+        user.setPassword(encryptedPassword);
+        user.setUpdateTime(LocalDateTime.now());
+        userMapper.update(user);
+        
+        // 返回成功响应，并包含用户信息
+        Result<User> result = Result.success(user);
+        result.setMessage("密码更新成功");
+        return result;
+    }
+    
+    /**
+     * 验证码校验
+     */
+    // ... existing code ...
 }

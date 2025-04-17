@@ -56,6 +56,7 @@ public class UserController {
     /**
      * 更新用户信息接口
      * @param updateDTO 用户更新信息DTO
+     * @param request 用于获取用户认证信息的请求对象
      * @return 更新结果，包含更新后的用户信息
      */
     @PutMapping("/update")
@@ -152,7 +153,52 @@ public class UserController {
             return Result.error(Result.TOKEN_EXPIRED);
         }
     }
+    
+    /**
+     * 更新用户密码
+     * @param passwordUpdateDTO 密码更新DTO
+     * @param request HTTP请求
+     * @return 更新结果
+     */
+    @PutMapping("/updatePassword")
+    public Result<User> updatePassword(@Valid @RequestBody PasswordUpdateDTO passwordUpdateDTO, HttpServletRequest request) {
+        // 从请求头中获取token
+        String token = request.getHeader("Authorization");
+        if (!StringUtils.hasText(token)) {
+            return Result.error(Result.UNAUTHORIZED, "未提供认证令牌");
+        }
 
+        // 解析token获取用户信息
+        try {
+            // 如果token以Bearer 开头，需要去掉前缀
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
 
+            // 验证Token
+            DecodedJWT jwt = jwtUtil.verifyToken(token);
+            if (jwt == null) {
+                return Result.error(Result.UNAUTHORIZED, "认证令牌无效");
+            }
 
+            // 检查令牌是否过期
+            if (jwtUtil.isTokenExpired(token)) {
+                return Result.error(Result.UNAUTHORIZED, "认证令牌已过期");
+            }
+            
+            // 从token中获取userId
+            String userIdStr = jwt.getClaim("userId").asString();
+            if (!StringUtils.hasText(userIdStr)) {
+                return Result.error(Result.BAD_REQUEST, "无法获取用户ID");
+            }
+            
+            Long userId = Long.valueOf(userIdStr);
+            
+            // 执行密码更新操作
+            return userService.updatePassword(userId, passwordUpdateDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(Result.UNAUTHORIZED, "认证失败");
+        }
+    }
 }

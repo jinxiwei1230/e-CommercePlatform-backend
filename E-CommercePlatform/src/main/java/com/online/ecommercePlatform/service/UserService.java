@@ -1,5 +1,6 @@
 package com.online.ecommercePlatform.service;
 
+import com.online.ecommercePlatform.dto.PasswordUpdateDTO;
 import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.UserLoginDTO;
 import com.online.ecommercePlatform.dto.UserLoginResponseDTO;
@@ -44,6 +45,14 @@ public interface UserService {
      * @return 更新结果，包含更新后的用户信息
      */
     Result<User> updateUserInfo(UserUpdateDTO updateDTO);
+    
+    /**
+     * 更新用户密码
+     * @param userId 用户ID
+     * @param passwordUpdateDTO 密码更新DTO，包含旧密码和新密码
+     * @return 更新结果
+     */
+    Result<User> updatePassword(Long userId, PasswordUpdateDTO passwordUpdateDTO);
     
     /**
      * 验证码校验
