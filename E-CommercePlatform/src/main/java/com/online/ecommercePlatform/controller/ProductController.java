@@ -60,12 +60,15 @@ public class ProductController {
 
         try {
             List<Product> products = productService.searchProducts(keyword, categoryId, minPrice, maxPrice);
+            
             if (products.isEmpty()) {
-                return Result.error("未找到符合条件的产品");
+                return Result.error(Result.NOT_FOUND, "未找到符合条件的产品");
             }
+            
             return Result.success(products);
         } catch (Exception e) {
-            return Result.error("搜索产品时发生错误: " + e.getMessage());
+            e.printStackTrace();
+            return Result.error(Result.BAD_REQUEST, "搜索产品时发生错误: " + e.getMessage());
         }
     }
 

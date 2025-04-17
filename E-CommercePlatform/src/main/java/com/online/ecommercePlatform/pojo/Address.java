@@ -17,4 +17,5 @@ public class Address {
     private String postalCode; // 邮政编码
     private Boolean isDefault; // 是否为默认地址
     private LocalDateTime createTime; // 创建时间
+    private LocalDateTime updateTime; // 更新时间 - 从操作日志中获取
 }

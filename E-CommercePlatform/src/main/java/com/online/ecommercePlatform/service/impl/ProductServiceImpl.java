@@ -101,8 +101,8 @@ public class ProductServiceImpl implements ProductService {
         // 获取所有顶级类别及其子类别销量总和，并取前4
         List<CategoryHotProductsDTO> hotCategories = productMapper.selectTopLevelCategoriesWithSubSales(TOP_CATEGORIES_LIMIT);
 
-        if (hotCategories.isEmpty()) {
-            return Result.error("暂无顶级热门类别数据");
+        if (hotCategories == null || hotCategories.isEmpty()) {
+            return Result.error(Result.BAD_REQUEST, "暂无顶级热门类别数据");
         }
 
         // 为每个顶级类别获取前5个热门商品（包含子类别中的商品）

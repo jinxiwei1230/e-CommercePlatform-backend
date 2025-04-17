@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.online.ecommercePlatform.mapper.AddressMapper">
+    <!-- 定义基础的列映射 -->
+    <resultMap id="BaseAddressMap" type="com.online.ecommercePlatform.pojo.Address">
+        <id column="address_id" property="addressId"/>
+        <result column="user_id" property="userId"/>
+        <result column="recipient_name" property="recipientName"/>
+        <result column="phone" property="phone"/>
+        <result column="address_detail" property="addressDetail"/>
+        <result column="city" property="city"/>
+        <result column="state" property="state"/>
+        <result column="postal_code" property="postalCode"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <!-- 根据用户ID查询地址列表 -->
+    <select id="findByUserId" resultMap="BaseAddressMap">
+        SELECT a.*, 
+               COALESCE(MAX(ol.create_time), a.create_time) AS update_time
+        FROM Address a
+        LEFT JOIN OperationLog ol ON ol.target_table = 'Address' 
+                                AND ol.target_id = a.address_id 
+                                AND ol.action IN ('更新地址', '编辑地址', '修改地址')
+        WHERE a.user_id = #{userId}
+        GROUP BY a.address_id
+    </select>
+    
+    <!-- 根据地址ID查询地址 -->
+    <select id="findById" resultMap="BaseAddressMap">
+        SELECT a.*, 
+               COALESCE(MAX(ol.create_time), a.create_time) AS update_time
+        FROM Address a
+        LEFT JOIN OperationLog ol ON ol.target_table = 'Address' 
+                                AND ol.target_id = a.address_id 
+                                AND ol.action IN ('更新地址', '编辑地址', '修改地址')
+        WHERE a.address_id = #{addressId}
+        GROUP BY a.address_id
+    </select>
+    
+    <!-- 查询用户地址总数 -->
+    <select id="countByUserId" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM Address WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 分页查询用户地址 -->
+    <select id="findByUserIdWithPage" resultMap="BaseAddressMap">
+        SELECT a.*, 
+               COALESCE(MAX(ol.create_time), a.create_time) AS update_time
+        FROM Address a
+        LEFT JOIN OperationLog ol ON ol.target_table = 'Address' 
+                                AND ol.target_id = a.address_id 
+                                AND ol.action IN ('更新地址', '编辑地址', '修改地址')
+        WHERE a.user_id = #{userId}
+        GROUP BY a.address_id
+        ORDER BY a.is_default DESC, a.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <!-- 插入新地址 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="addressId">
+        INSERT INTO Address(
+            user_id, 
+            recipient_name, 
+            phone, 
+            address_detail, 
+            city, 
+            state, 
+            postal_code,
+            is_default, 
+            create_time
+        ) VALUES (
+            #{userId}, 
+            #{recipientName}, 
+            #{phone}, 
+            #{addressDetail}, 
+            #{city}, 
+            #{state}, 
+            #{postalCode}, 
+            #{isDefault},
+            NOW()
+        )
+    </insert>
+    
+    <!-- 更新地址 -->
+    <update id="update">
+        UPDATE Address
+        SET 
+            recipient_name = #{recipientName},
+            phone = #{phone},
+            address_detail = #{addressDetail},
+            city = #{city},
+            state = #{state},
+            postal_code = #{postalCode},
+            is_default = #{isDefault}
+        WHERE address_id = #{addressId}
+    </update>
+    
+    <!-- 将用户的所有地址设置为非默认 -->
+    <update id="clearDefaultAddress">
+        UPDATE Address
+        SET is_default = false
+        WHERE user_id = #{userId}
+    </update>
+    
+    <!-- 删除地址 -->
+    <delete id="deleteById">
+        DELETE FROM Address
+        WHERE address_id = #{addressId}
+    </delete>
+</mapper> 

@@ -24,7 +24,7 @@ import java.util.List;
  * 处理用户注册、登录等请求
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -63,7 +63,7 @@ public class UserController {
         // 从请求头中获取token
         String token = request.getHeader("Authorization");
         if (!StringUtils.hasText(token)) {
-            return Result.error(Result.UNAUTHORIZED, "未登录");
+            return Result.error(Result.UNAUTHORIZED);
         }
 
         // 解析token获取用户名
@@ -76,34 +76,34 @@ public class UserController {
             // 验证Token
             DecodedJWT jwt = jwtUtil.verifyToken(token);
             if (jwt == null) {
-                return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
+                return Result.error(Result.TOKEN_EXPIRED);
             }
 
             // 检查令牌是否过期
             if (jwtUtil.isTokenExpired(token)) {
-                return Result.error(Result.TOKEN_EXPIRED, "登录已过期，请重新登录");
+                return Result.error(Result.TOKEN_EXPIRED);
             }
-
+            
             // 从token中获取userId并设置到DTO中
             String userIdStr = jwt.getClaim("userId").asString();
             if (!StringUtils.hasText(userIdStr)) {
-                return Result.error(Result.BAD_REQUEST, "Token中缺少用户ID信息");
+                return Result.error(Result.BAD_REQUEST);
             }
-
+            
             Long tokenUserId = Long.valueOf(userIdStr);
             Long updateUserId = updateDTO.getUserId();
-
+            
             // 验证操作权限（只能更新自己的信息，管理员除外）
             if (!tokenUserId.equals(updateUserId)) {
                 // 这里可以加入管理员权限判断逻辑
-                return Result.error(Result.UNAUTHORIZED, "无权更新他人信息");
+                return Result.error(Result.UNAUTHORIZED);
             }
-
+            
             // 执行更新操作
             return userService.updateUserInfo(updateDTO);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
+            return Result.error(Result.TOKEN_EXPIRED);
         }
     }
     
@@ -117,7 +117,7 @@ public class UserController {
         // 从请求头中获取token
         String token = request.getHeader("Authorization");
         if (!StringUtils.hasText(token)) {
-            return Result.error(Result.UNAUTHORIZED, "未登录");
+            return Result.error(Result.UNAUTHORIZED);
         }
         
         // 解析token获取用户ID
@@ -130,18 +130,18 @@ public class UserController {
             // 验证Token
             DecodedJWT jwt = jwtUtil.verifyToken(token);
             if (jwt == null) {
-                return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
+                return Result.error(Result.TOKEN_EXPIRED);
             }
             
             // 检查令牌是否过期
             if (jwtUtil.isTokenExpired(token)) {
-                return Result.error(Result.TOKEN_EXPIRED, "登录已过期，请重新登录");
+                return Result.error(Result.TOKEN_EXPIRED);
             }
             
             // 获取用户ID
             String userIdStr = jwt.getClaim("userId").asString();
             if (!StringUtils.hasText(userIdStr)) {
-                return Result.error(Result.BAD_REQUEST, "Token中缺少用户信息");
+                return Result.error(Result.BAD_REQUEST);
             }
             
             // 获取用户信息
@@ -149,102 +149,10 @@ public class UserController {
             return userService.getUserInfo(userId);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
+            return Result.error(Result.TOKEN_EXPIRED);
         }
     }
 
-//    /**
-//     * 更新用户信息
-//     * @param user 更新后的用户对象
-//     * @return 更新结果
-//     */
-//    @PutMapping("/update")
-//    public Result<User> updateUser(@RequestBody User user) {
-//        // 确保密码字段不被更新
-//        user.setPassword(null);
-//        User updatedUser = userService.updateUser(user);
-//        return Result.success("用户信息更新成功", updatedUser);
-//        // 错误或者异常被全局异常类GlobalExceptionHandler捕获
-//    }
-
-    /**
-     * 更新用户密码
-     */
-    @PutMapping("/updatePassword")
-    public Result<User> updatePassword(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody PasswordUpdateDTO passwordUpdateRequest) {
-
-        // 1. 从请求头中获取 Token
-        String token = authHeader;
-        if (!StringUtils.hasText(token)) {
-            return Result.error(401,"未登录");
-        }
-
-        // 2. 去掉 "Bearer " 前缀（如果存在）
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
-        // 3. 验证 Token 并获取用户ID
-        try {
-            DecodedJWT jwt = jwtUtil.verifyToken(token);
-            if (jwt == null || jwtUtil.isTokenExpired(token)) {
-                return Result.error(403,"登录已过期或Token无效");
-            }
-
-            String userIdStr = jwt.getClaim("userId").asString();
-            if (!StringUtils.hasText(userIdStr)) {
-                return Result.error(422,"Token中缺少用户信息");
-            }
-
-            Long userId = Long.valueOf(userIdStr);
-
-            // 4. 调用 Service 更新密码
-            User updatedUser = userService.updatePassword(
-                    userId,
-                    passwordUpdateRequest.getOldPassword(),
-                    passwordUpdateRequest.getNewPassword()
-            );
-            return Result.success("密码更新成功", updatedUser);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.error(403,"旧密码错误！");
-        }
-    }
-
-
-    /**
-     * 删除用户
-     * @param id 用户ID
-     * @return 删除结果
-     */
-    @DeleteMapping("/delete/{id}")
-    public Result<Boolean> delete(@PathVariable Long id) {
-        boolean result = userService.deleteUser(id);
-        return Result.success("用户删除成功", result);
-    }
-
-    /**
-     * 批量删除用户
-     * @param ids 用户ID列表
-     * @return 删除结果
-     */
-    @DeleteMapping("/delete/batch")
-    public Result<Integer> deleteBatch(@RequestBody List<Long> ids) {
-        int count = userService.deleteUserBatch(ids);
-        return Result.success("批量删除成功，删除了 " + count + " 个用户", count);
-    }
-
-    /**
-     * 查询所有用户
-     * @return 用户列表
-     */
-    @GetMapping("/selectAll")
-    public Result<List<User>> selectAll(User user) {
-        List<User> users = userService.getAllUsers();
-        return Result.success("查询所有用户成功", users);
-    }
 
 
 }
