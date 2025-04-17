@@ -4,6 +4,7 @@ import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 /**
  * 更新地址数据传输对象
@@ -15,6 +16,7 @@ public class AddressUpdateDTO {
     private Long address_id;
     
     @NotBlank(message = "收件人姓名不能为空")
+    @Size(min = 2, max = 20, message = "收件人姓名长度应为2-20个字符")
     private String recipient_name;
     
     @NotBlank(message = "联系电话不能为空")
@@ -22,12 +24,15 @@ public class AddressUpdateDTO {
     private String phone;
     
     @NotBlank(message = "详细地址不能为空")
+    @Size(min = 5, max = 100, message = "详细地址长度应为5-100个字符")
     private String address_line1;
     
     @NotBlank(message = "城市不能为空")
+    @Size(min = 2, max = 20, message = "城市名称长度应为2-20个字符")
     private String city;
     
     @NotBlank(message = "省份不能为空")
+    @Size(min = 2, max = 20, message = "省份名称长度应为2-20个字符")
     private String state;
     
     @NotBlank(message = "邮政编码不能为空")

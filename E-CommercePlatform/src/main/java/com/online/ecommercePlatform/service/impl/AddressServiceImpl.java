@@ -166,10 +166,35 @@ public class AddressServiceImpl implements AddressService {
                 return Result.error(Result.UNAUTHORIZED, "无权删除此地址");
             }
             
+            // 判断是否为默认地址
+            boolean isDefault = Boolean.TRUE.equals(existingAddress.getIsDefault());
+            
             // 执行删除操作
             addressMapper.deleteById(addressId);
             
-            // 记录操作日志
+            // 如果删除的是默认地址，则自动设置一个新的默认地址
+            if (isDefault) {
+                // 查询用户的所有地址
+                List<Address> remainingAddresses = addressMapper.findByUserId(userId);
+                if (!remainingAddresses.isEmpty()) {
+                    // 选择第一个地址设为默认地址
+                    Address newDefaultAddress = remainingAddresses.get(0);
+                    newDefaultAddress.setIsDefault(true);
+                    addressMapper.update(newDefaultAddress);
+                    
+                    // 记录设置新默认地址的操作日志
+                    OperationLog defaultLog = new OperationLog();
+                    defaultLog.setUserId(userId);
+                    defaultLog.setAction("设置默认地址");
+                    defaultLog.setTargetTable("Address");
+                    defaultLog.setTargetId(newDefaultAddress.getAddressId());
+                    defaultLog.setDescription("系统自动设置新默认地址: " + newDefaultAddress.getRecipientName() + ", " + newDefaultAddress.getAddressDetail());
+                    defaultLog.setResult("成功");
+                    operationLogMapper.insert(defaultLog);
+                }
+            }
+            
+            // 记录删除地址的操作日志
             OperationLog log = new OperationLog();
             log.setUserId(userId);
             log.setAction("删除地址");
