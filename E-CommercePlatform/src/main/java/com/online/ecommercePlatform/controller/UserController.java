@@ -52,7 +52,7 @@ public class UserController {
     public Result<UserLoginResponseDTO> login(@Valid @RequestBody UserLoginDTO loginDTO) {
         return userService.login(loginDTO);
     }
-    
+
     /**
      * 更新用户信息接口
      * @param updateDTO 用户更新信息DTO
@@ -65,47 +65,40 @@ public class UserController {
         if (!StringUtils.hasText(token)) {
             return Result.error(Result.UNAUTHORIZED, "未登录");
         }
-        
+
         // 解析token获取用户名
         try {
             // 如果token以Bearer 开头，需要去掉前缀
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
-            
+
             // 验证Token
             DecodedJWT jwt = jwtUtil.verifyToken(token);
             if (jwt == null) {
                 return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
             }
-            
+
             // 检查令牌是否过期
             if (jwtUtil.isTokenExpired(token)) {
                 return Result.error(Result.TOKEN_EXPIRED, "登录已过期，请重新登录");
             }
-            
-            // 获取用户名并验证权限
-            String tokenUsername = jwt.getClaim("username").asString();
-            if (!StringUtils.hasText(tokenUsername)) {
-                return Result.error(Result.BAD_REQUEST, "Token中缺少用户信息");
+
+            // 从token中获取userId并设置到DTO中
+            String userIdStr = jwt.getClaim("userId").asString();
+            if (!StringUtils.hasText(userIdStr)) {
+                return Result.error(Result.BAD_REQUEST, "Token中缺少用户ID信息");
             }
-            
-            String updateUsername = updateDTO.getUsername();
-            
+
+            Long tokenUserId = Long.valueOf(userIdStr);
+            Long updateUserId = updateDTO.getUserId();
+
             // 验证操作权限（只能更新自己的信息，管理员除外）
-            if (!tokenUsername.equals(updateUsername)) {
+            if (!tokenUserId.equals(updateUserId)) {
                 // 这里可以加入管理员权限判断逻辑
                 return Result.error(Result.UNAUTHORIZED, "无权更新他人信息");
             }
-            
-            // 从token中获取userId并设置到DTO中
-            String userIdStr = jwt.getClaim("userId").asString();
-            if (StringUtils.hasText(userIdStr)) {
-                updateDTO.setUserId(Long.valueOf(userIdStr));
-            } else {
-                return Result.error(Result.BAD_REQUEST, "Token中缺少用户ID信息");
-            }
-            
+
             // 执行更新操作
             return userService.updateUserInfo(updateDTO);
         } catch (Exception e) {
@@ -160,19 +153,19 @@ public class UserController {
         }
     }
 
-    /**
-     * 更新用户信息
-     * @param user 更新后的用户对象
-     * @return 更新结果
-     */
-    @PutMapping("/update")
-    public Result<User> updateUser(@RequestBody User user) {
-        // 确保密码字段不被更新
-        user.setPassword(null);
-        User updatedUser = userService.updateUser(user);
-        return Result.success("用户信息更新成功", updatedUser);
-        // 错误或者异常被全局异常类GlobalExceptionHandler捕获
-    }
+//    /**
+//     * 更新用户信息
+//     * @param user 更新后的用户对象
+//     * @return 更新结果
+//     */
+//    @PutMapping("/update")
+//    public Result<User> updateUser(@RequestBody User user) {
+//        // 确保密码字段不被更新
+//        user.setPassword(null);
+//        User updatedUser = userService.updateUser(user);
+//        return Result.success("用户信息更新成功", updatedUser);
+//        // 错误或者异常被全局异常类GlobalExceptionHandler捕获
+//    }
 
     /**
      * 更新用户密码
@@ -216,7 +209,7 @@ public class UserController {
             return Result.success("密码更新成功", updatedUser);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(403,"登录已过期或Token无效");
+            return Result.error(403,"旧密码错误！");
         }
     }
 

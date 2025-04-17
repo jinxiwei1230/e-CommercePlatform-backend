@@ -109,30 +109,49 @@ public class UserServiceImpl implements UserService {
         // 10. 返回用户信息
         return Result.success(createdUser);
     }
-    
+
     /**
      * 用户登录
      */
     @Override
     public Result<UserLoginResponseDTO> login(UserLoginDTO loginDTO) {
-        // 1. 根据用户名查询用户
-        User user = userMapper.findByUsername(loginDTO.getUsername());
+        // 获取登录信息
+        String username = loginDTO.getUsername();
+        String phone = loginDTO.getPhone();
+        String password = loginDTO.getPassword();
+
+        // 验证至少提供了用户名或手机号
+        if (!StringUtils.hasText(username) && !StringUtils.hasText(phone)) {
+            return Result.error(Result.BAD_REQUEST, "请提供用户名或手机号");
+        }
+
+        // 根据提供的登录方式查询用户
+        User user = null;
+        if (StringUtils.hasText(username)) {
+            // 使用用户名登录
+            user = userMapper.findByUsername(username);
+        } else if (StringUtils.hasText(phone)) {
+            // 使用手机号登录
+            user = userMapper.findByPhone(phone);
+        }
+
+        // 用户不存在
         if (user == null) {
-            return Result.error(Result.UNAUTHORIZED, "用户名或密码错误");
+            return Result.error(Result.UNAUTHORIZED, "账号或密码错误");
         }
-        
-        // 2. 密码校验 - 修改为使用BCrypt
-        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            return Result.error(Result.UNAUTHORIZED, "用户名或密码错误");
+
+        // 密码校验 - 使用BCrypt
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return Result.error(Result.UNAUTHORIZED, "账号或密码错误");
         }
-        
-        // 3. 生成JWT令牌
+
+        // 生成JWT令牌
         Map<String, String> claims = new HashMap<>();
         claims.put("username", user.getUsername());
         claims.put("userId", user.getUserId().toString());
         String token = jwtUtil.generateToken(claims);
-        
-        // 4. 创建用户返回信息（移除敏感数据）
+
+        // 创建用户返回信息（移除敏感数据）
         User userInfo = new User();
         userInfo.setUserId(user.getUserId());
         userInfo.setUsername(user.getUsername());
@@ -143,11 +162,11 @@ public class UserServiceImpl implements UserService {
         userInfo.setAge(user.getAge());
         userInfo.setIsVip(user.getIsVip());
         userInfo.setRole(user.getRole());
-        
-        // 5. 创建登录响应DTO
+
+        // 创建登录响应DTO
         UserLoginResponseDTO responseDTO = new UserLoginResponseDTO(token, userInfo);
-        
-        // 6. 返回登录成功结果
+
+        // 返回登录成功结果
         return Result.success("登录成功", responseDTO);
     }
     
