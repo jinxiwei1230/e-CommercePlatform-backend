@@ -32,7 +32,7 @@ public class Result<T> {
      * 成功响应，无数据
      */
     public static <T> Result<T> success() {
-        return success("操作成功", null);
+        return success(null);
     }
     
     /**
@@ -41,17 +41,7 @@ public class Result<T> {
     public static <T> Result<T> success(T data) {
         Result<T> result = new Result<>();
         result.setCode(SUCCESS);
-        result.setData(data);
-        return result;
-    }
-    
-    /**
-     * 成功响应，自定义消息和数据
-     */
-    public static <T> Result<T> success(String message, T data) {
-        Result<T> result = new Result<>();
-        result.setCode(SUCCESS);
-        result.setMessage(message);
+        result.setMessage("success");
         result.setData(data);
         return result;
     }
@@ -59,15 +49,22 @@ public class Result<T> {
     /**
      * 失败响应，使用BAD_REQUEST错误码
      */
-    public static <T> Result<T> error(String message) {
-        return build(BAD_REQUEST, message, null);
+    public static <T> Result<T> error(String errorMessage) {
+        return build(BAD_REQUEST, "fail", null);
     }
     
     /**
      * 带错误码的失败响应
      */
-    public static <T> Result<T> error(int code, String message) {
-        return build(code, message, null);
+    public static <T> Result<T> error(int code) {
+        return build(code, "fail", null);
+    }
+    
+    /**
+     * 带错误码和自定义错误信息的失败响应
+     */
+    public static <T> Result<T> error(int code, String errorMessage) {
+        return build(code, errorMessage, null);
     }
     
     /**

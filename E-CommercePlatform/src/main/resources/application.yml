@@ -41,7 +41,7 @@ jwt:
 server:
   port: 8080
   servlet:
-    context-path: /api
+    context-path: 
 
 # 日志配置
 logging:

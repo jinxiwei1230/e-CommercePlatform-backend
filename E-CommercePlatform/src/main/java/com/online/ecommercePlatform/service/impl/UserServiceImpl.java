@@ -38,41 +38,33 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
-    // 验证码前缀
-    private static final String VERIFY_CODE_PREFIX = "verify:code:";
-    
     /**
      * 用户注册
      */
     @Override
     public Result<?> register(UserRegisterDTO registerDTO) {
-        // 1. 验证码校验
+        // 1. 参数校验
         String email = registerDTO.getEmail();
         String phone = registerDTO.getPhone();
         
         // 验证邮箱或手机号至少有一个
         if (!StringUtils.hasText(email) && !StringUtils.hasText(phone)) {
-            return Result.error(Result.EMAIL_PHONE_REQUIRED, "邮箱和手机号至少提供一个");
-        }
-        
-        // 验证验证码
-        if (!verifyCode(email, registerDTO.getVerifyCode())) {
-            return Result.error(Result.VERIFY_CODE_ERROR, "验证码错误或已过期");
+            return Result.error(Result.EMAIL_PHONE_REQUIRED);
         }
         
         // 2. 检查用户名是否已存在
         if (userMapper.existsByUsername(registerDTO.getUsername())) {
-            return Result.error(Result.USERNAME_EXISTS, "用户名已存在");
+            return Result.error(Result.USERNAME_EXISTS);
         }
         
         // 3. 检查邮箱是否已存在
         if (StringUtils.hasText(email) && userMapper.existsByEmail(email)) {
-            return Result.error(Result.EMAIL_EXISTS, "邮箱已被注册");
+            return Result.error(Result.EMAIL_EXISTS);
         }
         
         // 4. 检查手机号是否已存在
         if (StringUtils.hasText(phone) && userMapper.existsByPhone(phone)) {
-            return Result.error(Result.PHONE_EXISTS, "手机号已被注册");
+            return Result.error(Result.PHONE_EXISTS);
         }
         
         // 5. 密码加密 - 修改为使用BCrypt
@@ -85,7 +77,6 @@ public class UserServiceImpl implements UserService {
         user.setEmail(email);
         user.setPhone(phone);
         user.setGender(registerDTO.getGender());
-        user.setAddress(registerDTO.getAddress());
         user.setIsVip(false);
         user.setRole(registerDTO.getRole());
         LocalDateTime now = LocalDateTime.now();
@@ -101,8 +92,14 @@ public class UserServiceImpl implements UserService {
         // 9. 清除敏感信息
         createdUser.setPassword(null);
         
-        // 10. 返回用户信息
-        return Result.success(createdUser);
+        // 10. 返回简化的用户信息
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("userId", createdUser.getUserId());
+        userMap.put("username", createdUser.getUsername());
+        userMap.put("email", createdUser.getEmail());
+        userMap.put("phone", createdUser.getPhone());
+        
+        return Result.success(userMap);
     }
     
     /**
@@ -117,7 +114,7 @@ public class UserServiceImpl implements UserService {
         
         // 验证至少提供了用户名或手机号
         if (!StringUtils.hasText(username) && !StringUtils.hasText(phone)) {
-            return Result.error(Result.BAD_REQUEST, "请提供用户名或手机号");
+            return Result.error(Result.BAD_REQUEST);
         }
         
         // 根据提供的登录方式查询用户
@@ -132,12 +129,12 @@ public class UserServiceImpl implements UserService {
         
         // 用户不存在
         if (user == null) {
-            return Result.error(Result.UNAUTHORIZED, "账号或密码错误");
+            return Result.error(Result.UNAUTHORIZED);
         }
         
         // 密码校验 - 使用BCrypt
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            return Result.error(Result.UNAUTHORIZED, "账号或密码错误");
+            return Result.error(Result.UNAUTHORIZED);
         }
         
         // 生成JWT令牌
@@ -146,23 +143,18 @@ public class UserServiceImpl implements UserService {
         claims.put("userId", user.getUserId().toString());
         String token = jwtUtil.generateToken(claims);
         
-        // 创建用户返回信息（移除敏感数据）
-        User userInfo = new User();
-        userInfo.setUserId(user.getUserId());
-        userInfo.setUsername(user.getUsername());
-        userInfo.setEmail(user.getEmail());
-        userInfo.setPhone(user.getPhone());
-        userInfo.setGender(user.getGender());
-        userInfo.setAddress(user.getAddress());
-        userInfo.setAge(user.getAge());
-        userInfo.setIsVip(user.getIsVip());
-        userInfo.setRole(user.getRole());
+        // 创建用户返回信息（只保留四个指定字段）
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("userId", user.getUserId());
+        userMap.put("username", user.getUsername());
+        userMap.put("email", user.getEmail());
+        userMap.put("phone", user.getPhone());
         
         // 创建登录响应DTO
-        UserLoginResponseDTO responseDTO = new UserLoginResponseDTO(token, userInfo);
+        UserLoginResponseDTO responseDTO = new UserLoginResponseDTO(token, userMap);
         
         // 返回登录成功结果
-        return Result.success("登录成功", responseDTO);
+        return Result.success(responseDTO);
     }
     
     /**
@@ -174,40 +166,13 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.findById(userId);
         
         if (user == null) {
-            return Result.error(Result.NOT_FOUND, "用户不存在");
+            return Result.error(Result.NOT_FOUND);
         }
         
         // 清除敏感信息
         user.setPassword(null);
         
         return Result.success(user);
-    }
-    
-    /**
-     * 验证码校验
-     */
-    @Override
-    public boolean verifyCode(String email, String code) {
-        // 实际项目中应从Redis中获取验证码进行校验
-        if (!StringUtils.hasText(email) || !StringUtils.hasText(code)) {
-            return false;
-        }
-        
-        String key = VERIFY_CODE_PREFIX + email;
-        String savedCode = redisTemplate.opsForValue().get(key);
-        
-        // 为了方便测试，可以设置一个固定的验证码供测试使用
-        if ("123456".equals(code)) {
-            return true;
-        }
-        
-        // 校验验证码
-        boolean match = code.equals(savedCode);
-        if (match) {
-            // 验证成功后删除验证码
-            redisTemplate.delete(key);
-        }
-        return match;
     }
     
     /**
@@ -218,19 +183,19 @@ public class UserServiceImpl implements UserService {
         // 1. 验证用户是否存在
         Long userId = updateDTO.getUserId();
         if (userId == null) {
-            return Result.error(Result.BAD_REQUEST, "用户ID不能为空");
+            return Result.error(Result.BAD_REQUEST);
         }
         
         User user = userMapper.findById(userId);
         if (user == null) {
-            return Result.error(Result.NOT_FOUND, "用户不存在");
+            return Result.error(Result.NOT_FOUND);
         }
         
         // 2. 验证用户名是否已被其他用户使用
         String newUsername = updateDTO.getUsername();
         if (StringUtils.hasText(newUsername) && !newUsername.equals(user.getUsername())) {
             if (userMapper.existsByUsername(newUsername)) {
-                return Result.error(Result.USERNAME_EXISTS, "用户名已存在");
+                return Result.error(Result.USERNAME_EXISTS);
             }
             user.setUsername(newUsername);
         }
@@ -239,7 +204,7 @@ public class UserServiceImpl implements UserService {
         String newEmail = updateDTO.getEmail();
         if (StringUtils.hasText(newEmail) && !newEmail.equals(user.getEmail())) {
             if (userMapper.existsByEmail(newEmail)) {
-                return Result.error(Result.EMAIL_EXISTS, "邮箱已被注册");
+                return Result.error(Result.EMAIL_EXISTS);
             }
             user.setEmail(newEmail);
         }
@@ -248,7 +213,7 @@ public class UserServiceImpl implements UserService {
         String newPhone = updateDTO.getPhone();
         if (StringUtils.hasText(newPhone) && !newPhone.equals(user.getPhone())) {
             if (userMapper.existsByPhone(newPhone)) {
-                return Result.error(Result.PHONE_EXISTS, "手机号已被注册");
+                return Result.error(Result.PHONE_EXISTS);
             }
             user.setPhone(newPhone);
         }
@@ -258,9 +223,6 @@ public class UserServiceImpl implements UserService {
             user.setGender(updateDTO.getGender());
         }
         
-        if (StringUtils.hasText(updateDTO.getAddress())) {
-            user.setAddress(updateDTO.getAddress());
-        }
         
         // 6. 设置更新时间
         user.setUpdateTime(LocalDateTime.now());

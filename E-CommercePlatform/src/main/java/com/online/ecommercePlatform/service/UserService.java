@@ -40,12 +40,4 @@ public interface UserService {
      * @return 更新结果，包含更新后的用户信息
      */
     Result<User> updateUserInfo(UserUpdateDTO updateDTO);
-    
-    /**
-     * 验证码校验
-     * @param email 邮箱
-     * @param code 验证码
-     * @return 校验结果
-     */
-    boolean verifyCode(String email, String code);
 }

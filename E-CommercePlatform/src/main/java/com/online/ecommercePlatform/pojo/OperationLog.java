@@ -5,12 +5,16 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 操作日志信息实体类
+ * 操作日志实体类
  */
 @Data
 public class OperationLog {
-    private Long logId; // 日志唯一标识（主键）
-    private Long userId; // 用户 ID（外键关联用户表）
-    private String action; // 操作类型（密码修改 / 删除评价）
+    private Long logId;           // 日志唯一标识（主键）
+    private Long userId;          // 用户ID
+    private String action;        // 操作类型
+    private String targetTable;   // 操作对象的表名
+    private Long targetId;        // 操作对象的ID
+    private String description;   // 操作描述
+    private String result;        // 操作结果（成功/失败）
     private LocalDateTime createTime; // 操作时间
 }

@@ -12,7 +12,6 @@
         <result column="email" property="email"/>
         <result column="phone" property="phone"/>
         <result column="gender" property="gender"/>
-        <result column="address" property="address"/>
         <result column="age" property="age"/>
         <result column="is_vip" property="isVip"/>
         <result column="role" property="role"/>
@@ -58,9 +57,9 @@
     <!-- 插入新用户 -->
     <insert id="insert" parameterType="com.online.ecommercePlatform.pojo.User" useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO User (
-            username, password, email, phone, gender, address, age, is_vip, role, create_time, update_time
+            username, password, email, phone, gender, age, is_vip, role, create_time, update_time
         ) VALUES (
-            #{username}, #{password}, #{email}, #{phone}, #{gender}, #{address}, #{age}, #{isVip}, #{role}, #{createTime}, #{updateTime}
+            #{username}, #{password}, #{email}, #{phone}, #{gender}, #{age}, #{isVip}, #{role}, #{createTime}, #{updateTime}
         )
     </insert>
     
@@ -68,11 +67,11 @@
     <update id="update" parameterType="com.online.ecommercePlatform.pojo.User">
         UPDATE User
         <set>
+            <if test="username != null">username = #{username},</if>
             <if test="password != null">password = #{password},</if>
             <if test="email != null">email = #{email},</if>
             <if test="phone != null">phone = #{phone},</if>
             <if test="gender != null">gender = #{gender},</if>
-            <if test="address != null">address = #{address},</if>
             <if test="age != null">age = #{age},</if>
             <if test="isVip != null">is_vip = #{isVip},</if>
             <if test="role != null">role = #{role},</if>

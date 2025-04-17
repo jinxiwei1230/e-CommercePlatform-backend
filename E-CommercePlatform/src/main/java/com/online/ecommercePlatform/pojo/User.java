@@ -13,7 +13,6 @@ public class User {
     private String email; // 电子邮箱
     private String phone; // 手机号
     private String gender; // 性别 - 男/女/保密
-    private String address; // 地址
     private Integer age; // 年龄
     private Boolean isVip; // 是否为VIP用户
     private String role = "普通用户"; // 用户角色，默认是普通用户

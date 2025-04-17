@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * 处理用户注册、登录等请求
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -59,7 +59,7 @@ public class UserController {
         // 从请求头中获取token
         String token = request.getHeader("Authorization");
         if (!StringUtils.hasText(token)) {
-            return Result.error(Result.UNAUTHORIZED, "未登录");
+            return Result.error(Result.UNAUTHORIZED);
         }
         
         // 解析token获取用户名
@@ -72,18 +72,18 @@ public class UserController {
             // 验证Token
             DecodedJWT jwt = jwtUtil.verifyToken(token);
             if (jwt == null) {
-                return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
+                return Result.error(Result.TOKEN_EXPIRED);
             }
             
             // 检查令牌是否过期
             if (jwtUtil.isTokenExpired(token)) {
-                return Result.error(Result.TOKEN_EXPIRED, "登录已过期，请重新登录");
+                return Result.error(Result.TOKEN_EXPIRED);
             }
             
             // 从token中获取userId并设置到DTO中
             String userIdStr = jwt.getClaim("userId").asString();
             if (!StringUtils.hasText(userIdStr)) {
-                return Result.error(Result.BAD_REQUEST, "Token中缺少用户ID信息");
+                return Result.error(Result.BAD_REQUEST);
             }
             
             Long tokenUserId = Long.valueOf(userIdStr);
@@ -92,14 +92,14 @@ public class UserController {
             // 验证操作权限（只能更新自己的信息，管理员除外）
             if (!tokenUserId.equals(updateUserId)) {
                 // 这里可以加入管理员权限判断逻辑
-                return Result.error(Result.UNAUTHORIZED, "无权更新他人信息");
+                return Result.error(Result.UNAUTHORIZED);
             }
             
             // 执行更新操作
             return userService.updateUserInfo(updateDTO);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
+            return Result.error(Result.TOKEN_EXPIRED);
         }
     }
     
@@ -113,7 +113,7 @@ public class UserController {
         // 从请求头中获取token
         String token = request.getHeader("Authorization");
         if (!StringUtils.hasText(token)) {
-            return Result.error(Result.UNAUTHORIZED, "未登录");
+            return Result.error(Result.UNAUTHORIZED);
         }
         
         // 解析token获取用户ID
@@ -126,18 +126,18 @@ public class UserController {
             // 验证Token
             DecodedJWT jwt = jwtUtil.verifyToken(token);
             if (jwt == null) {
-                return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
+                return Result.error(Result.TOKEN_EXPIRED);
             }
             
             // 检查令牌是否过期
             if (jwtUtil.isTokenExpired(token)) {
-                return Result.error(Result.TOKEN_EXPIRED, "登录已过期，请重新登录");
+                return Result.error(Result.TOKEN_EXPIRED);
             }
             
             // 获取用户ID
             String userIdStr = jwt.getClaim("userId").asString();
             if (!StringUtils.hasText(userIdStr)) {
-                return Result.error(Result.BAD_REQUEST, "Token中缺少用户信息");
+                return Result.error(Result.BAD_REQUEST);
             }
             
             // 获取用户信息
@@ -145,7 +145,7 @@ public class UserController {
             return userService.getUserInfo(userId);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(Result.TOKEN_EXPIRED, "登录已过期或Token无效");
+            return Result.error(Result.TOKEN_EXPIRED);
         }
     }
 }
