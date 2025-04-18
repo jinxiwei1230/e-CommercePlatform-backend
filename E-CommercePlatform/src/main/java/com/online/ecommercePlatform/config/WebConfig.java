@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  *   注册自定义拦截器
  *   配置拦截器规则
  *   设置排除路径
+ *   配置CORS跨域
  */
 @Configuration // 标记为Spring配置类
 public class WebConfig implements WebMvcConfigurer {
@@ -39,7 +40,7 @@ public class WebConfig implements WebMvcConfigurer {
      * @param registry 拦截器注册器，用于注册和配置拦截器
      *
      * @apiNote 当前配置：
-     *   排除登录和注册接口（/user/login, /user/register）
+     *   排除登录和注册接口（/api/user/login, /api/user/register）
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
