@@ -15,7 +15,7 @@ import java.util.Map;
  * 产品控制器，处理产品相关的 HTTP 请求
  */
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 public class ProductController {
 
     @Autowired

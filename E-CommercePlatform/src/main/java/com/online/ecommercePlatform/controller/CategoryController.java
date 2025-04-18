@@ -17,7 +17,7 @@ import java.util.Map;
  * 处理与商品分类相关的HTTP请求
  */
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/api/category")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
