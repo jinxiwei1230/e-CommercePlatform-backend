@@ -48,8 +48,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptors)
                 // 排除不需要拦截的路径
                 .excludePathPatterns(
-                        "api/user/login",    // 用户登录接口
-                        "api/user/register", // 用户注册接口
+                        "/api/user/login",    // 用户登录接口
+                        "/api/user/register", // 用户注册接口
                         "/doc.html",      // Swagger文档
                         "/swagger-ui.html", // Swagger UI
                         "/swagger-resources/**", // Swagger资源
