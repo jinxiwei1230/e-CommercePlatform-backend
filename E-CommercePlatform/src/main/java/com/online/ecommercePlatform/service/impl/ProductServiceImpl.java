@@ -1,7 +1,10 @@
 package com.online.ecommercePlatform.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
 import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
+import com.online.ecommercePlatform.dto.ProductDTO;
+import com.online.ecommercePlatform.dto.ProductQueryDTO;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.ProductService;
@@ -21,20 +24,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductMapper productMapper; // 注入产品数据访问层接口，用于数据库操作
-
-    /**
-     * 搜索产品，根据关键字、类别 ID、最低价格和最高价格进行筛选
-     * @param keyword 关键字
-     * @param categoryId 类别 ID（可选）
-     * @param minPrice 最低价格（可选）
-     * @param maxPrice 最高价格（可选）
-     * @return 符合条件的产品列表
-     */
-    @Override
-    public List<Product> searchProducts(String keyword, Long categoryId, Double minPrice, Double maxPrice) {
-        return productMapper.search(keyword, categoryId, minPrice, maxPrice);
-    }
-
 
     /**
      * 根据产品 ID 获取产品信息
@@ -115,5 +104,47 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return Result.success(hotCategories);
+    }
+
+
+    @Override
+    public List<ProductDTO> getProductsByCategory(ProductQueryDTO queryDTO) {
+        PageHelper.startPage(queryDTO.getPage(), queryDTO.getPageSize());
+        if (queryDTO.isAllProducts()) {
+            // 查询所有商品
+            return productMapper.findAllProducts(
+                    queryDTO.getMinPrice(),
+                    queryDTO.getMaxPrice(),
+                    queryDTO.getSortBy(),
+                    queryDTO.getSortOrder()
+            );
+        } else {
+            // 查询特定分类商品
+            return productMapper.findByCategory(
+                    Long.valueOf(queryDTO.getCategoryId()),
+                    queryDTO.getMinPrice(),
+                    queryDTO.getMaxPrice(),
+                    queryDTO.getSortBy(),
+                    queryDTO.getSortOrder()
+            );
+        }
+    }
+
+    @Override
+    public int countProductsByCategory(ProductQueryDTO queryDTO) {
+        if (queryDTO.isAllProducts()) {
+            // 统计所有商品
+            return productMapper.countAllProducts(
+                    queryDTO.getMinPrice(),
+                    queryDTO.getMaxPrice()
+            );
+        } else {
+            // 统计特定分类商品
+            return productMapper.countByCategory(
+                    Long.valueOf(queryDTO.getCategoryId()),
+                    queryDTO.getMinPrice(),
+                    queryDTO.getMaxPrice()
+            );
+        }
     }
 }

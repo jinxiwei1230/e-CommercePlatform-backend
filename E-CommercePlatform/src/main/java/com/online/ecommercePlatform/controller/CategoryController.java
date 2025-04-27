@@ -17,7 +17,7 @@ import java.util.Map;
  * 处理与商品分类相关的HTTP请求
  */
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -27,11 +27,24 @@ public class CategoryController {
      * GET /api/categories
      * @return 统一响应结果包装，包含分类树形列表
      */
-    @GetMapping("/categories")
+    @GetMapping("/category/categories")
     public Result<List<Category>> getAllCategories(){
 
         // 调用服务层获取分类数据（true表示只获取非叶子节点）
         List<Category> cs = categoryService.getCategories(true);
+        return Result.success(cs);
+    }
+
+    /**
+     * 获取所有分类，包括叶子分类（包含子分类的树形结构）
+     * GET /api/categories/tree
+     * @return 统一响应结果包装，包含分类树形列表
+     */
+    @GetMapping("/categories/tree")
+    public Result<List<Category>> getCategoriesTree(){
+
+        // 调用服务层获取分类数据（false表示获取全部节点）
+        List<Category> cs = categoryService.getCategories(false);
         return Result.success(cs);
     }
 }
