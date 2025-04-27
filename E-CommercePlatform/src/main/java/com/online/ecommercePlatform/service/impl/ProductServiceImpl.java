@@ -106,7 +106,12 @@ public class ProductServiceImpl implements ProductService {
         return Result.success(hotCategories);
     }
 
-
+    /**
+     * 根据查询条件获取商品列表实现
+     * 支持查询特定分类或所有分类的商品，并支持分页、排序和价格筛选
+     * @param queryDTO 商品查询DTO
+     * @return 商品DTO列表
+     */
     @Override
     public List<ProductDTO> getProductsByCategory(ProductQueryDTO queryDTO) {
         PageHelper.startPage(queryDTO.getPage(), queryDTO.getPageSize());
@@ -130,6 +135,12 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    /**
+     * 根据查询条件统计商品数量实现
+     * 支持统计特定分类或所有分类的商品数量，并支持价格筛选
+     * @param queryDTO 商品查询DTO
+     * @return 商品总数
+     */
     @Override
     public int countProductsByCategory(ProductQueryDTO queryDTO) {
         if (queryDTO.isAllProducts()) {

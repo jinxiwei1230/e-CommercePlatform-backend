@@ -47,6 +47,18 @@ public class ProductController {
         return productService.getHotCategoriesAndProducts();
     }
 
+    /**
+     * 根据类别ID获取商品列表（支持分页、排序和价格筛选）
+     *
+     * @param categoryId 商品类别ID（路径变量）
+     * @param page 当前页码，默认为1
+     * @param pageSize 每页显示数量，默认为10
+     * @param sortBy 排序字段（可选）
+     * @param sortOrder 排序方式（asc/desc，可选）
+     * @param minPrice 最低价格筛选（可选）
+     * @param maxPrice 最高价格筛选（可选）
+     * @return 包含分页商品列表的Result对象
+     */
     @GetMapping("/{categoryId}/products")
     public Result<PageBean<ProductDTO>> getProductsByCategory(
             @PathVariable String categoryId,

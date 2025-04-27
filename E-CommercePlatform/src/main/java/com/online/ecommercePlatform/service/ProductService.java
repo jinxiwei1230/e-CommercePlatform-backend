@@ -58,10 +58,18 @@ public interface ProductService {
      */
     Result<List<CategoryHotProductsDTO>> getHotCategoriesAndProducts();
 
-
+    /**
+     * 根据查询条件获取商品列表
+     * @param queryDTO 商品查询DTO，包含分类、分页、排序和价格筛选条件
+     * @return 商品DTO列表
+     */
     List<ProductDTO> getProductsByCategory(ProductQueryDTO queryDTO);
 
-
+    /**
+     * 根据查询条件统计商品数量
+     * @param queryDTO 商品查询DTO，包含分类和价格筛选条件
+     * @return 商品总数
+     */
     int countProductsByCategory(ProductQueryDTO queryDTO);
 
 

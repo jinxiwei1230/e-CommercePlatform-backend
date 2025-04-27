@@ -42,6 +42,55 @@ public interface ProductMapper {
     List<CategoryHotProductsDTO> selectTopLevelCategoriesWithSubSales(int i);
 
     /**
+     * 根据分类ID查询商品列表
+     * @param categoryId 分类ID
+     * @param minPrice 最低价格（可选）
+     * @param maxPrice 最高价格（可选）
+     * @param sortBy 排序字段（可选）
+     * @param sortOrder 排序方式（可选）
+     * @return 商品DTO列表
+     */
+    List<ProductDTO> findByCategory(@Param("categoryId") Long categoryId,
+                                    @Param("minPrice") BigDecimal minPrice,
+                                    @Param("maxPrice") BigDecimal maxPrice,
+                                    @Param("sortBy") String sortBy,
+                                    @Param("sortOrder") String sortOrder);
+
+    /**
+     * 根据分类ID统计商品数量
+     * @param categoryId 分类ID
+     * @param minPrice 最低价格（可选）
+     * @param maxPrice 最高价格（可选）
+     * @return 商品数量
+     */
+    Integer countByCategory(@Param("categoryId") Long categoryId,
+                            @Param("minPrice") BigDecimal minPrice,
+                            @Param("maxPrice") BigDecimal maxPrice);
+
+    /**
+     * 查询所有商品列表（不限定分类）
+     * @param minPrice 最低价格（可选）
+     * @param maxPrice 最高价格（可选）
+     * @param sortBy 排序字段（可选）
+     * @param sortOrder 排序方式（可选）
+     * @return 商品DTO列表
+     */
+    List<ProductDTO> findAllProducts(@Param("minPrice") BigDecimal minPrice,
+                                  @Param("maxPrice") BigDecimal maxPrice,
+                                  @Param("sortBy") String sortBy,
+                                  @Param("sortOrder") String sortOrder);
+
+    /**
+     * 统计所有商品数量（不限定分类）
+     * @param minPrice 最低价格（可选）
+     * @param maxPrice 最高价格（可选）
+     * @return 商品数量
+     */
+    Integer countAllProducts(@Param("minPrice") BigDecimal minPrice,
+                             @Param("maxPrice") BigDecimal maxPrice);
+
+
+    /**
      * 通过商品 ID 查找商品
      * @param id 商品 ID
      * @return 商品对象
@@ -69,23 +118,5 @@ public interface ProductMapper {
      */
     @Select("")
     void delete(Long id);
-
-    List<ProductDTO> findByCategory(@Param("categoryId") Long categoryId,
-                                    @Param("minPrice") BigDecimal minPrice,
-                                    @Param("maxPrice") BigDecimal maxPrice,
-                                    @Param("sortBy") String sortBy,
-                                    @Param("sortOrder") String sortOrder);
-
-    Integer countByCategory(@Param("categoryId") Long categoryId,
-                            @Param("minPrice") BigDecimal minPrice,
-                            @Param("maxPrice") BigDecimal maxPrice);
-
-    List<ProductDTO> findAllProducts(@Param("minPrice") BigDecimal minPrice,
-                                  @Param("maxPrice") BigDecimal maxPrice,
-                                  @Param("sortBy") String sortBy,
-                                  @Param("sortOrder") String sortOrder);
-
-    Integer countAllProducts(@Param("minPrice") BigDecimal minPrice,
-                             @Param("maxPrice") BigDecimal maxPrice);
 
 }
