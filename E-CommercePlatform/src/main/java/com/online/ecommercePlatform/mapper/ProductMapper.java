@@ -1,11 +1,13 @@
 package com.online.ecommercePlatform.mapper;
 import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
 import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
+import com.online.ecommercePlatform.dto.ProductDTO;
 import org.apache.ibatis.annotations.Param;
 import com.online.ecommercePlatform.pojo.Product;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -40,23 +42,61 @@ public interface ProductMapper {
     List<CategoryHotProductsDTO> selectTopLevelCategoriesWithSubSales(int i);
 
     /**
+     * 根据分类ID查询商品列表
+     * @param categoryId 分类ID
+     * @param minPrice 最低价格（可选）
+     * @param maxPrice 最高价格（可选）
+     * @param sortBy 排序字段（可选）
+     * @param sortOrder 排序方式（可选）
+     * @return 商品DTO列表
+     */
+    List<ProductDTO> findByCategory(@Param("categoryId") Long categoryId,
+                                    @Param("minPrice") BigDecimal minPrice,
+                                    @Param("maxPrice") BigDecimal maxPrice,
+                                    @Param("sortBy") String sortBy,
+                                    @Param("sortOrder") String sortOrder);
+
+    /**
+     * 根据分类ID统计商品数量
+     * @param categoryId 分类ID
+     * @param minPrice 最低价格（可选）
+     * @param maxPrice 最高价格（可选）
+     * @return 商品数量
+     */
+    Integer countByCategory(@Param("categoryId") Long categoryId,
+                            @Param("minPrice") BigDecimal minPrice,
+                            @Param("maxPrice") BigDecimal maxPrice);
+
+    /**
+     * 查询所有商品列表（不限定分类）
+     * @param minPrice 最低价格（可选）
+     * @param maxPrice 最高价格（可选）
+     * @param sortBy 排序字段（可选）
+     * @param sortOrder 排序方式（可选）
+     * @return 商品DTO列表
+     */
+    List<ProductDTO> findAllProducts(@Param("minPrice") BigDecimal minPrice,
+                                  @Param("maxPrice") BigDecimal maxPrice,
+                                  @Param("sortBy") String sortBy,
+                                  @Param("sortOrder") String sortOrder);
+
+    /**
+     * 统计所有商品数量（不限定分类）
+     * @param minPrice 最低价格（可选）
+     * @param maxPrice 最高价格（可选）
+     * @return 商品数量
+     */
+    Integer countAllProducts(@Param("minPrice") BigDecimal minPrice,
+                             @Param("maxPrice") BigDecimal maxPrice);
+
+
+    /**
      * 通过商品 ID 查找商品
      * @param id 商品 ID
      * @return 商品对象
      */
     @Select("")
     Product findById(Long id);
-
-    /**
-     * 根据关键词、类别、价格范围搜索商品
-     * @param keyword 搜索关键词
-     * @param categoryId 商品类别 ID（可选）
-     * @param minPrice 最低价格（可选）
-     * @param maxPrice 最高价格（可选）
-     * @return 商品列表
-     */
-    @Select("")
-    List<Product> search(String keyword, Long categoryId, Double minPrice, Double maxPrice);
 
     /**
      * 插入新的商品

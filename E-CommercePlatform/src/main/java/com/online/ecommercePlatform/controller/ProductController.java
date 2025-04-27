@@ -2,12 +2,17 @@ package com.online.ecommercePlatform.controller;
 
 import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
 import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
+import com.online.ecommercePlatform.dto.ProductDTO;
+import com.online.ecommercePlatform.dto.ProductQueryDTO;
+import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,34 +47,58 @@ public class ProductController {
         return productService.getHotCategoriesAndProducts();
     }
 
-
     /**
-     * 搜索产品
-     * @param keyword 关键字
-     * @param categoryId 类别 ID，可选
-     * @param minPrice 最低价格，可选
-     * @param maxPrice 最高价格，可选
-     * @return 封装后的产品列表查询结果
+     * 根据类别ID获取商品列表（支持分页、排序和价格筛选）
+     *
+     * @param categoryId 商品类别ID（路径变量）
+     * @param page 当前页码，默认为1
+     * @param pageSize 每页显示数量，默认为10
+     * @param sortBy 排序字段（可选）
+     * @param sortOrder 排序方式（asc/desc，可选）
+     * @param minPrice 最低价格筛选（可选）
+     * @param maxPrice 最高价格筛选（可选）
+     * @return 包含分页商品列表的Result对象
      */
-    @GetMapping
-    public Result<List<Product>> searchProducts(
-            @RequestParam String keyword,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice) {
+    @GetMapping("/{categoryId}/products")
+    public Result<PageBean<ProductDTO>> getProductsByCategory(
+            @PathVariable String categoryId,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortOrder,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
 
         try {
-            List<Product> products = productService.searchProducts(keyword, categoryId, minPrice, maxPrice);
-            
-            if (products.isEmpty()) {
-                return Result.error(Result.NOT_FOUND, "未找到符合条件的产品");
+            // 参数校验
+            if (categoryId == null || categoryId.trim().isEmpty()) {
+                return Result.error(Result.BAD_REQUEST, "类别 ID 不能为空");
             }
-            
-            return Result.success(products);
+            if (page < 1 || pageSize < 1) {
+                return Result.error(Result.BAD_REQUEST, "分页参数无效");
+            }
+            if (minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
+                return Result.error(Result.BAD_REQUEST, "最低价格不能大于最高价格");
+            }
+            ProductQueryDTO queryDTO = new ProductQueryDTO();
+            queryDTO.setCategoryId(categoryId);
+            queryDTO.setPage(page);
+            queryDTO.setPageSize(pageSize);
+            queryDTO.setSortBy(sortBy);
+            queryDTO.setSortOrder(sortOrder);
+            queryDTO.setMinPrice(minPrice);
+            queryDTO.setMaxPrice(maxPrice);
+
+            List<ProductDTO> products = productService.getProductsByCategory(queryDTO);
+            Long total = (long) productService.countProductsByCategory(queryDTO); // 注意类型转换
+
+            PageBean<ProductDTO> pageBean = new PageBean<>();
+            pageBean.setTotal(total);
+            pageBean.setItems(products);
+            return Result.success(pageBean);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(Result.BAD_REQUEST, "搜索产品时发生错误: " + e.getMessage());
+            return Result.error(Result.SERVER_ERROR, "服务器错误: " + e.getMessage());
         }
     }
-
 }

@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.online.ecommercePlatform.mapper.ProductMapper">
-    <!--    动态SQL-->
+
     <!-- 获取热门商品（按销量降序） -->
     <select id="selectHotProducts" resultType="com.online.ecommercePlatform.dto.ProductBasicInfoDTO">
         SELECT
@@ -21,41 +21,29 @@
         LIMIT #{limit}
     </select>
 
-
-    <!-- 查询销量最高的几个顶级类别（包含子类别销量） -->
+    <!-- 查询销量最高的几个顶级类别（递归计算所有子类别销量） -->
     <select id="selectTopLevelCategoriesWithSubSales" resultType="com.online.ecommercePlatform.dto.CategoryHotProductsDTO">
+        WITH RECURSIVE category_tree AS (
+            -- 初始查询：顶级类别
+            SELECT category_id, name, parent_id
+            FROM category
+            WHERE parent_id = 0
+            UNION ALL
+            -- 递归查询：所有子类别
+            SELECT c.category_id, c.name, c.parent_id
+            FROM category c
+                     INNER JOIN category_tree ct ON c.parent_id = ct.category_id
+        )
         SELECT
             c.category_id as categoryId,
             c.name as categoryName
         FROM category c
                  INNER JOIN (
-            SELECT
-                top_cat.category_id as top_category_id,
-                SUM(p.sales) as total_sales
-            FROM category top_cat
-                     LEFT JOIN (
-                -- 获取所有子类别ID（包括自身）
-                SELECT c1.category_id
-                FROM category c1
-                WHERE c1.parent_id = 0
-                UNION
-                SELECT c2.category_id
-                FROM category c2
-                         INNER JOIN category c3 ON c2.parent_id = c3.category_id
-                WHERE c3.parent_id = 0
-                UNION
-                SELECT c4.category_id
-                FROM category c4
-                         INNER JOIN category c5 ON c4.parent_id = c5.category_id
-                         INNER JOIN category c6 ON c5.parent_id = c6.category_id
-                WHERE c6.parent_id = 0
-                -- 如果层级更深，可以继续添加 UNION
-            ) sub_cats ON top_cat.category_id = sub_cats.category_id OR top_cat.category_id IN (
-                SELECT parent_id FROM category WHERE category_id = sub_cats.category_id
-            )
-                     LEFT JOIN product p ON p.category_id = sub_cats.category_id
-            WHERE top_cat.parent_id = 0
-            GROUP BY top_cat.category_id
+            SELECT ct.category_id as top_category_id, SUM(p.sales) as total_sales
+            FROM category_tree ct
+                     LEFT JOIN product p ON p.category_id = ct.category_id
+            WHERE ct.parent_id = 0  -- 只取顶级类别
+            GROUP BY ct.category_id
             ORDER BY total_sales DESC
             LIMIT #{limit}
         ) top ON c.category_id = top.top_category_id
@@ -63,6 +51,17 @@
 
     <!-- 查询顶级类别及其所有子类别下的热门商品 -->
     <select id="selectHotProductsByTopCategory" resultType="com.online.ecommercePlatform.dto.ProductBasicInfoDTO">
+        WITH RECURSIVE category_tree AS (
+            -- 初始查询：指定顶级类别
+            SELECT category_id
+            FROM category
+            WHERE category_id = #{categoryId}
+            UNION ALL
+            -- 递归查询：所有子类别
+            SELECT c.category_id
+            FROM category c
+                     INNER JOIN category_tree ct ON c.parent_id = ct.category_id
+        )
         SELECT
             p.product_id as productId,
             p.name as productName,
@@ -74,88 +73,195 @@
                  LEFT JOIN productimage pi ON
             p.product_id = pi.product_id AND
             pi.is_main = true
-        WHERE p.category_id IN (
-            -- 获取指定顶级类别及其所有子类别
-            SELECT c1.category_id
-            FROM category c1
-            WHERE c1.category_id = #{categoryId}
-            UNION
-            SELECT c2.category_id
-            FROM category c2
-            WHERE c2.parent_id = #{categoryId}
-            UNION
-            SELECT c3.category_id
-            FROM category c3
-                     INNER JOIN category c4 ON c3.parent_id = c4.category_id
-            WHERE c4.parent_id = #{categoryId}
-            UNION
-            SELECT c5.category_id
-            FROM category c5
-                     INNER JOIN category c6 ON c5.parent_id = c6.category_id
-                     INNER JOIN category c7 ON c6.parent_id = c7.category_id
-            WHERE c7.category_id = #{categoryId}
-            -- 如果层级更深，可以继续添加 UNION
-        )
+        WHERE p.category_id IN (SELECT category_id FROM category_tree)
         ORDER BY p.sales DESC
         LIMIT #{limit}
     </select>
 
-<!--    &lt;!&ndash; 查询销量最高的几个顶级类别（递归计算所有子类别销量） &ndash;&gt;-->
-<!--    MySQL版本>8.0可使用更简洁的版本WITH RECURSIVE-->
-<!--    <select id="selectTopLevelCategoriesWithSubSales" resultType="com.online.ecommercePlatform.dto.CategoryHotProductsDTO">-->
-<!--        WITH RECURSIVE category_tree AS (-->
-<!--            &#45;&#45; 初始查询：顶级类别-->
-<!--            SELECT category_id, name, parent_id-->
-<!--            FROM category-->
-<!--            WHERE parent_id = 0-->
-<!--            UNION ALL-->
-<!--            &#45;&#45; 递归查询：所有子类别-->
-<!--            SELECT c.category_id, c.name, c.parent_id-->
-<!--            FROM category c-->
-<!--                     INNER JOIN category_tree ct ON c.parent_id = ct.category_id-->
-<!--        )-->
-<!--        SELECT-->
-<!--            c.category_id as categoryId,-->
-<!--            c.name as categoryName-->
-<!--        FROM category c-->
-<!--                 INNER JOIN (-->
-<!--            SELECT ct.category_id as top_category_id, SUM(p.sales) as total_sales-->
-<!--            FROM category_tree ct-->
-<!--                     LEFT JOIN product p ON p.category_id = ct.category_id-->
-<!--            WHERE ct.parent_id = 0  &#45;&#45; 只取顶级类别-->
-<!--            GROUP BY ct.category_id-->
-<!--            ORDER BY total_sales DESC-->
+    <select id="findByCategory" resultType="com.online.ecommercePlatform.dto.ProductDTO">
+        WITH RECURSIVE category_tree AS (
+        SELECT category_id
+        FROM category
+        WHERE category_id = #{categoryId}
+        UNION ALL
+        SELECT c.category_id
+        FROM category c
+        INNER JOIN category_tree ct ON c.parent_id = ct.category_id
+        )
+        SELECT
+        p.product_id,
+        p.name,
+        p.price,
+        p.sales,
+        p.category_id,
+        p.create_time,
+        p.update_time,
+        pi.image_url as image
+        FROM product p
+        LEFT JOIN productimage pi ON p.product_id = pi.product_id AND pi.is_main = true
+        WHERE p.category_id IN (SELECT category_id FROM category_tree)
+        <if test="minPrice != null">
+            AND p.price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND p.price &lt;= #{maxPrice}
+        </if>
+        <!-- 确保只有一个 ORDER BY -->
+        <choose>
+            <when test="sortBy != null and sortOrder != null">
+                ORDER BY p.${sortBy} ${sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY p.create_time DESC
+            </otherwise>
+        </choose>
+        <!-- LIMIT 应该由调用方通过 PageHelper 或参数传入 -->
+<!--        <if test="limit != null">-->
 <!--            LIMIT #{limit}-->
-<!--        ) top ON c.category_id = top.top_category_id-->
-<!--    </select>-->
+<!--        </if>-->
+    </select>
 
-<!--    &lt;!&ndash; 查询顶级类别及其所有子类别下的热门商品 &ndash;&gt;-->
-<!--    <select id="selectHotProductsByTopCategory" resultType="com.online.ecommercePlatform.dto.ProductBasicInfoDTO">-->
-<!--        WITH RECURSIVE category_tree AS (-->
-<!--            &#45;&#45; 初始查询：指定顶级类别-->
-<!--            SELECT category_id, parent_id-->
-<!--            FROM category-->
-<!--            WHERE category_id = #{categoryId}-->
-<!--            UNION ALL-->
-<!--            &#45;&#45; 递归查询：所有子类别-->
-<!--            SELECT c.category_id, c.parent_id-->
-<!--            FROM category c-->
-<!--                     INNER JOIN category_tree ct ON c.parent_id = ct.category_id-->
-<!--        )-->
-<!--        SELECT-->
-<!--            p.product_id as productId,-->
-<!--            p.name as productName,-->
-<!--            pi.image_url as mainImageUrl,-->
-<!--            p.price as sellingPrice,-->
-<!--            p.description as briefDescription-->
-<!--        FROM product p-->
-<!--                 LEFT JOIN productimage pi ON-->
-<!--            p.product_id = pi.product_id AND-->
-<!--            pi.is_main = true-->
-<!--        WHERE p.category_id IN (SELECT category_id FROM category_tree)-->
-<!--        ORDER BY p.sales DESC-->
-<!--        LIMIT #{limit}-->
-<!--    </select>-->
 
+    <select id="countByCategory" resultType="int">
+        WITH RECURSIVE category_tree AS (
+        SELECT category_id
+        FROM category
+        WHERE category_id = #{categoryId}
+        UNION ALL
+        SELECT c.category_id
+        FROM category c
+        INNER JOIN category_tree ct ON c.parent_id = ct.category_id
+        )
+        SELECT COUNT(*)
+        FROM product p
+        WHERE p.category_id IN (SELECT category_id FROM category_tree)
+        <if test="minPrice != null">
+            AND p.price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND p.price &lt;= #{maxPrice}
+        </if>
+    </select>
+
+    <!-- 查询所有商品 -->
+    <select id="findAllProducts" resultType="com.online.ecommercePlatform.dto.ProductDTO">
+        SELECT
+        p.product_id,
+        p.name,
+        p.price,
+        p.sales,
+        p.category_id,
+        p.create_time,
+        p.update_time,
+        pi.image_url as image
+        FROM product p
+        LEFT JOIN productimage pi ON p.product_id = pi.product_id AND pi.is_main = true
+        WHERE 1=1
+        <if test="minPrice != null">
+            AND p.price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND p.price &lt;= #{maxPrice}
+        </if>
+        <choose>
+            <when test="sortBy != null and sortOrder != null">
+                ORDER BY p.${sortBy} ${sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY p.create_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 统计所有商品数量 -->
+    <select id="countAllProducts" resultType="int">
+        SELECT COUNT(*)
+        FROM product p
+        WHERE 1=1
+        <if test="minPrice != null">
+            AND p.price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND p.price &lt;= #{maxPrice}
+        </if>
+    </select>
 
 </mapper>
+
+<!--        &lt;!&ndash; 查询销量最高的几个顶级类别（包含子类别销量） &ndash;&gt;-->
+<!--<select id="selectTopLevelCategoriesWithSubSales" resultType="com.online.ecommercePlatform.dto.CategoryHotProductsDTO">-->
+<!--SELECT-->
+<!--    c.category_id as categoryId,-->
+<!--    c.name as categoryName-->
+<!--FROM category c-->
+<!--         INNER JOIN (-->
+<!--    SELECT-->
+<!--        top_cat.category_id as top_category_id,-->
+<!--        SUM(p.sales) as total_sales-->
+<!--    FROM category top_cat-->
+<!--             LEFT JOIN (-->
+<!--        &#45;&#45; 获取所有子类别ID（包括自身）-->
+<!--        SELECT c1.category_id-->
+<!--        FROM category c1-->
+<!--        WHERE c1.parent_id = 0-->
+<!--        UNION-->
+<!--        SELECT c2.category_id-->
+<!--        FROM category c2-->
+<!--                 INNER JOIN category c3 ON c2.parent_id = c3.category_id-->
+<!--        WHERE c3.parent_id = 0-->
+<!--        UNION-->
+<!--        SELECT c4.category_id-->
+<!--        FROM category c4-->
+<!--                 INNER JOIN category c5 ON c4.parent_id = c5.category_id-->
+<!--                 INNER JOIN category c6 ON c5.parent_id = c6.category_id-->
+<!--        WHERE c6.parent_id = 0-->
+<!--        &#45;&#45; 如果层级更深，可以继续添加 UNION-->
+<!--    ) sub_cats ON top_cat.category_id = sub_cats.category_id OR top_cat.category_id IN (-->
+<!--        SELECT parent_id FROM category WHERE category_id = sub_cats.category_id-->
+<!--    )-->
+<!--             LEFT JOIN product p ON p.category_id = sub_cats.category_id-->
+<!--    WHERE top_cat.parent_id = 0-->
+<!--    GROUP BY top_cat.category_id-->
+<!--    ORDER BY total_sales DESC-->
+<!--    LIMIT #{limit}-->
+<!--) top ON c.category_id = top.top_category_id-->
+<!--</select>-->
+
+<!--        &lt;!&ndash; 查询顶级类别及其所有子类别下的热门商品 &ndash;&gt;-->
+<!--<select id="selectHotProductsByTopCategory" resultType="com.online.ecommercePlatform.dto.ProductBasicInfoDTO">-->
+<!--SELECT-->
+<!--    p.product_id as productId,-->
+<!--    p.name as productName,-->
+<!--    pi.image_url as mainImageUrl,-->
+<!--    p.price as sellingPrice,-->
+<!--    p.description as briefDescription,-->
+<!--    p.sales as sales-->
+<!--FROM product p-->
+<!--         LEFT JOIN productimage pi ON-->
+<!--    p.product_id = pi.product_id AND-->
+<!--    pi.is_main = true-->
+<!--WHERE p.category_id IN (-->
+<!--    &#45;&#45; 获取指定顶级类别及其所有子类别-->
+<!--    SELECT c1.category_id-->
+<!--    FROM category c1-->
+<!--    WHERE c1.category_id = #{categoryId}-->
+<!--    UNION-->
+<!--    SELECT c2.category_id-->
+<!--    FROM category c2-->
+<!--    WHERE c2.parent_id = #{categoryId}-->
+<!--    UNION-->
+<!--    SELECT c3.category_id-->
+<!--    FROM category c3-->
+<!--             INNER JOIN category c4 ON c3.parent_id = c4.category_id-->
+<!--    WHERE c4.parent_id = #{categoryId}-->
+<!--    UNION-->
+<!--    SELECT c5.category_id-->
+<!--    FROM category c5-->
+<!--             INNER JOIN category c6 ON c5.parent_id = c6.category_id-->
+<!--             INNER JOIN category c7 ON c6.parent_id = c7.category_id-->
+<!--    WHERE c7.category_id = #{categoryId}-->
+<!--    &#45;&#45; 如果层级更深，可以继续添加 UNION-->
+<!--)-->
+<!--ORDER BY p.sales DESC-->
+<!--LIMIT #{limit}-->
+<!--</select>-->
