@@ -36,4 +36,10 @@ public interface CartMapper {
      * @return 受影响的行数
      */
     int updateQuantity(@Param("cartId") Long cartId, @Param("quantity") Integer quantity);
+    List<Cart> selectByUserId(Long userId);
+    Cart selectByUserIdAndProductId(Long userId, Long productId);
+    int insert(Cart cart);
+    int updateQuantity(Cart cart);
+    int deleteByUserIdAndProductId(Long userId, Long productId);
+    int deleteByUserId(Long userId);
 }

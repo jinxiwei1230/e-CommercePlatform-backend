@@ -5,19 +5,55 @@ import com.online.ecommercePlatform.dto.CartAddResponseDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
+import com.online.ecommercePlatform.dto.CartCheckoutDTO;
+import com.online.ecommercePlatform.pojo.Cart;
 
 import java.util.List;
-
+/**
+ * 购物车服务接口，定义购物车相关操作
+ */
 public interface CartService {
 
-    //查询用户购物车列表
-    List<Product> cartList();
-    
     /**
-     * 将商品添加到购物车
+     * 根据用户ID查询购物车列表
      * @param userId 用户ID
-     * @param cartAddDTO 添加购物车请求DTO
-     * @return 添加购物车响应结果
+     * @return 购物车列表
      */
-    Result<CartAddResponseDTO> addToCart(Long userId, CartAddDTO cartAddDTO);
+    List<Cart> selectByUserId(Long userId);
+
+    /**
+     * 添加商品到购物车
+     * @param userId 用户ID
+     * @param productId 商品ID
+     * @param quantity 商品数量
+     */
+    void addToCart(Long userId, Long productId, Integer quantity);
+
+    /**
+     * 更新购物车中商品的数量
+     * @param userId 用户ID
+     * @param productId 商品ID
+     * @param quantity 新的商品数量
+     */
+    Cart updateCartItem(Long userId, Long productId, Integer quantity);
+
+    /**
+     * 从购物车中移除指定商品
+     * @param userId 用户ID
+     * @param productId 要移除的商品ID
+     */
+    void removeFromCart(Long userId, Long productId);
+
+    /**
+     * 清空指定用户的购物车
+     * @param userId 用户ID
+     */
+    void clearCart(Long userId);
+
+    /**
+     * 购物车结算
+     * @param userId 用户ID
+     * @return 结算信息
+     */
+    CartCheckoutDTO checkout(Long userId);
 }

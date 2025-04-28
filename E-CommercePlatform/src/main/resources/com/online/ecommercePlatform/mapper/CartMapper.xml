@@ -1,68 +1,41 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.online.ecommercePlatform.mapper.CartMapper">
-    
-    <!-- 用户购物车基本信息映射 -->
-    <resultMap id="CartMap" type="com.online.ecommercePlatform.pojo.Cart">
-        <id column="cart_id" property="cartId"/>
-        <result column="user_id" property="userId"/>
-        <result column="product_id" property="productId"/>
-        <result column="quantity" property="quantity"/>
-        <result column="create_time" property="createTime"/>
+
+    <resultMap id="BaseResultMap" type="com.online.ecommercePlatform.pojo.Cart">
+        <id column="cart_id" property="cartId" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="product_id" property="productId" jdbcType="BIGINT"/>
+        <result column="quantity" property="quantity" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
-    
-    <!-- 查询用户购物车列表 -->
-    <select id="cartList" resultType="com.online.ecommercePlatform.pojo.Product">
-        SELECT 
-            p.product_id, 
-            p.name, 
-            p.description, 
-            p.price, 
-            c.quantity as stock, 
-            p.sales, 
-            p.category_id, 
-            p.create_time, 
-            p.update_time
-        FROM cart c
-        JOIN product p ON c.product_id = p.product_id
-        WHERE c.user_id = #{userId}
-        ORDER BY c.create_time DESC
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT * FROM cart WHERE user_id = #{userId}
     </select>
-    
-    <!-- 检查产品是否已在购物车中 -->
-    <select id="findByUserIdAndProductId" resultMap="CartMap">
-        SELECT 
-            cart_id, 
-            user_id, 
-            product_id, 
-            quantity,
-            create_time
-        FROM cart
+
+    <select id="selectByUserIdAndProductId" resultMap="BaseResultMap">
+        SELECT * FROM cart
         WHERE user_id = #{userId} AND product_id = #{productId}
     </select>
-    
-    <!-- 添加商品到购物车 -->
-    <insert id="addToCart" parameterType="com.online.ecommercePlatform.pojo.Cart" useGeneratedKeys="true" keyProperty="cartId">
-        INSERT INTO cart (
-            user_id, 
-            product_id, 
-            quantity, 
-            create_time
-        ) VALUES (
-            #{userId}, 
-            #{productId}, 
-            #{quantity}, 
-            #{createTime}
-        )
+
+    <insert id="insert" parameterType="com.online.ecommercePlatform.pojo.Cart" useGeneratedKeys="true" keyProperty="cartId">
+        INSERT INTO cart (user_id, product_id, quantity, create_time)
+        VALUES (#{userId}, #{productId}, #{quantity}, #{createTime})
     </insert>
-    
-    <!-- 更新购物车中商品数量 -->
-    <update id="updateQuantity">
-        UPDATE cart
-        SET quantity = #{quantity}
+
+    <update id="updateQuantity" parameterType="com.online.ecommercePlatform.pojo.Cart">
+        UPDATE cart SET quantity = #{quantity}
         WHERE cart_id = #{cartId}
     </update>
-    
-</mapper> 
+
+    <delete id="deleteByUserIdAndProductId">
+        DELETE FROM cart
+        WHERE user_id = #{userId} AND product_id = #{productId}
+    </delete>
+
+    <delete id="deleteByUserId">
+        DELETE FROM cart WHERE user_id = #{userId}
+    </delete>
+</mapper>

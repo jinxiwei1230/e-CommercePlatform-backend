@@ -92,25 +92,11 @@ public interface ProductMapper {
 
     /**
      * 通过商品 ID 查找商品
-     * @param id 商品 ID
+     * @param productId 商品 ID
      * @return 商品对象
      */
-    @Select("")
-    Product findById(Long id);
-    
-    /**
-     * 根据商品ID获取商品详情，包括基本信息、分类名称等
-     * @param productId 商品ID
-     * @return 包含商品信息的Map
-     */
-    Map<String, Object> getProductDetail(@Param("productId") Long productId);
-    
-    /**
-     * 根据商品ID获取商品的所有图片
-     * @param productId 商品ID
-     * @return 图片列表
-     */
-    List<Map<String, Object>> getProductImages(@Param("productId") Long productId);
+    @Select("SELECT * FROM product WHERE product_id = #{productId}")
+    Product findById(@Param("productId") Long productId);
 
     /**
      * 插入新的商品

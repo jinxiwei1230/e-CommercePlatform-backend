@@ -21,7 +21,8 @@ public class Result<T> {
     public static final int BAD_REQUEST = 400;
     public static final int UNAUTHORIZED = 401;
     public static final int NOT_FOUND = 404;
-    public static final int SERVER_ERROR = 404;
+    public static final int SERVER_ERROR = 500;
+    public static final int TOKEN_EXPIRED = 402;
 
     /**
      * 快速返回操作成功的响应结果（带响应数据）
