@@ -3,6 +3,7 @@ package com.online.ecommercePlatform.controller;
 import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
 import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
 import com.online.ecommercePlatform.dto.ProductDTO;
+import com.online.ecommercePlatform.dto.ProductDetailDTO;
 import com.online.ecommercePlatform.dto.ProductQueryDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Product;
@@ -99,6 +100,35 @@ public class ProductController {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error(Result.SERVER_ERROR, "服务器错误: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 获取商品详情
+     * @param id 商品ID
+     * @return 包含商品详情的Result对象
+     */
+    @GetMapping("/{id}")
+    public Result<ProductDetailDTO> getProductDetail(@PathVariable("id") String id) {
+        try {
+            // 参数校验
+            if (id == null || id.trim().isEmpty()) {
+                return Result.error(Result.BAD_REQUEST, "商品 ID 不能为空");
+            }
+            
+            Long productId;
+            try {
+                productId = Long.valueOf(id);
+            } catch (NumberFormatException e) {
+                return Result.error(Result.BAD_REQUEST, "商品 ID 格式无效");
+            }
+            
+            // 调用服务获取商品详情
+            return productService.getProductDetail(productId);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(Result.SERVER_ERROR, "获取商品详情失败: " + e.getMessage());
         }
     }
 }
