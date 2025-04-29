@@ -2,6 +2,7 @@ package com.online.ecommercePlatform.service;
 import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
 import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
 import com.online.ecommercePlatform.dto.ProductDTO;
+import com.online.ecommercePlatform.dto.ProductDetailDTO;
 import com.online.ecommercePlatform.dto.ProductQueryDTO;
 import com.online.ecommercePlatform.mapper.ProductMapper;
 import com.online.ecommercePlatform.pojo.Product;
@@ -22,6 +23,13 @@ public interface ProductService {
      * @return 对应的产品对象
      */
     Product getProductById(Long id);
+    
+    /**
+     * 获取商品详情，包括基本信息、分类名和图片列表
+     * @param productId 商品ID
+     * @return 包含商品详情的Result对象
+     */
+    Result<ProductDetailDTO> getProductDetail(Long productId);
 
     /**
      * 产品服务接口，定义管理员可以执行的产品管理操作
@@ -71,6 +79,4 @@ public interface ProductService {
      * @return 商品总数
      */
     int countProductsByCategory(ProductQueryDTO queryDTO);
-
-
 }
