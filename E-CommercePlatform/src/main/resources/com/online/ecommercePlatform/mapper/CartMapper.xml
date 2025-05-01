@@ -34,6 +34,10 @@
         SELECT * FROM cart WHERE cart_id = #{cartId}
     </select>
 
+    <select id="findByUserIdAndProductId" resultType="com.online.ecommercePlatform.pojo.Cart">
+        SELECT * FROM cart WHERE user_id = #{userId} AND product_id = #{productId}
+    </select>
+
     <delete id="deleteByCartId">
         DELETE FROM cart WHERE cart_id = #{cartId}
     </delete>

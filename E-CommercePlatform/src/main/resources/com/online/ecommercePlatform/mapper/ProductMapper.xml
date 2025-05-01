@@ -186,6 +186,7 @@
         </if>
     </select>
     
+
     <!-- 获取商品详情，包括基本信息和分类名称 -->
     <select id="getProductDetail" resultType="map">
         SELECT 

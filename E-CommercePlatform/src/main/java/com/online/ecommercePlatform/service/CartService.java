@@ -7,6 +7,7 @@ import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.dto.CartCheckoutDTO;
 import com.online.ecommercePlatform.pojo.Cart;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 /**
