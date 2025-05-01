@@ -11,7 +11,6 @@ import java.util.List;
 @Mapper
 public interface CartMapper {
 //    查询用户购物车列表
-    @Select("")
     List<Product> cartList();
     
     /**
