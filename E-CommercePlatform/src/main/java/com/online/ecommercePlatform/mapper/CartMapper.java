@@ -40,6 +40,20 @@ public interface CartMapper {
     Cart selectByUserIdAndProductId(Long userId, Long productId);
     int insert(Cart cart);
     int updateQuantity(Cart cart);
-    int deleteByUserIdAndProductId(Long userId, Long productId);
+    
     int deleteByUserId(Long userId);
+
+    /**
+     * 根据购物车ID查询购物车项
+     * @param cartId 购物车ID
+     * @return 购物车项
+     */
+    Cart selectByCartId(Long cartId);
+
+    /**
+     * 根据购物车ID删除购物车项
+     * @param cartId 购物车ID
+     * @return 影响的行数
+     */
+    int deleteByCartId(Long cartId);
 }

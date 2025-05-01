@@ -62,13 +62,13 @@ public class CartController {
      * @return 操作结果
      */
     @PostMapping("/add")
-    public Result<Void> addToCart(@RequestBody Cart cart, HttpServletRequest request) {
+    public Result<Cart> addToCart(@RequestBody Cart cart, HttpServletRequest request) {
         Long userId = getUserIdFromRequest(request);
         if (userId == null) {
             return Result.error(Result.UNAUTHORIZED);
         }
-        cartService.addToCart(userId, cart.getProductId(), cart.getQuantity());
-        return Result.success();
+        Cart updatedCart = cartService.addToCart(userId, cart.getProductId(), cart.getQuantity());
+        return Result.success(updatedCart);
     }
 
     /**
@@ -89,19 +89,19 @@ public class CartController {
     }
 
     /**
-     * 从购物车中移除指定商品
-     * @param productId 要移除的商品ID
+     * 从购物车中移除指定商品项
+     * @param cartId 要移除的购物车项ID
      * @param request HTTP请求对象
      * @return 操作结果
      */
-    @DeleteMapping("/remove")
-    public Result<Void> removeFromCart(@PathVariable Long productId,
+    @DeleteMapping("/remove/{cartId}")
+    public Result<Void> removeFromCart(@PathVariable Long cartId,
                                        HttpServletRequest request) {
         Long userId = getUserIdFromRequest(request);
         if (userId == null) {
             return Result.error(Result.UNAUTHORIZED);
         }
-        cartService.removeFromCart(userId, productId);
+        cartService.removeFromCart(userId, cartId);
         return Result.success();
     }
 
@@ -110,7 +110,7 @@ public class CartController {
      * @param request HTTP请求对象
      * @return 操作结果
      */
-    @DeleteMapping("clear")
+    @DeleteMapping("/clear")
     public Result<Void> clearCart(HttpServletRequest request) {
         Long userId = getUserIdFromRequest(request);
         if (userId == null) {

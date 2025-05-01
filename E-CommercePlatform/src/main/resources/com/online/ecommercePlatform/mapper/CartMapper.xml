@@ -30,9 +30,12 @@
         WHERE cart_id = #{cartId}
     </update>
 
-    <delete id="deleteByUserIdAndProductId">
-        DELETE FROM cart
-        WHERE user_id = #{userId} AND product_id = #{productId}
+    <select id="selectByCartId" resultType="com.online.ecommercePlatform.pojo.Cart">
+        SELECT * FROM cart WHERE cart_id = #{cartId}
+    </select>
+
+    <delete id="deleteByCartId">
+        DELETE FROM cart WHERE cart_id = #{cartId}
     </delete>
 
     <delete id="deleteByUserId">

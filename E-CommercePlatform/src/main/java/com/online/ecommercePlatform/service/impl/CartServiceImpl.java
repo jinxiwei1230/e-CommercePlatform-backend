@@ -45,10 +45,11 @@ public class CartServiceImpl implements CartService {
      * @param userId 用户ID
      * @param productId 商品ID
      * @param quantity 要添加的商品数量
+     * @return 更新后的购物车记录
      */
     @Override
     @Transactional
-    public void addToCart(Long userId, Long productId, Integer quantity) {
+    public Cart addToCart(Long userId, Long productId, Integer quantity) {
         // 检查是否已存在该商品
         Cart existingCart = cartMapper.selectByUserIdAndProductId(userId, productId);
 
@@ -56,6 +57,7 @@ public class CartServiceImpl implements CartService {
             // 如果已存在，更新数量
             existingCart.setQuantity(existingCart.getQuantity() + quantity);
             cartMapper.updateQuantity(existingCart);
+            return existingCart;
         } else {
             // 不存在，新增记录
             Cart cart = new Cart();
@@ -64,6 +66,7 @@ public class CartServiceImpl implements CartService {
             cart.setQuantity(quantity);
             cart.setCreateTime(LocalDateTime.now());
             cartMapper.insert(cart);
+            return cart;
         }
     }
 
@@ -86,14 +89,19 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
-     * 从购物车中移除指定商品
+     * 从购物车中移除指定商品项
      * @param userId 用户ID
-     * @param productId 要移除的商品ID
+     * @param cartId 要移除的购物车项ID
      */
     @Override
     @Transactional
-    public void removeFromCart(Long userId, Long productId) {
-        cartMapper.deleteByUserIdAndProductId(userId, productId);
+    public void removeFromCart(Long userId, Long cartId) {
+        // 先验证该购物车项属于当前用户
+        Cart cart = cartMapper.selectByCartId(cartId);
+        if (cart == null || !cart.getUserId().equals(userId)) {
+            throw new RuntimeException("购物车项不存在或不属于当前用户");
+        }
+        cartMapper.deleteByCartId(cartId);
     }
 
     /**

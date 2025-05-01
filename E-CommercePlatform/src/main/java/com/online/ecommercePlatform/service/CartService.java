@@ -27,7 +27,7 @@ public interface CartService {
      * @param productId 商品ID
      * @param quantity 商品数量
      */
-    void addToCart(Long userId, Long productId, Integer quantity);
+    Cart addToCart(Long userId, Long productId, Integer quantity);
 
     /**
      * 更新购物车中商品的数量
@@ -40,9 +40,9 @@ public interface CartService {
     /**
      * 从购物车中移除指定商品
      * @param userId 用户ID
-     * @param productId 要移除的商品ID
+     * @param cartId 要移除的购物车项ID
      */
-    void removeFromCart(Long userId, Long productId);
+    void removeFromCart(Long userId, Long cartId);
 
     /**
      * 清空指定用户的购物车
