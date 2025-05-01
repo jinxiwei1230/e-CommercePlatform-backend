@@ -35,4 +35,24 @@ public interface CartMapper {
      * @return 受影响的行数
      */
     int updateQuantity(@Param("cartId") Long cartId, @Param("quantity") Integer quantity);
+    List<Cart> selectByUserId(Long userId);
+    Cart selectByUserIdAndProductId(Long userId, Long productId);
+    int insert(Cart cart);
+    int updateQuantity(Cart cart);
+    
+    int deleteByUserId(Long userId);
+
+    /**
+     * 根据购物车ID查询购物车项
+     * @param cartId 购物车ID
+     * @return 购物车项
+     */
+    Cart selectByCartId(Long cartId);
+
+    /**
+     * 根据购物车ID删除购物车项
+     * @param cartId 购物车ID
+     * @return 影响的行数
+     */
+    int deleteByCartId(Long cartId);
 }
