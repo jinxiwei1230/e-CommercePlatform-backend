@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
         claims.put("userId", user.getUserId().toString());
         String token = jwtUtil.generateToken(claims);
         
-        // 创建用户返回信息（只保留四个指定字段）
+        // 创建用户返回信息（只保留指定字段）
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("userId", user.getUserId());
         userMap.put("username", user.getUsername());

@@ -65,9 +65,9 @@ public class SecurityConfig {
                 // 允许OPTIONS预检请求
                 .requestMatchers("/**").permitAll()
                 // 允许所有人访问注册、登录等公开接口
-                .requestMatchers("/api/user/register", "/api/user/login").permitAll()
+                .requestMatchers("/api/user/register", "/api/user/login", "/admin/login").permitAll()
                 // 其他请求需要认证
-                .anyRequest().permitAll() // 临时设置为全部放行，方便测试
+                .anyRequest().permitAll() // 保持临时全部放行
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
