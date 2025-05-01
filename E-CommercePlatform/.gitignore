@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 logs/*.gz
+
+# 忽略所有 .log 文件
+*.log
