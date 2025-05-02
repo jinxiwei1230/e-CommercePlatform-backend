@@ -3,6 +3,7 @@ package com.online.ecommercePlatform.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -42,8 +43,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5174"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -60,22 +60,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 应用CORS配置
+            .csrf(csrf -> csrf.disable()) // 禁用CSRF
             .authorizeHttpRequests(auth -> auth
-                // 允许OPTIONS预检请求
-                .requestMatchers("/**").permitAll()
-                // 允许所有人访问注册、登录等公开接口
-                .requestMatchers("/api/user/register", "/api/user/login", "/admin/login").permitAll()
-                // 其他请求需要认证
-                .anyRequest().permitAll() // 保持临时全部放行
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 明确允许所有OPTIONS预检请求
+                .requestMatchers("/api/user/register", "/api/user/login", "/api/admin/login").permitAll() // 允许注册和登录
+                .requestMatchers("/api/products/**", "/api/categories/**").permitAll() // 允许公共产品和分类接口
+                .requestMatchers("/doc.html", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v3/api-docs/**").permitAll() // 允许Swagger文档
+                .anyRequest().authenticated() // 其他所有请求都需要认证 (修改这里以强制认证其他接口)
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 无状态Session
             )
             // 添加JWT认证过滤器
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         return http.build();
     }
 } 
