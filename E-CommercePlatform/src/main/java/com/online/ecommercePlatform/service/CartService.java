@@ -1,13 +1,6 @@
 package com.online.ecommercePlatform.service;
 
-import com.online.ecommercePlatform.dto.CartAddDTO;
-import com.online.ecommercePlatform.dto.CartAddResponseDTO;
-import com.online.ecommercePlatform.pojo.PageBean;
-import com.online.ecommercePlatform.pojo.Product;
-import com.online.ecommercePlatform.pojo.Result;
-import com.online.ecommercePlatform.dto.CartCheckoutDTO;
 import com.online.ecommercePlatform.pojo.Cart;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 /**
@@ -51,10 +44,4 @@ public interface CartService {
      */
     void clearCart(Long userId);
 
-    /**
-     * 购物车结算
-     * @param userId 用户ID
-     * @return 结算信息
-     */
-    CartCheckoutDTO checkout(Long userId);
 }

@@ -1,13 +1,9 @@
 package com.online.ecommercePlatform.service.impl;
 
-import com.online.ecommercePlatform.dto.CartAddDTO;
-import com.online.ecommercePlatform.dto.CartAddResponseDTO;
-import com.online.ecommercePlatform.dto.CartCheckoutDTO;
 import com.online.ecommercePlatform.mapper.CartMapper;
 import com.online.ecommercePlatform.mapper.ProductMapper;
 import com.online.ecommercePlatform.pojo.Cart;
 import com.online.ecommercePlatform.pojo.Product;
-import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +22,6 @@ public class CartServiceImpl implements CartService {
     
     @Autowired
     private ProductMapper productMapper;
-
 
     /**
      * 根据用户ID查询购物车列表
@@ -112,59 +107,61 @@ public class CartServiceImpl implements CartService {
         cartMapper.deleteByUserId(userId);
     }
 
-    @Override
-    @Transactional
-    public CartCheckoutDTO checkout(Long userId) {
-        // 1. 获取用户购物车列表
-        List<Cart> cartItems = cartMapper.selectByUserId(userId);
-        if (cartItems == null || cartItems.isEmpty()) {
-            throw new RuntimeException("购物车为空，无法结算");
-        }
+//    @Override
+//    @Transactional
+//    public CartCheckoutDTO checkout(Long userId) {
+//        // 1. 获取用户购物车列表
+//        List<Cart> cartItems = cartMapper.selectByUserId(userId);
+//        if (cartItems == null || cartItems.isEmpty()) {
+//            throw new RuntimeException("购物车为空，无法结算");
+//        }
+//
+//        // 2. 构建结算DTO
+//        CartCheckoutDTO checkoutDTO = new CartCheckoutDTO();
+//        BigDecimal totalAmount = BigDecimal.ZERO;
+//        BigDecimal totalFreight = BigDecimal.ZERO;
+//
+//        // 3. 遍历购物车商品
+//        for (Cart cartItem : cartItems) {
+//            Product product = productMapper.findById(cartItem.getProductId());
+//            if (product == null) {
+//                throw new RuntimeException("商品ID:" + cartItem.getProductId() + "不存在");
+//            }
+//
+//            // 检查库存
+//            if (product.getStock() < cartItem.getQuantity()) {
+//                throw new RuntimeException("商品:" + product.getName() + "库存不足");
+//            }
+//
+//            // 计算商品小计和运费
+//            BigDecimal price = BigDecimal.valueOf(product.getPrice());
+//            BigDecimal subtotal = price.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+//            BigDecimal freight = BigDecimal.valueOf(product.getFreight());
+//
+//            // 构建商品项DTO
+//            CartCheckoutDTO.CartItemDTO itemDTO = new CartCheckoutDTO.CartItemDTO();
+//            itemDTO.setProductId(product.getProductId());
+//            itemDTO.setProductName(product.getName());
+//            itemDTO.setQuantity(cartItem.getQuantity());
+//            itemDTO.setPrice(price);
+//            itemDTO.setSubtotal(subtotal);
+//            itemDTO.setFreight(freight);
+//
+//            checkoutDTO.getItems().add(itemDTO);
+//            totalAmount = totalAmount.add(subtotal);
+//            totalFreight = totalFreight.add(freight);
+//        }
+//
+//        // 4. 设置结算总金额
+//        checkoutDTO.setTotalAmount(totalAmount);
+//        checkoutDTO.setTotalFreight(totalFreight);
+//        checkoutDTO.setPaymentAmount(totalAmount.add(totalFreight));
+//
+//        return checkoutDTO;
+//    }
 
-        // 2. 构建结算DTO
-        CartCheckoutDTO checkoutDTO = new CartCheckoutDTO();
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        BigDecimal totalFreight = BigDecimal.ZERO;
 
-        // 3. 遍历购物车商品
-        for (Cart cartItem : cartItems) {
-            Product product = productMapper.findById(cartItem.getProductId());
-            if (product == null) {
-                throw new RuntimeException("商品ID:" + cartItem.getProductId() + "不存在");
-            }
 
-            // 检查库存
-            if (product.getStock() < cartItem.getQuantity()) {
-                throw new RuntimeException("商品:" + product.getName() + "库存不足");
-            }
-
-            // 计算商品小计和运费
-            BigDecimal price = BigDecimal.valueOf(product.getPrice());
-            BigDecimal subtotal = price.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
-            BigDecimal freight = BigDecimal.valueOf(product.getFreight());
-
-            // 构建商品项DTO
-            CartCheckoutDTO.CartItemDTO itemDTO = new CartCheckoutDTO.CartItemDTO();
-            itemDTO.setProductId(product.getProductId());
-            itemDTO.setProductName(product.getName());
-            itemDTO.setQuantity(cartItem.getQuantity());
-            itemDTO.setPrice(price);
-            itemDTO.setSubtotal(subtotal);
-            itemDTO.setFreight(freight);
-
-            checkoutDTO.getItems().add(itemDTO);
-            totalAmount = totalAmount.add(subtotal);
-            totalFreight = totalFreight.add(freight);
-        }
-
-        // 4. 设置结算总金额
-        checkoutDTO.setTotalAmount(totalAmount);
-        checkoutDTO.setTotalFreight(totalFreight);
-        checkoutDTO.setPaymentAmount(totalAmount.add(totalFreight));
-
-        return checkoutDTO;
-    }
-    
 //    /**
 //     * 将商品添加到购物车
 //     * @param userId 用户ID

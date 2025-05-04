@@ -3,6 +3,7 @@ package com.online.ecommercePlatform.mapper;
 import com.online.ecommercePlatform.pojo.Address;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -11,7 +12,6 @@ import java.util.List;
  */
 @Mapper
 public interface AddressMapper {
-    
     /**
      * 根据用户ID查询地址列表
      * @param userId 用户ID
