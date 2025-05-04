@@ -12,7 +12,8 @@
             pi.image_url as mainImageUrl,
             p.price as sellingPrice,
             p.description as briefDescription,
-            p.sales as sales
+            p.sales as sales,
+            p.stock as stock
         FROM product p
                  LEFT JOIN productimage pi ON
             p.product_id = pi.product_id AND
@@ -68,7 +69,8 @@
             pi.image_url as mainImageUrl,
             p.price as sellingPrice,
             p.description as briefDescription,
-            p.sales as sales
+            p.sales as sales,
+            p.stock as stock
         FROM product p
                  LEFT JOIN productimage pi ON
             p.product_id = pi.product_id AND
