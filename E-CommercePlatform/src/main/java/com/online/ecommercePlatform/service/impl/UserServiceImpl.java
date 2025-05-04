@@ -229,6 +229,9 @@ public class UserServiceImpl implements UserService {
             user.setGender(updateDTO.getGender());
         }
         
+        if (updateDTO.getAge() != null) {
+            user.setAge(updateDTO.getAge());
+        }
         
         // 6. 设置更新时间
         user.setUpdateTime(LocalDateTime.now());

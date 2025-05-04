@@ -24,5 +24,7 @@ public class UserUpdateDTO {
     
     private String gender;
     
+    private Integer age;
+    
     private String address;
 } 
