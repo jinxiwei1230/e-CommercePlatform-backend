@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.online.ecommercePlatform.mapper.OrderMapper">
+
+    <!-- 查询购物车商品信息 -->
+    <select id="getCartItemsForCheckout" resultType="com.online.ecommercePlatform.dto.CheckoutItemDTO">
+        SELECT c.cart_id, c.product_id, p.name, c.quantity, p.price AS unit_price, p.stock, p.freight
+        FROM Cart c
+                 JOIN Product p ON c.product_id = p.product_id
+        WHERE c.user_id = #{userId} AND c.cart_id IN (${cartIds})
+    </select>
+
+    <!-- 查询用户的所有地址 -->
+    <select id="getUserAddresses" resultType="com.online.ecommercePlatform.pojo.Address">
+        SELECT address_id, recipient_name, phone, address_detail, city, state, postal_code, is_default
+        FROM Address
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 查询用户可用的优惠券 -->
+    <select id="getAvailableCoupons" resultType="com.online.ecommercePlatform.pojo.Coupon">
+        SELECT c.coupon_id, c.type, c.discount_value, c.min_order_amount
+        FROM Coupon c
+                 JOIN CouponDistribution cd ON c.coupon_id = cd.coupon_id
+        WHERE cd.user_id = #{userId} AND c.status = '未使用'
+          AND c.start_time &lt;= NOW() AND c.end_time &gt;= NOW()
+          AND c.min_order_amount &lt;= #{totalAmount}
+    </select>
+
+    <!-- 查询用户名 -->
+    <select id="getUsernameByUserId" resultType="java.lang.String">
+        SELECT username FROM `User` WHERE user_id = #{userId}
+    </select>
+
+    <!-- 插入订单 -->
+    <insert id="insertOrder" parameterType="com.online.ecommercePlatform.pojo.Order" useGeneratedKeys="true" keyProperty="orderId">
+        INSERT INTO `Order` (user_id, total_amount, status, payment_method, coupon_id, address_id, discount_amount, remark, create_time)
+        VALUES (#{userId}, #{totalAmount}, #{status}, #{paymentMethod}, #{couponId}, #{addressId}, #{discountAmount}, #{remark}, NOW())
+    </insert>
+
+    <!-- 查询订单创建时间 -->
+    <select id="getOrderCreateTime" resultType="java.sql.Timestamp">
+        SELECT create_time FROM `Order` WHERE order_id = #{orderId}
+    </select>
+
+    <!-- 插入订单明细 -->
+    <insert id="insertOrderDetail" parameterType="com.online.ecommercePlatform.pojo.OrderDetail">
+        INSERT INTO OrderDetail (order_id, product_id, quantity, unit_price, create_time)
+        VALUES (#{orderId}, #{productId}, #{quantity}, #{unitPrice}, NOW())
+    </insert>
+
+    <!-- 更新商品库存和销量 -->
+    <update id="updateProductStockAndSales">
+        UPDATE Product
+        SET stock = stock - #{quantity}, sales = sales + #{quantity}
+        WHERE product_id = #{productId} AND stock >= #{quantity}
+    </update>
+
+    <!-- 恢复商品库存和销量 -->
+    <update id="restoreProductStockAndSales">
+        UPDATE Product
+        SET stock = stock + #{quantity}, sales = sales - #{quantity}
+        WHERE product_id = #{productId}
+    </update>
+
+    <!-- 删除购物车商品 -->
+    <delete id="deleteCartItems">
+        DELETE FROM Cart
+        WHERE cart_id IN (${cartIds}) AND user_id = #{userId}
+    </delete>
+
+    <!-- 更新优惠券状态 -->
+    <update id="updateCouponStatus">
+        UPDATE Coupon
+        SET status = '已使用', update_time = NOW()
+        WHERE coupon_id = #{couponId} AND status = '未使用'
+    </update>
+
+    <!-- 查询订单状态 -->
+    <select id="getOrderStatus" resultType="java.lang.String">
+        SELECT status FROM `Order` WHERE order_id = #{orderId} AND user_id = #{userId}
+    </select>
+
+<!--    &lt;!&ndash; 查询订单信息（用于支付状态等） &ndash;&gt;-->
+<!--    <select id="getOrder" resultType="com.online.ecommercePlatform.pojo.Order">-->
+<!--        SELECT order_id, status, update_time, payment_method, total_amount, payment_url, qr_code-->
+<!--        FROM `Order`-->
+<!--        WHERE order_id = #{orderId} AND user_id = #{userId}-->
+<!--    </select>-->
+
+    <select id="getOrder" resultType="com.online.ecommercePlatform.pojo.Order">
+        SELECT order_id, user_id, total_amount, status, payment_method, payment_url, qr_code, coupon_id,
+        address_id, discount_amount, freight, remark, create_time, update_time
+        FROM `Order`
+        WHERE order_id = #{orderId}
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+    </select>
+
+    <!-- 更新订单支付信息 -->
+    <update id="updateOrderPaymentDetails" parameterType="com.online.ecommercePlatform.pojo.Order">
+        UPDATE `Order`
+        SET payment_method = #{paymentMethod}, payment_url = #{paymentUrl}, qr_code = #{qrCode}, update_time = NOW()
+        WHERE order_id = #{orderId}
+    </update>
+
+    <!-- 更新订单状态 -->
+    <update id="updateOrderStatus">
+        UPDATE `Order`
+        SET status = #{status}, update_time = NOW()
+        WHERE order_id = #{orderId} AND user_id = #{userId}
+    </update>
+
+    <!-- 查询订单明细（用于取消订单和退款时恢复库存） -->
+    <select id="getOrderDetailsByOrderId" resultType="com.online.ecommercePlatform.pojo.OrderDetail">
+        SELECT product_id, quantity FROM OrderDetail WHERE order_id = #{orderId}
+    </select>
+
+    <!-- 查询用户订单列表 -->
+    <select id="getUserOrders" resultType="com.online.ecommercePlatform.dto.OrderSummaryDTO">
+        <include refid="selectUserOrdersSql"/>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        ORDER BY create_time DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <sql id="selectUserOrdersSql">
+        SELECT order_id, CONCAT('ORDER', DATE_FORMAT(create_time, '%Y%m%d'), LPAD(order_id, 4, '0')) AS order_no,
+               total_amount, status, create_time
+        FROM `Order` WHERE user_id = #{userId}
+    </sql>
+
+    <!-- 查询订单总数 -->
+    <select id="getUserOrdersCount" resultType="java.lang.Long">
+        <include refid="selectUserOrdersCountSql"/>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <sql id="selectUserOrdersCountSql">
+        SELECT COUNT(*) FROM `Order` WHERE user_id = #{userId}
+    </sql>
+
+    <!-- 查询订单商品预览 -->
+    <select id="getOrderProductPreview" resultType="com.online.ecommercePlatform.dto.ProductPreviewDTO">
+        SELECT od.product_id, p.name, od.quantity
+        FROM OrderDetail od
+                 JOIN Product p ON od.product_id = p.product_id
+        WHERE od.order_id = #{orderId}
+    </select>
+
+    <!-- 查询订单详情 -->
+    <select id="getOrderDetail" resultType="com.online.ecommercePlatform.dto.OrderDetailDTO">
+        SELECT order_id, CONCAT('ORDER', DATE_FORMAT(create_time, '%Y%m%d'), LPAD(order_id, 4, '0')) AS order_no,
+               total_amount, status, payment_method, discount_amount, freight, remark, create_time, update_time
+        FROM `Order` WHERE order_id = #{orderId} AND user_id = #{userId}
+    </select>
+
+    <!-- 查询订单商品详情 -->
+    <select id="getOrderItems" resultType="com.online.ecommercePlatform.dto.OrderItemDTO">
+        SELECT od.product_id, p.name, od.unit_price AS price, od.quantity, (od.unit_price * od.quantity) AS total_price
+        FROM OrderDetail od
+                 JOIN Product p ON od.product_id = p.product_id
+        WHERE od.order_id = #{orderId}
+    </select>
+
+    <!-- 查询订单地址 -->
+    <select id="getOrderAddress" resultType="com.online.ecommercePlatform.pojo.Address">
+        SELECT a.address_id, a.recipient_name, a.phone, a.address_detail, a.city, a.state, a.postal_code, a.is_default
+        FROM Address a
+                 JOIN `Order` o ON a.address_id = o.address_id
+        WHERE o.order_id = #{orderId}
+    </select>
+
+    <!-- 查询订单优惠券 -->
+    <select id="getOrderCoupon" resultType="com.online.ecommercePlatform.pojo.Coupon">
+        SELECT c.coupon_id, c.type, c.discount_value, c.min_order_amount
+        FROM Coupon c
+                 JOIN `Order` o ON c.coupon_id = o.coupon_id
+        WHERE o.order_id = #{orderId}
+    </select>
+
+    <!-- 插入退款申请 -->
+    <insert id="insertRefund" parameterType="com.online.ecommercePlatform.pojo.Refund" useGeneratedKeys="true" keyProperty="refundId">
+        INSERT INTO Refund (order_id, user_id, reason, refund_amount, type, status, create_time)
+        VALUES (#{orderId}, #{userId}, #{reason}, #{refundAmount}, #{type}, '处理中', NOW())
+    </insert>
+
+    <!-- 插入操作日志 -->
+    <insert id="insertOperationLog" parameterType="com.online.ecommercePlatform.pojo.OperationLog">
+        INSERT INTO OperationLog (user_id, action, target_table, target_id, description, result, create_time)
+        VALUES (#{userId}, #{action}, #{targetTable}, #{targetId}, #{description}, #{result}, NOW())
+    </insert>
+
+    <!-- 查询用户角色 -->
+    <select id="getRoleByUserId" resultType="java.lang.String">
+        SELECT role FROM `User` WHERE user_id = #{userId}
+    </select>
+
+</mapper>
