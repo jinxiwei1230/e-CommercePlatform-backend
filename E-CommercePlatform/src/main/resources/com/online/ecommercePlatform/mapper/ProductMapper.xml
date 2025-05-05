@@ -12,10 +12,9 @@
             pi.image_url as mainImageUrl,
             p.price as sellingPrice,
             p.description as briefDescription,
-            p.sales as sales,
-            p.stock as stock
-        FROM product p
-                 LEFT JOIN productimage pi ON
+            p.sales as sales
+        FROM Product p
+                 LEFT JOIN ProductImage pi ON
             p.product_id = pi.product_id AND
             pi.is_main = true
         ORDER BY p.sales DESC
@@ -27,22 +26,22 @@
         WITH RECURSIVE category_tree AS (
             -- 初始查询：顶级类别
             SELECT category_id, name, parent_id
-            FROM category
+            FROM Category
             WHERE parent_id = 0
             UNION ALL
             -- 递归查询：所有子类别
             SELECT c.category_id, c.name, c.parent_id
-            FROM category c
+            FROM Category c
                      INNER JOIN category_tree ct ON c.parent_id = ct.category_id
         )
         SELECT
             c.category_id as categoryId,
             c.name as categoryName
-        FROM category c
+        FROM Category c
                  INNER JOIN (
             SELECT ct.category_id as top_category_id, SUM(p.sales) as total_sales
-            FROM category_tree ct
-                     LEFT JOIN product p ON p.category_id = ct.category_id
+            FROM Category_tree ct
+                     LEFT JOIN Product p ON p.category_id = ct.category_id
             WHERE ct.parent_id = 0  -- 只取顶级类别
             GROUP BY ct.category_id
             ORDER BY total_sales DESC
@@ -69,10 +68,9 @@
             pi.image_url as mainImageUrl,
             p.price as sellingPrice,
             p.description as briefDescription,
-            p.sales as sales,
-            p.stock as stock
-        FROM product p
-                 LEFT JOIN productimage pi ON
+            p.sales as sales
+        FROM Product p
+                 LEFT JOIN ProductImage pi ON
             p.product_id = pi.product_id AND
             pi.is_main = true
         WHERE p.category_id IN (SELECT category_id FROM category_tree)
@@ -99,8 +97,8 @@
         p.create_time,
         p.update_time,
         pi.image_url as image
-        FROM product p
-        LEFT JOIN productimage pi ON p.product_id = pi.product_id AND pi.is_main = true
+        FROM Product p
+        LEFT JOIN ProductImage pi ON p.product_id = pi.product_id AND pi.is_main = true
         WHERE p.category_id IN (SELECT category_id FROM category_tree)
         <if test="minPrice != null">
             AND p.price &gt;= #{minPrice}
@@ -135,7 +133,7 @@
         INNER JOIN category_tree ct ON c.parent_id = ct.category_id
         )
         SELECT COUNT(*)
-        FROM product p
+        FROM Product p
         WHERE p.category_id IN (SELECT category_id FROM category_tree)
         <if test="minPrice != null">
             AND p.price &gt;= #{minPrice}
@@ -156,8 +154,8 @@
         p.create_time,
         p.update_time,
         pi.image_url as image
-        FROM product p
-        LEFT JOIN productimage pi ON p.product_id = pi.product_id AND pi.is_main = true
+        FROM Product p
+        LEFT JOIN ProductImage pi ON p.product_id = pi.product_id AND pi.is_main = true
         WHERE 1=1
         <if test="minPrice != null">
             AND p.price &gt;= #{minPrice}
@@ -178,7 +176,7 @@
     <!-- 统计所有商品数量 -->
     <select id="countAllProducts" resultType="int">
         SELECT COUNT(*)
-        FROM product p
+        FROM Product p
         WHERE 1=1
         <if test="minPrice != null">
             AND p.price &gt;= #{minPrice}
@@ -201,9 +199,9 @@
             p.category_id as categoryId,
             c.name as categoryName
         FROM 
-            product p
+            Product p
         LEFT JOIN 
-            category c ON p.category_id = c.category_id
+            Category c ON p.category_id = c.category_id
         WHERE 
             p.product_id = #{productId}
     </select>
@@ -216,12 +214,18 @@
             sort_order,
             is_main
         FROM 
-            productimage
+            ProductImage
         WHERE 
             product_id = #{productId}
         ORDER BY 
             is_main DESC, sort_order ASC
     </select>
+
+    <!-- 新增：插入商品图片 -->
+    <insert id="insertProductImage" parameterType="com.online.ecommercePlatform.pojo.ProductImage" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ProductImage (product_id, image_url, sort_order, is_main, created_time)
+        VALUES (#{productId}, #{imageUrl}, #{sortOrder}, #{isMain}, #{createdTime})
+    </insert>
 
 </mapper>
 

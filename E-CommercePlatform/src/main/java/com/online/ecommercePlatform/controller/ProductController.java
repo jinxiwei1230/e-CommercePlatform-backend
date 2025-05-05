@@ -5,6 +5,7 @@ import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
 import com.online.ecommercePlatform.dto.ProductDTO;
 import com.online.ecommercePlatform.dto.ProductDetailDTO;
 import com.online.ecommercePlatform.dto.ProductQueryDTO;
+import com.online.ecommercePlatform.dto.ImageUploadDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
@@ -129,6 +130,22 @@ public class ProductController {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error(Result.SERVER_ERROR, "获取商品详情失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 上传商品图片 (Base64 方式)
+     * @param imageUploadDTO 包含 productId 和 imageDataWithPrefix
+     * @return 操作结果
+     */
+    @PostMapping("/images/upload") // 定义上传接口路径
+    public Result<?> uploadProductImageBase64(@RequestBody ImageUploadDTO imageUploadDTO) {
+         try {
+            // 调用 Service 层处理上传逻辑
+            return productService.uploadProductImage(imageUploadDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(Result.SERVER_ERROR, "图片上传失败: " + e.getMessage());
         }
     }
 }

@@ -2,6 +2,7 @@ package com.online.ecommercePlatform.mapper;
 import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
 import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
 import com.online.ecommercePlatform.dto.ProductDTO;
+import com.online.ecommercePlatform.pojo.ProductImage;
 import org.apache.ibatis.annotations.Param;
 import com.online.ecommercePlatform.pojo.Product;
 import org.apache.ibatis.annotations.Mapper;
@@ -111,6 +112,12 @@ public interface ProductMapper {
      * @return 图片列表
      */
     List<Map<String, Object>> getProductImages(@Param("productId") Long productId);
+
+    /**
+     * 插入新的商品图片
+     * @param productImage 商品图片对象 (包含 Base64 Data URL)
+     */
+    void insertProductImage(ProductImage productImage);
 
     /**
      * 插入新的商品

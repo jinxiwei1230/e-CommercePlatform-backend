@@ -31,7 +31,9 @@ public class ProductDetailDTO {
     @AllArgsConstructor
     public static class ProductImageDTO {
         private String imageId;   // 图片ID
-        private String imageUrl;  // 图片URL
+        // 注意：此字段包含完整的 Base64 Data URL
+        private String imageUrl;  // 图片URL (Base64 Data URL)
         private Integer sortOrder; // 排序
+        private Boolean isMain;    // 是否为主图
     }
 } 

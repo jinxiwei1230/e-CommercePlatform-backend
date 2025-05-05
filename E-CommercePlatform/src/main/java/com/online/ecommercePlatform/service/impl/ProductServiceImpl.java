@@ -1,18 +1,17 @@
 package com.online.ecommercePlatform.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
-import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
-import com.online.ecommercePlatform.dto.ProductDTO;
-import com.online.ecommercePlatform.dto.ProductDetailDTO;
-import com.online.ecommercePlatform.dto.ProductQueryDTO;
+import com.online.ecommercePlatform.dto.*;
 import com.online.ecommercePlatform.pojo.Product;
+import com.online.ecommercePlatform.pojo.ProductImage;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.ProductService;
 import com.online.ecommercePlatform.mapper.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -72,15 +71,28 @@ public class ProductServiceImpl implements ProductService {
                 detailDTO.setCategoryName(categoryName.toString());
             }
             
-            // 转换图片列表
+            // 转换图片列表 (这里的 imageUrl 已经是 Base64 Data URL)
             if (productImages != null && !productImages.isEmpty()) {
                 List<ProductDetailDTO.ProductImageDTO> imageDTOs = productImages.stream()
                         .map(image -> {
                             ProductDetailDTO.ProductImageDTO imageDTO = new ProductDetailDTO.ProductImageDTO();
                             imageDTO.setImageId(String.valueOf(image.get("id")));
-                            imageDTO.setImageUrl((String) image.get("image_url"));
-                            Integer sortOrder = (Integer) image.get("sort_order");
-                            imageDTO.setSortOrder(sortOrder != null ? sortOrder : 0);
+                            // 直接使用从数据库获取的 imageUrl (Base64 Data URL)
+                            imageDTO.setImageUrl((String) image.get("image_url")); 
+                            Integer sortOrder = image.get("sort_order") instanceof Number ? ((Number)image.get("sort_order")).intValue() : 0;
+                            imageDTO.setSortOrder(sortOrder);
+                            
+                            // 获取并设置 isMain 字段
+                            Object isMainObj = image.get("is_main"); // 从 Map 中获取 is_main 列的值
+                            Boolean isMain = false; // 默认值
+                            if (isMainObj instanceof Boolean) {
+                                isMain = (Boolean) isMainObj;
+                            } else if (isMainObj instanceof Number) {
+                                // 处理数据库返回 0 或 1 的情况 (例如 TINYINT(1))
+                                isMain = ((Number) isMainObj).intValue() != 0;
+                            }
+                            imageDTO.setIsMain(isMain); // 设置到 DTO
+                            
                             return imageDTO;
                         })
                         .collect(Collectors.toList());
@@ -218,6 +230,50 @@ public class ProductServiceImpl implements ProductService {
                     queryDTO.getMinPrice(),
                     queryDTO.getMaxPrice()
             );
+        }
+    }
+
+    @Override
+    @Transactional // 添加事务注解，确保操作原子性
+    public Result<?> uploadProductImage(ImageUploadDTO imageUploadDTO) {
+        // 验证 productId 和 imageData
+        if (imageUploadDTO == null || imageUploadDTO.getProductId() == null || imageUploadDTO.getImageDataWithPrefix() == null || imageUploadDTO.getImageDataWithPrefix().isEmpty()) {
+            return Result.error(Result.BAD_REQUEST, "商品ID和图片数据不能为空");
+        }
+        // 简单验证 Data URL 格式 (可选但推荐)
+        if (!imageUploadDTO.getImageDataWithPrefix().startsWith("data:image")) {
+             return Result.error(Result.BAD_REQUEST, "无效的图片数据格式");
+        }
+
+        try {
+            // 检查商品是否存在 (可选)
+            // Product product = productMapper.findById(imageUploadDTO.getProductId());
+            // if (product == null) {
+            //     return Result.error(Result.NOT_FOUND, "关联的商品不存在");
+            // }
+            
+            // 1. 创建 ProductImage 实体
+            ProductImage productImage = new ProductImage();
+            productImage.setProductId(imageUploadDTO.getProductId());
+            productImage.setImageUrl(imageUploadDTO.getImageDataWithPrefix()); // 直接存储完整的 Data URL
+            
+            // 处理 sortOrder 和 isMain (如果 DTO 中提供了值，则使用；否则使用默认值)
+            productImage.setSortOrder(imageUploadDTO.getSortOrder() != null ? imageUploadDTO.getSortOrder() : 0); // 默认排序 0
+            productImage.setIsMain(imageUploadDTO.getIsMain() != null ? imageUploadDTO.getIsMain() : false); // 默认非主图
+            
+            productImage.setCreatedTime(LocalDateTime.now()); // 设置创建时间
+
+            // 2. 保存到数据库
+            productMapper.insertProductImage(productImage);
+
+            // 可以返回成功信息或者新图片的ID
+            return Result.success("图片上传成功"); 
+            // return Result.success(productImage.getId()); // 如果需要返回ID，确保insertProductImage后能获取到ID
+
+        } catch (Exception e) { // 捕获更广泛的异常，例如数据库错误
+            e.printStackTrace(); // 记录错误日志
+            // Consider rolling back the transaction if using @Transactional
+            return Result.error(Result.SERVER_ERROR, "保存图片时发生错误: " + e.getMessage());
         }
     }
 }
