@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.online.ecommercePlatform.pojo.Product;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +18,6 @@ import java.util.Map;
  */
 @Mapper
 public interface ProductMapper {
-
     /**
      * 查询热门商品基础信息
      * @param limit 查询条数

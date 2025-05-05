@@ -47,4 +47,54 @@ public class CategoryController {
         List<Category> cs = categoryService.getCategories(false);
         return Result.success(cs);
     }
+
+    /**
+     * 创建子分类
+     * POST /api/category/subcategory
+     * @param parentId 父分类ID
+     * @param name 子分类名称
+     * @return 操作结果
+     */
+    @PostMapping("/category/subcategory")
+    public Result<String> createSubCategory(@RequestParam Long parentId, @RequestParam String name) {
+        try {
+            categoryService.createSubCategory(parentId, name);
+            return Result.success("子分类创建成功");
+        } catch (IllegalArgumentException e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 删除分类
+     * DELETE /api/category/{categoryId}
+     * @param categoryId 要删除的分类ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/category/{categoryId}")
+    public Result<String> deleteCategory(@PathVariable Long categoryId) {
+        try {
+            categoryService.deleteCategory(categoryId);
+            return Result.success("分类删除成功");
+        } catch (IllegalArgumentException e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 修改分类名称
+     * PUT /api/category/{categoryId}/name
+     * @param categoryId 分类ID
+     * @param newName 新名称
+     * @return 操作结果
+     */
+    @PutMapping("/category/{categoryId}/name")
+    public Result<String> updateCategoryName(@PathVariable Long categoryId, @RequestParam String newName) {
+        try {
+            categoryService.updateCategoryName(categoryId, newName);
+            return Result.success("分类名称更新成功");
+        } catch (IllegalArgumentException e) {
+            return Result.error(e.getMessage());
+        }
+    }
 }

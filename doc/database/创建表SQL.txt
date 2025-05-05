@@ -100,7 +100,7 @@ CREATE TABLE `Order` (
     order_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 订单唯一标识
     user_id BIGINT NOT NULL,  -- 用户 ID
     total_amount DECIMAL(10,2) NOT NULL,  -- 订单总金额
-    status ENUM('待支付', '已支付', '已发货', '已完成', '已退款') NOT NULL,  -- 订单状态
+    status ENUM('待支付', '已支付', '已发货', '已完成', '已退款', '待退款') NOT NULL,  -- 订单状态
     payment_method VARCHAR(50),  -- 支付方式
     coupon_id BIGINT,  -- 订单使用的优惠券 ID
     discount_amount DECIMAL(10,2) DEFAULT 1,  -- 订单折扣

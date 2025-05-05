@@ -2,6 +2,7 @@ package com.online.ecommercePlatform.mapper;
 
 import com.online.ecommercePlatform.pojo.Cart;
 import com.online.ecommercePlatform.pojo.Product;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

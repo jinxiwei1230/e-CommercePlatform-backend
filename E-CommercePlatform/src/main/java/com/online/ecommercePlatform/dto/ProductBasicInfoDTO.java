@@ -32,4 +32,8 @@ public class ProductBasicInfoDTO {
     @Schema(description = "商品销量", example = "20000")
     @Min(value = 0, message = "销量不能为负数")
     private Integer sales;
+
+    @Schema(description = "商品库存", example = "20000")
+    @Min(value = 0, message = "销量不能为负数")
+    private Integer stock;
 }

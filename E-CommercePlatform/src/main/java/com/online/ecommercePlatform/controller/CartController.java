@@ -1,24 +1,13 @@
 package com.online.ecommercePlatform.controller;
 
-import com.online.ecommercePlatform.dto.CartAddDTO;
-import com.online.ecommercePlatform.dto.CartAddResponseDTO;
-import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.CartService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.online.ecommercePlatform.dto.CartCheckoutDTO;
 import com.online.ecommercePlatform.dto.CartDTO;
 import com.online.ecommercePlatform.pojo.Cart;
-import com.online.ecommercePlatform.pojo.Product;
-import com.online.ecommercePlatform.pojo.Result;
-import com.online.ecommercePlatform.service.CartService;
 import com.online.ecommercePlatform.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -120,24 +109,25 @@ public class CartController {
         return Result.success();
     }
 
-    /**
-     * 购物车结算
-     * @param request HTTP请求对象
-     * @return 结算信息
-     */
-    @PostMapping("/checkout")
-    public Result<CartCheckoutDTO> checkout(HttpServletRequest request) {
-        Long userId = getUserIdFromRequest(request);
-        if (userId == null) {
-            return Result.error(Result.UNAUTHORIZED);
-        }
-        try {
-            CartCheckoutDTO checkoutDTO = cartService.checkout(userId);
-            return Result.success(checkoutDTO);
-        } catch (RuntimeException e) {
-            return Result.error(e.getMessage());
-        }
-    }
+//    /**
+//     * 购物车结算
+//     * @param request HTTP请求对象
+//     * @return 结算信息
+//     */
+//    @PostMapping("/checkout")
+//    public Result<CartCheckoutDTO> checkout(HttpServletRequest request) {
+//        Long userId = getUserIdFromRequest(request);
+//        if (userId == null) {
+//            return Result.error(Result.UNAUTHORIZED);
+//        }
+//        try {
+//            CartCheckoutDTO checkoutDTO = cartService.checkout(userId);
+//            return Result.success(checkoutDTO);
+//        } catch (RuntimeException e) {
+//            return Result.error(e.getMessage());
+//        }
+//    }
+
 
     /**
      * 从请求头中解析并验证token，获取用户ID
