@@ -1,9 +1,5 @@
 package com.online.ecommercePlatform.service;
-import com.online.ecommercePlatform.dto.CategoryHotProductsDTO;
-import com.online.ecommercePlatform.dto.ProductBasicInfoDTO;
-import com.online.ecommercePlatform.dto.ProductDTO;
-import com.online.ecommercePlatform.dto.ProductDetailDTO;
-import com.online.ecommercePlatform.dto.ProductQueryDTO;
+import com.online.ecommercePlatform.dto.*;
 import com.online.ecommercePlatform.mapper.ProductMapper;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
@@ -30,6 +26,13 @@ public interface ProductService {
      * @return 包含商品详情的Result对象
      */
     Result<ProductDetailDTO> getProductDetail(Long productId);
+
+    /**
+     * 上传并保存商品图片
+     * @param imageUploadDTO 包含 productId 和 Base64 Data URL 的 DTO
+     * @return 操作结果
+     */
+    Result<?> uploadProductImage(ImageUploadDTO imageUploadDTO);
 
     /**
      * 产品服务接口，定义管理员可以执行的产品管理操作

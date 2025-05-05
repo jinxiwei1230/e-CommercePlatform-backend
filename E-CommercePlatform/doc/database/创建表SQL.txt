@@ -61,7 +61,7 @@ CREATE TABLE Product (
     description TEXT,  -- 商品简介
     price DECIMAL(10,2) NOT NULL,  -- 单价
     stock INT NOT NULL,  -- 库存数量
-		sales INT DEFAULT 0,  -- 销量
+	sales INT DEFAULT 0,  -- 销量
     freight DECIMAL(10,2) DEFAULT 0,  -- 运费
     category_id BIGINT NOT NULL,  -- 所属分类 ID
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
@@ -154,7 +154,7 @@ CREATE TABLE CouponDistribution (
 CREATE TABLE ProductImage (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     product_id BIGINT NOT NULL,
-    image_url VARCHAR(255) NOT NULL,  -- 图片url
+    image_url LONGTEXT NOT NULL,  -- 图片url
     sort_order INT DEFAULT 0, -- 图片排序
     is_main BOOLEAN DEFAULT FALSE,  -- 是否为主图
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
