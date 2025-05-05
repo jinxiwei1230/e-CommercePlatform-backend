@@ -81,9 +81,18 @@ public class ProductServiceImpl implements ProductService {
                             imageDTO.setImageUrl((String) image.get("image_url")); 
                             Integer sortOrder = image.get("sort_order") instanceof Number ? ((Number)image.get("sort_order")).intValue() : 0;
                             imageDTO.setSortOrder(sortOrder);
-                            // 如果需要 isMain 字段，也从 map 中获取
-                            // Boolean isMain = (Boolean) image.get("is_main");
-                            // imageDTO.setIsMain(isMain != null ? isMain : false);
+                            
+                            // 获取并设置 isMain 字段
+                            Object isMainObj = image.get("is_main"); // 从 Map 中获取 is_main 列的值
+                            Boolean isMain = false; // 默认值
+                            if (isMainObj instanceof Boolean) {
+                                isMain = (Boolean) isMainObj;
+                            } else if (isMainObj instanceof Number) {
+                                // 处理数据库返回 0 或 1 的情况 (例如 TINYINT(1))
+                                isMain = ((Number) isMainObj).intValue() != 0;
+                            }
+                            imageDTO.setIsMain(isMain); // 设置到 DTO
+                            
                             return imageDTO;
                         })
                         .collect(Collectors.toList());
@@ -247,9 +256,11 @@ public class ProductServiceImpl implements ProductService {
             ProductImage productImage = new ProductImage();
             productImage.setProductId(imageUploadDTO.getProductId());
             productImage.setImageUrl(imageUploadDTO.getImageDataWithPrefix()); // 直接存储完整的 Data URL
-            // 从 DTO 获取 sortOrder 和 isMain (如果需要)
-            // productImage.setSortOrder(imageUploadDTO.getSortOrder() != null ? imageUploadDTO.getSortOrder() : 0);
-            // productImage.setMain(imageUploadDTO.getIsMain() != null ? imageUploadDTO.getIsMain() : false);
+            
+            // 处理 sortOrder 和 isMain (如果 DTO 中提供了值，则使用；否则使用默认值)
+            productImage.setSortOrder(imageUploadDTO.getSortOrder() != null ? imageUploadDTO.getSortOrder() : 0); // 默认排序 0
+            productImage.setIsMain(imageUploadDTO.getIsMain() != null ? imageUploadDTO.getIsMain() : false); // 默认非主图
+            
             productImage.setCreatedTime(LocalDateTime.now()); // 设置创建时间
 
             // 2. 保存到数据库

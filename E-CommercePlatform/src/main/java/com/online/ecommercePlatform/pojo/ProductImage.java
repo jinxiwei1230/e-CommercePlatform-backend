@@ -1,6 +1,7 @@
 package com.online.ecommercePlatform.pojo;
 
 import lombok.Data;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
  * 商品图片实体类
  */
 @Data
+@Setter
 public class ProductImage {
 
     private Long id; //图片ID，主键，自增长
