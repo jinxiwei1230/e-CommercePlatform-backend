@@ -1,3 +1,0 @@
-ALTER TABLE `Order`
-ADD COLUMN address_id BIGINT NOT NULL AFTER coupon_id,  -- 添加 address_id 列，放在 coupon_id 之后
-ADD FOREIGN KEY (address_id) REFERENCES Address(address_id) ON DELETE RESTRICT;  -- 添加外键约束
