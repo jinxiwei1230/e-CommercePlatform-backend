@@ -8,6 +8,7 @@ import com.online.ecommercePlatform.pojo.Product;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import com.online.ecommercePlatform.dto.ProductQueryDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -140,4 +141,11 @@ public interface ProductMapper {
     @Select("")
     void delete(Long id);
 
+    /**
+     * 根据查询条件动态查询商品列表 (带分页、筛选、排序)
+     * 返回的 Map 应包含 product.*, category.name as categoryName, 和主图 URL as mainImageUrl
+     * @param queryDTO 查询参数 DTO
+     * @return 商品信息 Map 列表
+     */
+    List<Map<String, Object>> selectProductList(ProductQueryDTO queryDTO);
 }

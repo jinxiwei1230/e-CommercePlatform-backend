@@ -227,6 +227,57 @@
         VALUES (#{productId}, #{imageUrl}, #{sortOrder}, #{isMain}, #{createdTime})
     </insert>
 
+    <select id="selectProductList" resultType="java.util.Map">
+        SELECT
+            p.product_id AS productId,
+            p.name,
+            p.description,
+            p.price,
+            p.stock,
+            p.sales,
+            p.freight AS shippingFee, <!-- 别名与 DTO 对应 -->
+            p.category_id AS categoryId,
+            p.create_time AS createTime,
+            p.update_time AS updateTime,
+            c.name AS categoryName,
+            (SELECT pi.image_url FROM ProductImage pi
+            WHERE pi.product_id = p.product_id AND pi.is_main = 1 LIMIT 1) AS mainImageUrl
+        FROM
+            Product p
+        LEFT JOIN
+            Category c ON p.category_id = c.category_id
+        <where>
+            <if test="name != null and name != ''">
+                AND p.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                AND p.category_id = #{categoryId}
+            </if>
+            <if test="minPrice != null">
+                AND p.price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND p.price &lt;= #{maxPrice}
+            </if>
+        </where>
+        <if test="sortBy != null and sortBy != ''">
+            ORDER BY
+            <choose>
+                <when test="sortBy == 'price'">p.price</when>
+                <when test="sortBy == 'sales'">p.sales</when>
+                <when test="sortBy == 'createdAt'">p.create_time</when>
+                <!-- 其他允许的排序字段 -->
+                <otherwise>p.create_time</otherwise> <!-- 默认排序 -->
+            </choose>
+            <if test="sortOrder != null and (sortOrder == 'asc' or sortOrder == 'desc')">
+                ${sortOrder}
+            </if>
+        </if>
+        <if test="sortBy == null or sortBy == ''">
+            ORDER BY p.create_time DESC <!-- 默认排序 -->
+        </if>
+    </select>
+
 </mapper>
 
 <!--        &lt;!&ndash; 查询销量最高的几个顶级类别（包含子类别销量） &ndash;&gt;-->

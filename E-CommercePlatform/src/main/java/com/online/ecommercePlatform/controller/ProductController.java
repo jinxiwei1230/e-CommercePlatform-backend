@@ -6,9 +6,11 @@ import com.online.ecommercePlatform.dto.ProductDTO;
 import com.online.ecommercePlatform.dto.ProductDetailDTO;
 import com.online.ecommercePlatform.dto.ProductQueryDTO;
 import com.online.ecommercePlatform.dto.ImageUploadDTO;
+import com.online.ecommercePlatform.dto.ProductBriefDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
+import com.online.ecommercePlatform.dto.PageResult;
 import com.online.ecommercePlatform.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -76,6 +78,18 @@ public class ProductController {
             if (categoryId == null || categoryId.trim().isEmpty()) {
                 return Result.error(Result.BAD_REQUEST, "类别 ID 不能为空");
             }
+            Long categoryIdLong;
+            try {
+                // 特殊处理 "all" 或其他非数字 categoryId 的情况，如果 ProductQueryDTO 的 categoryId 为 null 则代表所有
+                if ("all".equalsIgnoreCase(categoryId)) { // 假设 "all" 是一个有效值代表所有分类
+                    categoryIdLong = null; // 或者根据业务逻辑处理
+                } else {
+                    categoryIdLong = Long.valueOf(categoryId);
+                }
+            } catch (NumberFormatException e) {
+                return Result.error(Result.BAD_REQUEST, "类别 ID 格式无效");
+            }
+
             if (page < 1 || pageSize < 1) {
                 return Result.error(Result.BAD_REQUEST, "分页参数无效");
             }
@@ -83,7 +97,7 @@ public class ProductController {
                 return Result.error(Result.BAD_REQUEST, "最低价格不能大于最高价格");
             }
             ProductQueryDTO queryDTO = new ProductQueryDTO();
-            queryDTO.setCategoryId(categoryId);
+            queryDTO.setCategoryId(categoryIdLong); // 使用转换后的 Long 类型
             queryDTO.setPage(page);
             queryDTO.setPageSize(pageSize);
             queryDTO.setSortBy(sortBy);
@@ -147,5 +161,29 @@ public class ProductController {
             e.printStackTrace();
             return Result.error(Result.SERVER_ERROR, "图片上传失败: " + e.getMessage());
         }
+    }
+
+    /**
+     * 获取商品列表 (支持分页、按名称搜索、价格区间筛选、分类筛选和排序)
+     *
+     * @param queryDTO 包含所有查询参数的对象
+     * @return 包含分页商品列表的 Result 对象 (使用 PageResult 和 ProductBriefDTO)
+     */
+    @GetMapping
+    public Result<PageResult<ProductBriefDTO>> getProducts(ProductQueryDTO queryDTO) {
+        // 参数校验可以放在 Service 层，或者在这里进行初步校验
+        if (queryDTO.getPage() == null || queryDTO.getPage() < 1) {
+            queryDTO.setPage(1);
+        }
+        if (queryDTO.getPageSize() == null || queryDTO.getPageSize() < 1) {
+            queryDTO.setPageSize(10);
+        }
+        // 对于 minPrice 和 maxPrice 的校验，如果需要也可以在这里添加
+        // 例如: if (queryDTO.getMinPrice() != null && queryDTO.getMaxPrice() != null && queryDTO.getMinPrice().compareTo(queryDTO.getMaxPrice()) > 0) {
+        // return Result.error(Result.BAD_REQUEST, "最低价格不能大于最高价格");
+        // }
+
+        PageResult<ProductBriefDTO> productPageResult = productService.listProducts(queryDTO);
+        return Result.success(productPageResult);
     }
 }

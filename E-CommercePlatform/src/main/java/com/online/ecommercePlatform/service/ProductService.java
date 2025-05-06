@@ -82,4 +82,11 @@ public interface ProductService {
      * @return 商品总数
      */
     int countProductsByCategory(ProductQueryDTO queryDTO);
+
+    /**
+     * 获取商品列表 (带筛选、分页、排序)
+     * @param queryDTO 包含所有查询参数的 DTO
+     * @return 分页后的商品简要信息列表
+     */
+    PageResult<ProductBriefDTO> listProducts(ProductQueryDTO queryDTO);
 }

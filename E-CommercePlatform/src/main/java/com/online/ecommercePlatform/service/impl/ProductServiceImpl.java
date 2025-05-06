@@ -1,12 +1,14 @@
 package com.online.ecommercePlatform.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.Page;
 import com.online.ecommercePlatform.dto.*;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.ProductImage;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.ProductService;
 import com.online.ecommercePlatform.mapper.ProductMapper;
+import com.online.ecommercePlatform.mapper.CategoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 产品服务实现类，处理产品的业务逻辑
@@ -25,6 +28,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductMapper productMapper; // 注入产品数据访问层接口，用于数据库操作
+
+    @Autowired(required = false) // CategoryMapper 可能不是必须的，如果 productMapper 能直接返回分类名
+    private CategoryMapper categoryMapper;
+
+    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 根据产品 ID 获取产品信息
@@ -189,21 +197,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> getProductsByCategory(ProductQueryDTO queryDTO) {
         PageHelper.startPage(queryDTO.getPage(), queryDTO.getPageSize());
-        if (queryDTO.isAllProducts()) {
+        if (queryDTO.getCategoryId() == null) {
             // 查询所有商品
             return productMapper.findAllProducts(
                     queryDTO.getMinPrice(),
                     queryDTO.getMaxPrice(),
-                    queryDTO.getSortBy(),
+                    queryDTO.getSortByOrDefault(),
                     queryDTO.getSortOrder()
             );
         } else {
             // 查询特定分类商品
             return productMapper.findByCategory(
-                    Long.valueOf(queryDTO.getCategoryId()),
+                    queryDTO.getCategoryId(),
                     queryDTO.getMinPrice(),
                     queryDTO.getMaxPrice(),
-                    queryDTO.getSortBy(),
+                    queryDTO.getSortByOrDefault(),
                     queryDTO.getSortOrder()
             );
         }
@@ -217,7 +225,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public int countProductsByCategory(ProductQueryDTO queryDTO) {
-        if (queryDTO.isAllProducts()) {
+        if (queryDTO.getCategoryId() == null) {
             // 统计所有商品
             return productMapper.countAllProducts(
                     queryDTO.getMinPrice(),
@@ -226,7 +234,7 @@ public class ProductServiceImpl implements ProductService {
         } else {
             // 统计特定分类商品
             return productMapper.countByCategory(
-                    Long.valueOf(queryDTO.getCategoryId()),
+                    queryDTO.getCategoryId(),
                     queryDTO.getMinPrice(),
                     queryDTO.getMaxPrice()
             );
@@ -275,5 +283,46 @@ public class ProductServiceImpl implements ProductService {
             // Consider rolling back the transaction if using @Transactional
             return Result.error(Result.SERVER_ERROR, "保存图片时发生错误: " + e.getMessage());
         }
+    }
+
+    @Override
+    public PageResult<ProductBriefDTO> listProducts(ProductQueryDTO queryDTO) {
+        PageHelper.startPage(queryDTO.getPage(), queryDTO.getPageSize());
+        // 调用 Mapper 获取包含商品基本信息、分类名和主图URL的数据列表
+        // 假设 ProductMapper 有一个 selectProductList 方法
+        List<Map<String, Object>> productMaps = productMapper.selectProductList(queryDTO);
+        
+        long total = ((Page<Map<String, Object>>) productMaps).getTotal();
+
+        List<ProductBriefDTO> briefDTOs = productMaps.stream().map(productMap -> {
+            ProductBriefDTO dto = new ProductBriefDTO();
+            dto.setProductId(((Number) productMap.get("productId")).longValue());
+            dto.setName((String) productMap.get("name"));
+            dto.setMainImageUrl((String) productMap.get("mainImageUrl")); // 假设 mapper 返回了 mainImageUrl
+            Object priceObj = productMap.get("price");
+            if (priceObj instanceof Number) {
+                 dto.setPrice(((Number) priceObj).doubleValue());
+            }
+            Object stockObj = productMap.get("stock");
+            if (stockObj instanceof Number) {
+                dto.setStock(((Number) stockObj).intValue());
+            }
+            Object salesObj = productMap.get("sales");
+            if (salesObj instanceof Number) {
+                dto.setSales(((Number) salesObj).intValue());
+            }
+            Object shippingFeeObj = productMap.get("shippingFee"); // 或 "freight"
+            if (shippingFeeObj instanceof Number) {
+                dto.setShippingFee(((Number) shippingFeeObj).doubleValue());
+            }
+            LocalDateTime createTime = (LocalDateTime) productMap.get("createTime");
+            if (createTime != null) {
+                dto.setCreatedAt(createTime.format(DATETIME_FORMATTER));
+            }
+            dto.setCategoryName((String) productMap.get("categoryName")); // 假设 mapper 返回了 categoryName
+            return dto;
+        }).collect(Collectors.toList());
+
+        return new PageResult<>(total, queryDTO.getPage(), queryDTO.getPageSize(), briefDTOs);
     }
 }
