@@ -26,7 +26,7 @@ CREATE TABLE `User` (
     gender ENUM('男', '女', '保密'),  -- 性别
     age INT,  -- 年龄
     is_vip BOOLEAN DEFAULT FALSE,  -- 是否为 VIP 用户
-		role ENUM('普通用户', '管理员') DEFAULT '普通用户',  -- 用户角色，默认是普通用户
+	role ENUM('普通用户', '管理员') DEFAULT '普通用户',  -- 用户角色，默认是普通用户
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 注册时间
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 信息更新时间
 );
@@ -61,7 +61,7 @@ CREATE TABLE Product (
     description TEXT,  -- 商品简介
     price DECIMAL(10,2) NOT NULL,  -- 单价
     stock INT NOT NULL,  -- 库存数量
-		sales INT DEFAULT 0,  -- 销量
+	sales INT DEFAULT 0,  -- 销量
     freight DECIMAL(10,2) DEFAULT 0,  -- 运费
     category_id BIGINT NOT NULL,  -- 所属分类 ID
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
@@ -95,20 +95,26 @@ CREATE TABLE Coupon (
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 更新时间
 );
 
--- 创建订单表
 CREATE TABLE `Order` (
     order_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 订单唯一标识
     user_id BIGINT NOT NULL,  -- 用户 ID
     total_amount DECIMAL(10,2) NOT NULL,  -- 订单总金额
-    status ENUM('待支付', '已支付', '已发货', '已完成', '已退款', '待退款') NOT NULL,  -- 订单状态
+    status ENUM('待支付', '已支付', '已发货', '已完成', '已退款', '待退款', '已取消') NOT NULL,  -- 订单状态
     payment_method VARCHAR(50),  -- 支付方式
+    payment_url VARCHAR(255),  -- 支付链接
+    qr_code VARCHAR(255),  -- 支付二维码
     coupon_id BIGINT,  -- 订单使用的优惠券 ID
+    address_id BIGINT NOT NULL,  -- 订单使用地址 ID
     discount_amount DECIMAL(10,2) DEFAULT 1,  -- 订单折扣
+    freight DECIMAL(10,2) DEFAULT 0.00,  -- 订单运费
+    remark TEXT,  -- 订单备注
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 状态更新时间
     FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (coupon_id) REFERENCES Coupon(coupon_id) ON DELETE SET NULL
+    FOREIGN KEY (coupon_id) REFERENCES Coupon(coupon_id) ON DELETE SET NULL,
+    FOREIGN KEY (address_id) REFERENCES Address(address_id) ON DELETE RESTRICT
 );
+
 
 -- 创建订单明细表
 CREATE TABLE OrderDetail (
@@ -154,7 +160,7 @@ CREATE TABLE CouponDistribution (
 CREATE TABLE ProductImage (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     product_id BIGINT NOT NULL,
-    image_url VARCHAR(255) NOT NULL,  -- 图片url
+    image_url LONGTEXT NOT NULL,  -- 图片url
     sort_order INT DEFAULT 0, -- 图片排序
     is_main BOOLEAN DEFAULT FALSE,  -- 是否为主图
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -175,3 +181,17 @@ CREATE TABLE OperationLog (
     FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE
 );
 
+-- 创建退款表
+CREATE TABLE Refund (
+    refund_id BIGINT PRIMARY KEY AUTO_INCREMENT,  -- 退款唯一标识
+    order_id BIGINT NOT NULL,  -- 关联订单 ID
+    user_id BIGINT NOT NULL,  -- 申请退款的用户 ID
+    reason TEXT NOT NULL,  -- 退款原因
+    refund_amount DECIMAL(10,2) NOT NULL,  -- 退款金额
+    type VARCHAR(50) NOT NULL,  -- 退款类型（例如 "仅退款", "退货退款"）
+    status ENUM('处理中', '已完成', '已拒绝') NOT NULL,  -- 退款状态
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 申请时间
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 更新时间
+    FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE
+);
