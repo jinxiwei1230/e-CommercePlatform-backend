@@ -20,6 +20,7 @@ public class Result<T> {
     public static final int UNAUTHORIZED = 401;
     public static final int TOKEN_EXPIRED = 402;
     public static final int NOT_FOUND = 404;
+    public static final int FORBIDDEN = 403;
     
     // 业务错误码
     public static final int EMAIL_PHONE_REQUIRED = 500;

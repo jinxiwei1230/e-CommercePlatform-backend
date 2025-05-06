@@ -21,4 +21,43 @@ public interface OrderService {
     // 确认支付
     PaymentConfirmResponseDTO confirmPayment(Long userId, Long orderId, PaymentConfirmRequestDTO request);
 
+    /**
+     * 查询支付状态
+     */
+    PaymentStatusResponseDTO getPaymentStatus(Long userId, Long orderId);
+
+    /**
+     * 查询用户订单列表
+     */
+    OrderListResponseDTO getUserOrders(Long userId, String status, int page, int pageSize);
+
+    /**
+     * 查询订单详情
+     */
+    OrderDetailResponseDTO getOrderDetail(Long userId, Long orderId);
+
+    /**
+     * 取消订单
+     */
+    OrderCancelResponseDTO cancelOrder(Long userId, Long orderId);
+
+    /**
+     * 确认收货
+     */
+    OrderCancelResponseDTO confirmReceipt(Long userId, Long orderId);
+
+    /**
+     * 申请退款
+     */
+    RefundResponseDTO applyRefund(Long userId, Long orderId, RefundRequestDTO refundRequest);
+
+    /**
+     * 管理员修改订单状态
+     */
+    Order updateOrderStatus(Long adminUserId, Long orderId, String status);
+
+    /**
+     * 根据用户ID查询用户角色
+     */
+    String getRoleByUserId(Long userId);
 }

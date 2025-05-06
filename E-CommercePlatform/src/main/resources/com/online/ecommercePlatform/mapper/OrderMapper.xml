@@ -34,8 +34,8 @@
 
     <!-- 插入订单 -->
     <insert id="insertOrder" parameterType="com.online.ecommercePlatform.pojo.Order" useGeneratedKeys="true" keyProperty="orderId">
-        INSERT INTO `Order` (user_id, total_amount, status, payment_method, coupon_id, address_id, discount_amount, remark, create_time)
-        VALUES (#{userId}, #{totalAmount}, #{status}, #{paymentMethod}, #{couponId}, #{addressId}, #{discountAmount}, #{remark}, NOW())
+        INSERT INTO `Order` (user_id, total_amount, status, payment_method,payment_url,qr_code,coupon_id, address_id, discount_amount, remark, create_time)
+        VALUES (#{userId}, #{totalAmount}, #{status}, #{paymentMethod},#{paymentUrl},#{qrCode}, #{couponId}, #{addressId}, #{discountAmount}, #{remark}, NOW())
     </insert>
 
     <!-- 查询订单创建时间 -->
