@@ -158,4 +158,20 @@ public interface ProductMapper {
      * @return 删除的行数
      */
     int deleteImageById(Long imageId);
+
+    /**
+     * 将指定商品ID下，除指定图片ID外的所有图片的主图状态设为 false。
+     * @param productId 商品ID
+     * @param excludeImageId 不需要取消主图状态的图片ID (即当前要设为主图的图片)
+     * @return 更新的行数
+     */
+    int clearMainStatusForOtherImages(@Param("productId") Long productId, @Param("excludeImageId") Long excludeImageId);
+
+    /**
+     * 更新指定图片ID的主图状态。
+     * @param imageId 图片ID
+     * @param isMain true设为主图, false取消主图
+     * @return 更新的行数
+     */
+    int updateImageMainStatus(@Param("imageId") Long imageId, @Param("isMain") boolean isMain);
 }

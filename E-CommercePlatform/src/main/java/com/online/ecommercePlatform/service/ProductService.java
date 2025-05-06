@@ -112,4 +112,13 @@ public interface ProductService {
      * @throws ResourceNotFoundException 如果图片未找到
      */
     void deleteProductImage(Long imageId);
+
+    /**
+     * 修改指定商品图片的"主图"状态。
+     * @param imageId 要操作的图片ID
+     * @param isMain true表示设为主图, false表示取消主图
+     * @throws ResourceNotFoundException 如果图片ID不存在
+     * @throws IllegalArgumentException 如果 productId 从图片对象中获取失败等
+     */
+    void updateProductImageMainStatus(Long imageId, boolean isMain);
 }

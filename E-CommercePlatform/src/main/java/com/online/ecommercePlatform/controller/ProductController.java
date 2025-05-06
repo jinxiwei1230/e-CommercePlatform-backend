@@ -9,6 +9,7 @@ import com.online.ecommercePlatform.dto.ImageUploadDTO;
 import com.online.ecommercePlatform.dto.ProductBriefDTO;
 import com.online.ecommercePlatform.dto.ProductCreateDTO;
 import com.online.ecommercePlatform.dto.ProductUpdateDTO;
+import com.online.ecommercePlatform.dto.ImageMainStatusUpdateDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -264,5 +266,41 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body(Result.error(Result.SERVER_ERROR, "图片删除失败: " + e.getMessage()));
         }
+    }
+
+    /**
+     * 修改指定商品图片的"主图"状态。
+     * @param imageId 要操作的图片ID
+     * @param statusUpdateDTO 包含 isMain 状态的请求体
+     * @return 操作结果
+     */
+    @PutMapping("/images/{imageId}/main")
+    public ResponseEntity<Result<Object>> updateImageMainStatus(
+            @PathVariable Long imageId,
+            @Valid @RequestBody ImageMainStatusUpdateDTO statusUpdateDTO) { // 使用 @Valid 触发校验
+        
+        // @NotNull 在DTO中已经定义，如果 statusUpdateDTO.getIsMain() 为 null，
+        // Spring 的 MethodArgumentNotValidException 会被触发，
+        // 通常由全局异常处理器 @ControllerAdvice 捕获并返回400。
+        // 如果没有全局处理器，这里需要 try-catch MethodArgumentNotValidException 或手动校验。
+        
+        // 手动校验示例 (如果不用@Valid或没有全局异常处理器处理MethodArgumentNotValidException):
+        // if (statusUpdateDTO.getIsMain() == null) {
+        //     return ResponseEntity.badRequest()
+        //                         .body(Result.error(Result.BAD_REQUEST, "isMain 字段为必需且必须是布尔值"));
+        // }
+
+        try {
+            productService.updateProductImageMainStatus(imageId, statusUpdateDTO.getIsMain());
+            return ResponseEntity.ok(Result.success("主图状态更新成功"));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body(Result.error(Result.NOT_FOUND, e.getMessage()));
+        } catch (IllegalArgumentException e) { // 可以用于Service层其他业务校验，如尝试取消不存在的主图等
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body(Result.error(Result.BAD_REQUEST, e.getMessage()));
+        }
+        // No need for catch (Exception e) here if you have a global exception handler for 500s
+        // otherwise, keep it for unhandled server errors.
     }
 }

@@ -327,6 +327,22 @@
         DELETE FROM ProductImage WHERE id = #{imageId}
     </delete>
 
+    <!-- 将指定商品ID下，除指定图片ID外的所有图片的主图状态设为 false -->
+    <update id="clearMainStatusForOtherImages">
+        UPDATE ProductImage
+        SET is_main = false
+        WHERE product_id = #{productId}
+          AND id != #{excludeImageId}
+          AND is_main = true  <!-- 只更新当前已经是主图的那些，避免不必要的写操作 -->
+    </update>
+
+    <!-- 更新指定图片ID的主图状态 -->
+    <update id="updateImageMainStatus">
+        UPDATE ProductImage
+        SET is_main = #{isMain}
+        WHERE id = #{imageId}
+    </update>
+
 </mapper>
 
 <!--        &lt;!&ndash; 查询销量最高的几个顶级类别（包含子类别销量） &ndash;&gt;-->

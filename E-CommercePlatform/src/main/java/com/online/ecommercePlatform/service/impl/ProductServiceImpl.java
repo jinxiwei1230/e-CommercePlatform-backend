@@ -472,4 +472,35 @@ public class ProductServiceImpl implements ProductService {
         //    throw new ResourceNotFoundException("ProductImage", "id", imageId); // 或者其他异常
         // }
     }
+
+    @Override
+    @Transactional
+    public void updateProductImageMainStatus(Long imageId, boolean isMain) {
+        ProductImage image = productMapper.findImageById(imageId);
+        if (image == null) {
+            throw new ResourceNotFoundException("ProductImage", "id", imageId);
+        }
+
+        Long productId = image.getProductId();
+        if (productId == null) {
+            // This should ideally not happen if database integrity is maintained.
+            throw new IllegalArgumentException("Product ID not found for image ID: " + imageId);
+        }
+
+        if (isMain) {
+            // 1. Set all other images for this product to isMain = false
+            productMapper.clearMainStatusForOtherImages(productId, imageId);
+            // 2. Set the current image to isMain = true
+            int updatedRows = productMapper.updateImageMainStatus(imageId, true);
+            if (updatedRows == 0) {
+                 // Should not happen if findImageById found it, but as a safeguard
+                throw new ResourceNotFoundException("ProductImage", "id", imageId + " (update failed)");
+            }
+        } else {
+            // Just set the current image to isMain = false
+            // Optional: Check if this image was actually the main image before unsetting.
+            // if (image.getIsMain()) { ... }
+            productMapper.updateImageMainStatus(imageId, false);
+        }
+    }
 }
