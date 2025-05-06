@@ -303,4 +303,26 @@ public class ProductController {
         // No need for catch (Exception e) here if you have a global exception handler for 500s
         // otherwise, keep it for unhandled server errors.
     }
+
+    /**
+     * 删除指定ID的商品及其关联数据。
+     * @param id 要删除的商品ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Result<Object>> deleteProduct(@PathVariable Long id) {
+        try {
+            productService.deleteProduct(id); // 调用已有的 deleteProduct 方法
+            return ResponseEntity.ok(Result.success("商品删除成功"));
+            // 或者返回 204 No Content
+            // return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body(Result.error(Result.NOT_FOUND, e.getMessage()));
+        } catch (Exception e) { // 例如，数据库约束冲突（如果某些关联数据没有ON DELETE CASCADE且阻止删除）
+            e.printStackTrace(); // 记录日志
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(Result.error(Result.SERVER_ERROR, "商品删除失败: " + e.getMessage()));
+        }
+    }
 }

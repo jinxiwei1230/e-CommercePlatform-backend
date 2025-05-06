@@ -141,12 +141,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 删除产品
+     * 删除产品，如果产品不存在则抛出 ResourceNotFoundException。
      * @param id 产品 ID
      */
     @Override
+    @Transactional // 确保删除操作及可能的级联操作在同一事务中
     public void deleteProduct(Long id) {
+        // 1. 检查商品是否存在
+        Product product = productMapper.findById(id);
+        if (product == null) {
+            throw new ResourceNotFoundException("Product", "id", id);
+        }
+        // 2. 商品存在，执行删除
         productMapper.delete(id);
+        // 由于数据库有 ON DELETE CASCADE，相关的 ProductImage, Cart, OrderDetail, Review 记录会自动删除。
     }
 
     /**
