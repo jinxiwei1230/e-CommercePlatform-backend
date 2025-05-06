@@ -278,6 +278,43 @@
         </if>
     </select>
 
+    <!-- 对于 findById(Long id) 方法 -->
+    <select id="findById" resultType="com.online.ecommercePlatform.pojo.Product">
+        SELECT product_id, name, description, price, stock, sales, freight, category_id, create_time, update_time
+        FROM Product
+        WHERE product_id = #{id}
+    </select>
+
+    <!-- 对于 insert(Product product) 方法 -->
+    <insert id="insert" parameterType="com.online.ecommercePlatform.pojo.Product" useGeneratedKeys="true" keyProperty="productId" keyColumn="product_id">
+        INSERT INTO Product (name, category_id, price, stock, freight, description, sales
+        <!-- , create_time, update_time --> <!-- 根据数据库默认值，这些可以不显式插入 -->
+        )
+        VALUES (#{name}, #{categoryId}, #{price}, #{stock}, #{freight}, #{description}, 0
+        <!-- , NOW(), NOW() -->
+        )
+    </insert>
+
+    <!-- 对于 update(Product product) 方法 -->
+    <update id="update" parameterType="com.online.ecommercePlatform.pojo.Product">
+        UPDATE Product
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="freight != null">freight = #{freight},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <!-- update_time 会由数据库自动更新 -->
+        </set>
+        WHERE product_id = #{productId}
+    </update>
+
+    <!-- 对于 delete(Long id) 方法 -->
+    <delete id="delete" parameterType="java.lang.Long"> <!-- 明确参数类型 -->
+        DELETE FROM Product WHERE product_id = #{id}
+    </delete>
+
 </mapper>
 
 <!--        &lt;!&ndash; 查询销量最高的几个顶级类别（包含子类别销量） &ndash;&gt;-->

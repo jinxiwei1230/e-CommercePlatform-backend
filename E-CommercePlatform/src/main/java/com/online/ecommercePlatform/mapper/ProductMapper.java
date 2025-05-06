@@ -97,7 +97,6 @@ public interface ProductMapper {
      * @param id 商品 ID
      * @return 商品对象
      */
-    @Select("")
     Product findById(Long id);
     
     /**
@@ -124,21 +123,18 @@ public interface ProductMapper {
      * 插入新的商品
      * @param product 商品对象
      */
-    @Select("")
     void insert(Product product);
 
     /**
      * 更新商品信息
      * @param product 商品对象
      */
-    @Select("")
     void update(Product product);
 
     /**
      * 根据商品 ID 删除商品
      * @param id 商品 ID
      */
-    @Select("")
     void delete(Long id);
 
     /**

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.time.format.DateTimeFormatter;
+import java.math.BigDecimal;
 
 /**
  * 产品服务实现类，处理产品的业务逻辑
@@ -324,5 +325,57 @@ public class ProductServiceImpl implements ProductService {
         }).collect(Collectors.toList());
 
         return new PageResult<>(total, queryDTO.getPage(), queryDTO.getPageSize(), briefDTOs);
+    }
+
+    @Override
+    @Transactional // 确保操作的原子性
+    public ProductBriefDTO createProduct(ProductCreateDTO createDTO) {
+        Product product = new Product();
+        product.setName(createDTO.getName());
+        product.setCategoryId(createDTO.getCategoryId());
+        
+        // BigDecimal to Double conversion for price and freight if Product entity uses Double
+        // If Product entity uses BigDecimal for price/freight, direct set is fine.
+        // Assuming Product.price and Product.freight are Double as per Product.java earlier.
+        if (createDTO.getPrice() != null) {
+            product.setPrice(createDTO.getPrice().doubleValue()); 
+        }
+        if (createDTO.getShippingFee() != null) {
+            product.setFreight(createDTO.getShippingFee().doubleValue()); // DTO is shippingFee, Entity is freight
+        }
+        product.setStock(createDTO.getStock());
+        product.setDescription(createDTO.getDescription());
+
+        // createTime 和 updateTime 由数据库 DEFAULT CURRENT_TIMESTAMP 自动设置，
+        // 或者如果需要在Java端设置，可以在这里 product.setCreateTime(LocalDateTime.now());
+        // product.setSales(0); // 销量默认为0，数据库也有 DEFAULT 0
+
+        productMapper.insert(product); // 调用 mapper 插入，并获取生成的主键
+
+        // product 对象现在应该包含由数据库生成的 productId
+        // 如果 productMapper.insert 没有配置返回主键, product.getProductId() 会是 null
+        // 确保 ProductMapper.xml 中的 <insert> 配置了 useGeneratedKeys 和 keyProperty
+
+        // 转换回 ProductBriefDTO 返回
+        ProductBriefDTO briefDTO = new ProductBriefDTO();
+        briefDTO.setProductId(product.getProductId());
+        briefDTO.setName(product.getName());
+        briefDTO.setPrice(product.getPrice()); // price
+        briefDTO.setStock(product.getStock());
+        briefDTO.setShippingFee(product.getFreight()); // freight
+        // briefDTO.setSales(product.getSales()); // 新商品销量是0，可不返回或返回0
+        // briefDTO.setMainImageUrl(null); // 新商品还没有图片
+        // briefDTO.setCategoryName(null); // 需要查询分类名，如果响应需要的话
+        // if (product.getCreateTime() != null) {
+        //    briefDTO.setCreatedAt(product.getCreateTime().format(DATETIME_FORMATTER));
+        // }
+        
+        // 根据响应示例，只需要 productId 和 name 等核心信息。 
+        // 如果需要返回更多信息如 categoryName，则需要额外查询。
+        // 你的成功响应示例只列出了 productId 和 name
+        // "data": { "productId": "124", "name": "新商品名称", ... }
+        // 为了匹配这个，我们可以只填充这两个，或者像ProductBriefDTO那样完整填充（除了图片和分类名）
+
+        return briefDTO; // 返回包含新ID和其他信息的DTO
     }
 }

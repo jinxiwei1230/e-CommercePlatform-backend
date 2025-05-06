@@ -89,4 +89,11 @@ public interface ProductService {
      * @return 分页后的商品简要信息列表
      */
     PageResult<ProductBriefDTO> listProducts(ProductQueryDTO queryDTO);
+
+    /**
+     * 创建新商品
+     * @param createDTO 包含新商品信息的 DTO
+     * @return 包含新创建商品（主要是ID和名称等）的简要信息 DTO
+     */
+    ProductBriefDTO createProduct(ProductCreateDTO createDTO);
 }

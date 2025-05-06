@@ -7,12 +7,15 @@ import com.online.ecommercePlatform.dto.ProductDetailDTO;
 import com.online.ecommercePlatform.dto.ProductQueryDTO;
 import com.online.ecommercePlatform.dto.ImageUploadDTO;
 import com.online.ecommercePlatform.dto.ProductBriefDTO;
+import com.online.ecommercePlatform.dto.ProductCreateDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.dto.PageResult;
 import com.online.ecommercePlatform.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -185,5 +188,30 @@ public class ProductController {
 
         PageResult<ProductBriefDTO> productPageResult = productService.listProducts(queryDTO);
         return Result.success(productPageResult);
+    }
+
+    /**
+     * 添加新商品
+     * @param productCreateDTO 商品创建信息
+     * @return 包含新创建商品信息的 Result 对象 (主要是 ID)
+     */
+    @PostMapping
+    public ResponseEntity<Result<ProductBriefDTO>> addProduct(@RequestBody ProductCreateDTO productCreateDTO) {
+        // TODO: 在 Service 层或此处进行更详细的参数校验，例如非空、格式等
+        // 例如：if (productCreateDTO.getName() == null || productCreateDTO.getName().trim().isEmpty()) {
+        // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Result.error(Result.BAD_REQUEST, "商品名称不能为空"));
+        // }
+
+        ProductBriefDTO newProductBrief = productService.createProduct(productCreateDTO); // 假设 service 方法叫 createProduct
+        
+        // 如果你的 Result.success() 方法总是返回 200 的 code，
+        // 并且你想严格遵循 REST 返回 201 Created，可以这样包装：
+        // Result<ProductBriefDTO> successResult = Result.success(newProductBrief);
+        // successResult.setCode(HttpStatus.CREATED.value()); // 或者你的Result类有专门的 created 方法
+        // return new ResponseEntity<>(successResult, HttpStatus.CREATED);
+        
+        // 或者，如果你的 Result.java 中 code 字段更多的是业务层面成功（如0或1），
+        // 而 HTTP 状态码由 ResponseEntity 控制，可以这样：
+        return new ResponseEntity<>(Result.success(newProductBrief), HttpStatus.CREATED);
     }
 }
