@@ -8,11 +8,13 @@ import com.online.ecommercePlatform.dto.ProductQueryDTO;
 import com.online.ecommercePlatform.dto.ImageUploadDTO;
 import com.online.ecommercePlatform.dto.ProductBriefDTO;
 import com.online.ecommercePlatform.dto.ProductCreateDTO;
+import com.online.ecommercePlatform.dto.ProductUpdateDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Product;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.dto.PageResult;
 import com.online.ecommercePlatform.service.ProductService;
+import com.online.ecommercePlatform.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -213,5 +215,29 @@ public class ProductController {
         // 或者，如果你的 Result.java 中 code 字段更多的是业务层面成功（如0或1），
         // 而 HTTP 状态码由 ResponseEntity 控制，可以这样：
         return new ResponseEntity<>(Result.success(newProductBrief), HttpStatus.CREATED);
+    }
+
+    /**
+     * 更新指定ID商品的信息
+     * @param id 商品ID
+     * @param updateDTO 包含要更新的商品信息的DTO
+     * @return 更新后的商品信息
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Result<ProductBriefDTO>> updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductUpdateDTO updateDTO) {
+        try {
+            ProductBriefDTO updatedProduct = productService.updateProductInfo(id, updateDTO);
+            return ResponseEntity.ok(Result.success(updatedProduct));
+        } catch (ResourceNotFoundException e) {
+            // 你需要定义一个全局异常处理器来处理 ResourceNotFoundException 并返回 404
+            // 或者在这里直接返回。为了演示，我直接返回。
+            // Result.NOT_FOUND 是 Result 类中定义的错误码 404
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Result.error(Result.NOT_FOUND, e.getMessage())); 
+        } catch (IllegalArgumentException e) { // 用于处理其他校验类错误，如果Service层抛出
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Result.error(Result.BAD_REQUEST, e.getMessage()));
+        }
+        // 其他潜在的异常也应该被捕获和处理，或者由全局异常处理器处理
     }
 }

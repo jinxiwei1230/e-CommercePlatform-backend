@@ -18,4 +18,6 @@ public class ProductBriefDTO {
     private Double shippingFee; // 运费 (根据您的需求，Product 实体中有 freight 字段)
     private String createdAt; // 创建时间 (格式化字符串，如: "2025-04-18 17:58")
     private String categoryName; // 分类名称
+    private String description; // 商品描述 (新增)
+    private Long categoryId; // 商品分类ID (新增，用于更新接口的响应)
 } 

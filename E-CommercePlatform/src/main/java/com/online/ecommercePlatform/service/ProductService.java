@@ -96,4 +96,13 @@ public interface ProductService {
      * @return 包含新创建商品（主要是ID和名称等）的简要信息 DTO
      */
     ProductBriefDTO createProduct(ProductCreateDTO createDTO);
+
+    /**
+     * 更新指定ID商品的信息。
+     * @param productId 要更新的商品ID
+     * @param updateDTO 包含要更新的字段的DTO
+     * @return 更新后的商品简要信息DTO
+     * @throws ResourceNotFoundException 如果商品未找到
+     */
+    ProductBriefDTO updateProductInfo(Long productId, ProductUpdateDTO updateDTO);
 }

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
+import com.online.ecommercePlatform.exception.ResourceNotFoundException;
 
 /**
  * 产品服务实现类，处理产品的业务逻辑
@@ -377,5 +378,77 @@ public class ProductServiceImpl implements ProductService {
         // 为了匹配这个，我们可以只填充这两个，或者像ProductBriefDTO那样完整填充（除了图片和分类名）
 
         return briefDTO; // 返回包含新ID和其他信息的DTO
+    }
+
+    @Override
+    @Transactional // 确保操作的原子性
+    public ProductBriefDTO updateProductInfo(Long productId, ProductUpdateDTO updateDTO) {
+        // 1. 检查商品是否存在
+        Product product = productMapper.findById(productId);
+        if (product == null) {
+            throw new ResourceNotFoundException("Product", "id", productId);
+        }
+
+        // 2. 按需更新字段
+        boolean updated = false;
+        if (updateDTO.getName() != null && !updateDTO.getName().isEmpty()) {
+            product.setName(updateDTO.getName());
+            updated = true;
+        }
+        if (updateDTO.getCategoryId() != null) {
+            product.setCategoryId(updateDTO.getCategoryId());
+            updated = true;
+        }
+        if (updateDTO.getPrice() != null) {
+            product.setPrice(updateDTO.getPrice().doubleValue()); // 假设Product实体中price是Double
+            updated = true;
+        }
+        if (updateDTO.getStock() != null) {
+            product.setStock(updateDTO.getStock());
+            updated = true;
+        }
+        if (updateDTO.getShippingFee() != null) {
+            product.setFreight(updateDTO.getShippingFee().doubleValue()); // DTO: shippingFee, Entity: freight
+            updated = true;
+        }
+        if (updateDTO.getDescription() != null) {
+            product.setDescription(updateDTO.getDescription());
+            updated = true;
+        }
+
+        // 3. 如果有字段被更新，则执行数据库更新操作
+        if (updated) {
+            // product.setUpdateTime(LocalDateTime.now()); // 如果不由数据库自动更新时间戳，则在此设置
+            productMapper.update(product);
+        }
+        
+        // 4. 转换并返回更新后的信息
+        // (即使没有字段被实际更新，也返回当前商品信息作为确认)
+        ProductBriefDTO briefDTO = new ProductBriefDTO();
+        briefDTO.setProductId(product.getProductId());
+        briefDTO.setName(product.getName());
+        if (product.getPrice() != null) briefDTO.setPrice(product.getPrice());
+        if (product.getStock() != null) briefDTO.setStock(product.getStock());
+        if (product.getFreight() != null) briefDTO.setShippingFee(product.getFreight());
+        briefDTO.setDescription(product.getDescription()); 
+        briefDTO.setCategoryId(product.getCategoryId()); // 设置 categoryId
+        
+        // 如果还需要 categoryName, 需要从 Category 表查询
+        // if (product.getCategoryId() != null && categoryMapper != null) {
+        //    Category category = categoryMapper.findById(product.getCategoryId()); // 假设CategoryMapper有findById
+        //    if (category != null) {
+        //        briefDTO.setCategoryName(category.getName());
+        //    }
+        // }
+
+        if (product.getCreateTime() != null) { // 一般返回创建时间
+             briefDTO.setCreatedAt(product.getCreateTime().format(DATETIME_FORMATTER));
+        }
+        // 响应中可能也需要 sales 和 mainImageUrl，即使它们不在此接口更新
+        // briefDTO.setSales(product.getSales());
+        // To get mainImageUrl, we might need to query ProductImage table or Product entity has it
+        // For now, matching the example that focuses on updated fields plus ID, Name.
+
+        return briefDTO;
     }
 }
