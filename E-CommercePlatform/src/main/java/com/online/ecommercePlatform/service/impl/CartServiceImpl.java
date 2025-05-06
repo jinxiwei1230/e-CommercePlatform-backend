@@ -1,5 +1,6 @@
 package com.online.ecommercePlatform.service.impl;
 
+import com.online.ecommercePlatform.dto.CartProductListDTO;
 import com.online.ecommercePlatform.mapper.CartMapper;
 import com.online.ecommercePlatform.mapper.ProductMapper;
 import com.online.ecommercePlatform.pojo.Cart;
@@ -29,8 +30,8 @@ public class CartServiceImpl implements CartService {
      * @return 购物车列表
      */
     @Override
-    public List<Cart> selectByUserId(Long userId) {
-        return cartMapper.selectByUserId(userId);
+    public List<CartProductListDTO> selectCartWithProductByUserId(Long userId) {
+        return cartMapper.selectCartWithProductByUserId(userId);
     }
 
     /**

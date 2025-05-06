@@ -1,5 +1,6 @@
 package com.online.ecommercePlatform.controller;
 
+import com.online.ecommercePlatform.dto.CartProductListDTO;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,13 @@ public class CartController {
      * @return 包含购物车列表的Result对象
      */
     @GetMapping("/list")
-    public Result<List<Cart>> cartList(HttpServletRequest request) {
+    public Result<List<CartProductListDTO>> cartList(HttpServletRequest request) {
         try {
             Long userId = getUserIdFromRequest(request);
             if (userId == null) {
                 return Result.error(Result.UNAUTHORIZED);
             }
-            List<Cart> cartItems = cartService.selectByUserId(userId);
+            List<CartProductListDTO> cartItems = cartService.selectCartWithProductByUserId(userId);
             return Result.success(cartItems);
         }catch (Exception e) {
             e.printStackTrace();

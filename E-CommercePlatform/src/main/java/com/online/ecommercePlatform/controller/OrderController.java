@@ -32,6 +32,8 @@ public class OrderController {
         if (userId == null) {
             return Result.error(Result.UNAUTHORIZED, "未授权");
         }
+        System.out.println("-------userId--------");
+        System.out.println(userId);
 
         try {
             CheckoutResponseDTO response = orderService.checkout(userId, checkoutRequest);
@@ -47,10 +49,13 @@ public class OrderController {
     @PostMapping("/order/create")
     public Result<OrderCreateResponseDTO> createOrder(HttpServletRequest request, @RequestBody OrderCreateRequestDTO orderRequest) {
         Long userId = getUserIdFromRequest(request);
+        System.out.println("-------userId--------");
+        System.out.println(userId);
         if (userId == null) {
             return Result.error(Result.UNAUTHORIZED, "未授权");
         }
-
+        System.out.println("-------userId--------");
+        System.out.println(userId);
         try {
             OrderCreateResponseDTO response = orderService.createOrder(userId, orderRequest);
             return Result.success(response);

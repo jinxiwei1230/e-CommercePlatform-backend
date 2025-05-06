@@ -11,8 +11,42 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="CartProductResultMap" type="com.online.ecommercePlatform.dto.CartProductListDTO">
+        <id property="cartId" column="cart_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="quantity" column="quantity"/>
+        <result property="createTime" column="create_time"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="price" column="price"/>
+        <result property="stock" column="stock"/>
+        <result property="sales" column="sales"/>
+        <result property="freight" column="freight"/>
+        <result property="categoryId" column="category_id"/>
+    </resultMap>
+
     <select id="selectByUserId" resultMap="BaseResultMap">
         SELECT * FROM cart WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectCartWithProductByUserId" resultMap="CartProductResultMap">
+        SELECT
+            c.cart_id,
+            c.user_id,
+            c.product_id,
+            c.quantity,
+            c.create_time,
+            p.name,
+            p.description,
+            p.price,
+            p.stock,
+            p.sales,
+            p.freight,
+            p.category_id
+        FROM cart c
+                 JOIN product p ON c.product_id = p.product_id
+        WHERE c.user_id = #{userId}
     </select>
 
     <select id="selectByUserIdAndProductId" resultMap="BaseResultMap">

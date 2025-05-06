@@ -1,5 +1,6 @@
 package com.online.ecommercePlatform.mapper;
 
+import com.online.ecommercePlatform.dto.CartProductListDTO;
 import com.online.ecommercePlatform.pojo.Cart;
 import com.online.ecommercePlatform.pojo.Product;
 import org.apache.ibatis.annotations.Delete;
@@ -79,4 +80,11 @@ public interface CartMapper {
      * @return 影响的行数
      */
     int deleteByCartId(Long cartId);
+
+    /**
+     * 根据用户ID查询购物车列表，包含商品详细信息
+     * @param userId 用户ID
+     * @return 包含商品信息的购物车列表
+     */
+    List<CartProductListDTO> selectCartWithProductByUserId(Long userId);
 }

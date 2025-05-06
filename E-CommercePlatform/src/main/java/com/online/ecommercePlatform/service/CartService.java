@@ -1,5 +1,6 @@
 package com.online.ecommercePlatform.service;
 
+import com.online.ecommercePlatform.dto.CartProductListDTO;
 import com.online.ecommercePlatform.pojo.Cart;
 
 import java.util.List;
@@ -7,13 +8,6 @@ import java.util.List;
  * 购物车服务接口，定义购物车相关操作
  */
 public interface CartService {
-
-    /**
-     * 根据用户ID查询购物车列表
-     * @param userId 用户ID
-     * @return 购物车列表
-     */
-    List<Cart> selectByUserId(Long userId);
 
     /**
      * 添加商品到购物车
@@ -44,4 +38,10 @@ public interface CartService {
      */
     void clearCart(Long userId);
 
+    /**
+     * 根据用户ID查询购物车列表，包含商品详细信息
+     * @param userId 用户ID
+     * @return 包含商品信息的购物车列表
+     */
+    List<CartProductListDTO> selectCartWithProductByUserId(Long userId);
 }
