@@ -240,4 +240,29 @@ public class ProductController {
         }
         // 其他潜在的异常也应该被捕获和处理，或者由全局异常处理器处理
     }
+
+    /**
+     * 删除指定ID的商品图片
+     * @param imageId 要删除的图片ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/images/{imageId}")
+    public ResponseEntity<Result<Object>> deleteProductImage(@PathVariable Long imageId) {
+        try {
+            productService.deleteProductImage(imageId);
+            // 返回 200 OK 带消息体
+            return ResponseEntity.ok(Result.success("图片删除成功"));
+            // 或者返回 204 No Content (更符合REST语义，但前端可能需要不同处理)
+            // return ResponseEntity.noContent().build(); 
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body(Result.error(Result.NOT_FOUND, e.getMessage()));
+        } catch (Exception e) {
+            // 其他通用服务器错误
+            // 最好有一个全局异常处理器来处理这类未预期的错误
+            e.printStackTrace(); // 记录日志
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(Result.error(Result.SERVER_ERROR, "图片删除失败: " + e.getMessage()));
+        }
+    }
 }

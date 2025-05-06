@@ -451,4 +451,25 @@ public class ProductServiceImpl implements ProductService {
 
         return briefDTO;
     }
+
+    @Override
+    @Transactional // 如果图片删除后还有其他关联操作，事务是好的
+    public void deleteProductImage(Long imageId) {
+        // 1. 检查图片是否存在 (可选步骤，但推荐，可以返回更明确的404)
+        //    需要 ProductMapper 中有 findImageById 方法
+        ProductImage image = productMapper.findImageById(imageId); 
+        if (image == null) {
+            throw new ResourceNotFoundException("ProductImage", "id", imageId);
+        }
+
+        // 2. 执行删除操作
+        //    需要 ProductMapper 中有 deleteImageById 方法
+        int rowsAffected = productMapper.deleteImageById(imageId);
+        
+        // 可以选择检查 rowsAffected，如果为0，尽管前面findImageById找到了，但删除时又没删掉（并发场景？）
+        // 但通常如果 findImageById 成功，delete 也会成功，除非并发删除。
+        // if (rowsAffected == 0) {
+        //    throw new ResourceNotFoundException("ProductImage", "id", imageId); // 或者其他异常
+        // }
+    }
 }

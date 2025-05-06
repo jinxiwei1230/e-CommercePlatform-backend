@@ -144,4 +144,18 @@ public interface ProductMapper {
      * @return 商品信息 Map 列表
      */
     List<Map<String, Object>> selectProductList(ProductQueryDTO queryDTO);
+
+    /**
+     * 根据图片ID查找商品图片信息
+     * @param imageId 图片ID
+     * @return 商品图片对象，如果不存在则返回 null
+     */
+    ProductImage findImageById(Long imageId);
+
+    /**
+     * 根据图片ID删除商品图片
+     * @param imageId 图片ID
+     * @return 删除的行数
+     */
+    int deleteImageById(Long imageId);
 }

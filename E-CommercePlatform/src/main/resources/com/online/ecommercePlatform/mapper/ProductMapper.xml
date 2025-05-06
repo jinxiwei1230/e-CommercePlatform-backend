@@ -315,6 +315,18 @@
         DELETE FROM Product WHERE product_id = #{id}
     </delete>
 
+    <!-- 根据图片ID查找商品图片 -->
+    <select id="findImageById" resultType="com.online.ecommercePlatform.pojo.ProductImage">
+        SELECT id, product_id AS productId, image_url AS imageUrl, sort_order AS sortOrder, is_main AS isMain, created_time AS createdTime
+        FROM ProductImage
+        WHERE id = #{imageId}
+    </select>
+
+    <!-- 根据图片ID删除商品图片 -->
+    <delete id="deleteImageById" parameterType="java.lang.Long">
+        DELETE FROM ProductImage WHERE id = #{imageId}
+    </delete>
+
 </mapper>
 
 <!--        &lt;!&ndash; 查询销量最高的几个顶级类别（包含子类别销量） &ndash;&gt;-->

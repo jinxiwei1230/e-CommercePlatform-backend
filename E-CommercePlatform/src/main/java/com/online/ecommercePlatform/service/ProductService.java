@@ -105,4 +105,11 @@ public interface ProductService {
      * @throws ResourceNotFoundException 如果商品未找到
      */
     ProductBriefDTO updateProductInfo(Long productId, ProductUpdateDTO updateDTO);
+
+    /**
+     * 删除指定ID的商品图片。
+     * @param imageId 要删除的图片ID
+     * @throws ResourceNotFoundException 如果图片未找到
+     */
+    void deleteProductImage(Long imageId);
 }
