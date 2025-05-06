@@ -121,4 +121,11 @@ public interface ProductService {
      * @throws IllegalArgumentException 如果 productId 从图片对象中获取失败等
      */
     void updateProductImageMainStatus(Long imageId, boolean isMain);
+
+    /**
+     * 根据ID列表批量删除商品。
+     * @param productIds 要删除的商品ID列表
+     * @return 批量删除操作的结果，包含成功计数和失败ID列表
+     */
+    BulkDeleteResultDTO bulkDeleteProducts(List<Long> productIds);
 }

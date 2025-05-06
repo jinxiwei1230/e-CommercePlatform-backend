@@ -511,4 +511,39 @@ public class ProductServiceImpl implements ProductService {
             productMapper.updateImageMainStatus(imageId, false);
         }
     }
+
+    @Override
+    @Transactional // 整个批量操作应在一个事务中
+    public BulkDeleteResultDTO bulkDeleteProducts(List<Long> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return new BulkDeleteResultDTO(0, new ArrayList<>());
+        }
+
+        int deletedCount = 0;
+        List<Long> failedIds = new ArrayList<>();
+
+        for (Long productId : productIds) {
+            if (productId == null) {
+                // Skip null IDs if any, or add to failedIds if that's desired behavior
+                continue; 
+            }
+            try {
+                Product product = productMapper.findById(productId);
+                if (product != null) {
+                    productMapper.delete(productId); // ON DELETE CASCADE handles related data
+                    deletedCount++;
+                } else {
+                    // Product with this ID not found, consider it a "failed" deletion for reporting
+                    failedIds.add(productId);
+                }
+            } catch (Exception e) {
+                // Log the exception for this specific ID
+                e.printStackTrace(); // 更推荐使用日志框架记录错误: log.error("Failed to delete product with id: {}", productId, e);
+                failedIds.add(productId); 
+                // Depending on requirements, a single failure might abort the whole transaction
+                // by re-throwing a runtime exception. For now, we continue and report failures.
+            }
+        }
+        return new BulkDeleteResultDTO(deletedCount, failedIds);
+    }
 }

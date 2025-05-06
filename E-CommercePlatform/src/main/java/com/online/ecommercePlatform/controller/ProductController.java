@@ -21,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import com.online.ecommercePlatform.dto.ProductBulkDeleteDTO;
+import com.online.ecommercePlatform.dto.BulkDeleteResultDTO;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -323,6 +325,47 @@ public class ProductController {
             e.printStackTrace(); // 记录日志
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body(Result.error(Result.SERVER_ERROR, "商品删除失败: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * 根据 ID 列表批量删除商品。
+     * @param bulkDeleteDTO 包含商品ID列表的DTO
+     * @return 批量删除操作的结果
+     */
+    @PostMapping("/bulk-delete")
+    public ResponseEntity<Result<BulkDeleteResultDTO>> bulkDeleteProducts(
+            @Valid @RequestBody ProductBulkDeleteDTO bulkDeleteDTO) {
+        
+        // @NotEmpty 在 ProductBulkDeleteDTO 中已定义，将由 @Valid 触发校验。
+        // 如果 ids 列表为空，会抛出 MethodArgumentNotValidException，
+        // 应由全局异常处理器处理并返回 400 Bad Request。
+        // 手动校验示例 (如果需要或没有全局处理器):
+        // if (bulkDeleteDTO.getIds() == null || bulkDeleteDTO.getIds().isEmpty()) {
+        //     return ResponseEntity.badRequest()
+        //          .body(Result.error(Result.BAD_REQUEST, "商品ID列表不能为空"));
+        // }
+
+        try {
+            BulkDeleteResultDTO resultDTO = productService.bulkDeleteProducts(bulkDeleteDTO.getIds());
+            String message = "批量删除操作完成。";
+            if (resultDTO.getFailedIds() != null && !resultDTO.getFailedIds().isEmpty()) {
+                message = String.format("部分商品删除成功。成功: %d, 失败ID: %s", 
+                                  resultDTO.getDeletedCount(), resultDTO.getFailedIds().toString());
+            } else if (resultDTO.getDeletedCount() > 0) {
+                message = String.format("成功删除 %d 个商品。", resultDTO.getDeletedCount());
+            } else {
+                 message = "没有商品被删除（可能ID列表为空或所有ID都不存在）。";
+            }
+            
+            Result<BulkDeleteResultDTO> responseResult = Result.success(resultDTO);
+            responseResult.setMessage(message); // 单独设置 message
+            return ResponseEntity.ok(responseResult);
+        } catch (Exception e) {
+            // 一般性的服务器错误
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(Result.error(Result.SERVER_ERROR, "批量删除过程中发生错误: " + e.getMessage()));
         }
     }
 }
