@@ -6,6 +6,9 @@ import com.online.ecommercePlatform.dto.OrderItemDTO;
 import com.online.ecommercePlatform.dto.ProductPreviewDTO;
 import com.online.ecommercePlatform.dto.OrderDetailDTO;
 import com.online.ecommercePlatform.pojo.*;
+import com.online.ecommercePlatform.pojo.Order;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
@@ -146,4 +149,19 @@ public interface OrderMapper {
      * 查询用户角色
      */
     String getRoleByUserId(@Param("userId") Long userId);
+
+        /**
+     * 根据订单ID查询订单
+     * @param orderId 订单ID
+     * @return 订单信息
+     */
+    Order findById(@Param("orderId") Long orderId);
+    
+    /**
+     * 更新订单评价状态
+     * @param orderId 订单ID
+     * @param reviewStatus 评价状态
+     * @return 影响的行数
+     */
+    int updateReviewStatus(@Param("orderId") Long orderId, @Param("reviewStatus") String reviewStatus);
 }
