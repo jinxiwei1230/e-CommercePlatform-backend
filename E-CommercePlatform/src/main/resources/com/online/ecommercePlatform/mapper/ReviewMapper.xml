@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.online.ecommercePlatform.mapper.ReviewMapper">
+    
+    <!-- 评价实体映射 -->
+    <resultMap id="ReviewMap" type="com.online.ecommercePlatform.pojo.Review">
+        <id column="review_id" property="reviewId"/>
+        <result column="product_id" property="productId"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="rating" property="rating"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    
+    <!-- 评价响应DTO映射 -->
+    <resultMap id="ReviewResponseMap" type="com.online.ecommercePlatform.dto.ReviewResponseDTO">
+        <id column="review_id" property="reviewId"/>
+        <result column="product_id" property="productId"/>
+        <result column="product_name" property="productName"/>
+        <result column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="order_id" property="orderId"/>
+        <result column="rating" property="rating"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    
+    <!-- 未评价商品DTO映射 -->
+    <resultMap id="UnreviewedProductMap" type="com.online.ecommercePlatform.dto.UnreviewedProductDTO">
+        <result column="product_id" property="productId"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_image" property="productImage"/>
+        <result column="price" property="price"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="order_time" property="orderTime"/>
+    </resultMap>
+
+    <!-- 查询已完成但未评价的订单商品列表 -->
+    <select id="selectUnreviewedProducts" resultMap="UnreviewedProductMap">
+        SELECT 
+            p.product_id, 
+            p.name as product_name, 
+            MAX(pi.image_url) as product_image, 
+            p.price, 
+            o.order_id, 
+            o.order_id as order_number, 
+            MAX(o.update_time) as order_time
+        FROM 
+            `Order` o
+            JOIN `OrderDetail` od ON o.order_id = od.order_id
+            JOIN `Product` p ON od.product_id = p.product_id
+            LEFT JOIN `ProductImage` pi ON p.product_id = pi.product_id AND pi.is_main = 1
+            LEFT JOIN `Review` r ON o.user_id = r.user_id AND p.product_id = r.product_id AND o.order_id = r.order_id
+        WHERE 
+            o.user_id = #{userId} 
+            AND o.status = '已完成'
+            AND o.review_status = '未评价'
+            AND r.review_id IS NULL
+        GROUP BY 
+            p.product_id, o.order_id, p.name, p.price
+        ORDER BY 
+            MAX(o.update_time) DESC
+    </select>
+    
+    <!-- 新增评价 -->
+    <insert id="insert" parameterType="com.online.ecommercePlatform.pojo.Review" useGeneratedKeys="true" keyProperty="reviewId">
+        INSERT INTO Review (
+            product_id, user_id, order_id, rating, content, create_time
+        ) VALUES (
+            #{productId}, #{userId}, #{orderId}, #{rating}, #{content}, NOW()
+        )
+    </insert>
+    
+    <!-- 查询指定商品的评价列表 -->
+    <select id="selectByProductId" resultMap="ReviewResponseMap">
+        SELECT 
+            r.review_id, 
+            r.product_id, 
+            p.name as product_name, 
+            r.user_id, 
+            u.username, 
+            r.order_id, 
+            r.rating, 
+            r.content, 
+            r.create_time
+        FROM 
+            `Review` r
+            JOIN `Product` p ON r.product_id = p.product_id
+            JOIN `User` u ON r.user_id = u.user_id
+        WHERE 
+            r.product_id = #{productId}
+        ORDER BY 
+            r.create_time DESC
+    </select>
+    
+    <!-- 查询用户的评价列表 -->
+    <select id="selectByUserId" resultMap="ReviewResponseMap">
+        SELECT 
+            r.review_id, 
+            r.product_id, 
+            p.name as product_name, 
+            r.user_id, 
+            u.username, 
+            r.order_id, 
+            r.rating, 
+            r.content, 
+            r.create_time
+        FROM 
+            `Review` r
+            JOIN `Product` p ON r.product_id = p.product_id
+            JOIN `User` u ON r.user_id = u.user_id
+        WHERE 
+            r.user_id = #{userId}
+        ORDER BY 
+            r.create_time DESC
+    </select>
+    
+    <!-- 根据ID查询评价详情 -->
+    <select id="selectById" resultMap="ReviewResponseMap">
+        SELECT 
+            r.review_id, 
+            r.product_id, 
+            p.name as product_name, 
+            r.user_id, 
+            u.username, 
+            r.order_id, 
+            r.rating, 
+            r.content, 
+            r.create_time
+        FROM 
+            `Review` r
+            JOIN `Product` p ON r.product_id = p.product_id
+            JOIN `User` u ON r.user_id = u.user_id
+        WHERE 
+            r.review_id = #{reviewId}
+    </select>
+    
+    <!-- 更新评价 -->
+    <update id="update" parameterType="com.online.ecommercePlatform.pojo.Review">
+        UPDATE Review
+        SET 
+            rating = #{rating}, 
+            content = #{content}
+        WHERE 
+            review_id = #{reviewId}
+    </update>
+    
+    <!-- 删除评价 -->
+    <delete id="delete">
+        DELETE FROM `Review` 
+        WHERE review_id = #{reviewId} AND user_id = #{userId}
+    </delete>
+    
+    <!-- 检查评价是否存在且属于指定用户 -->
+    <select id="checkReviewBelongsToUser" resultMap="ReviewMap">
+        SELECT 
+            review_id, product_id, user_id, order_id, rating, content, create_time
+        FROM 
+            `Review`
+        WHERE 
+            review_id = #{reviewId} AND user_id = #{userId}
+    </select>
+    
+    <!-- 检查用户是否已对该订单商品评价 -->
+    <select id="checkReviewExists" resultType="int">
+        SELECT 
+            COUNT(*)
+        FROM 
+            `Review`
+        WHERE 
+            user_id = #{userId} 
+            AND product_id = #{productId} 
+            AND order_id = #{orderId}
+    </select>
+    
+    <!-- 统计指定商品的评价总数 -->
+    <select id="countByProductId" resultType="int">
+        SELECT 
+            COUNT(*)
+        FROM 
+            `Review`
+        WHERE 
+            product_id = #{productId}
+    </select>
+    
+    <!-- 统计指定用户的评价总数 -->
+    <select id="countByUserId" resultType="int">
+        SELECT 
+            COUNT(*)
+        FROM 
+            `Review`
+        WHERE 
+            user_id = #{userId}
+    </select>
+    
+</mapper> 
