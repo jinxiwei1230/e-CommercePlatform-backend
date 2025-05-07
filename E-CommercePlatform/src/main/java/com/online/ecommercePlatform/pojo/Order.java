@@ -24,4 +24,5 @@ public class Order {
     private String remark; // 备注
     private LocalDateTime createTime; // 创建时间
     private LocalDateTime updateTime; // 状态更新时间
+    private String reviewStatus; // 评价状态（未评价 / 已评价）
 }
