@@ -431,4 +431,28 @@ public class UserServiceImpl implements UserService {
         // 10. 返回更新后的用户信息
         return Result.success(user);
     }
+
+    /**
+     * 管理员根据userId查询用户信息
+     */
+    @Override
+    public Result<?> adminGetUserInfo(Long userId, Long adminId) {
+        // 1. 验证管理员权限
+        User admin = userMapper.findById(adminId);
+        if (admin == null || !"管理员".equals(admin.getRole())) {
+            return Result.error(403, "无管理员权限");
+        }
+        
+        // 2. 查询指定用户
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            return Result.error(404, "用户不存在");
+        }
+        
+        // 3. 清除敏感信息
+        user.setPassword(null);
+        
+        // 4. 返回用户信息
+        return Result.success(user);
+    }
 }

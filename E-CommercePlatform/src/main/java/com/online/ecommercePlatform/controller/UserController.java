@@ -263,4 +263,52 @@ public class UserController {
             return Result.error(401, "认证失败");
         }
     }
+
+    /**
+     * 管理员根据userId查询用户信息
+     * @param userId 要查询的用户ID
+     * @param request HTTP请求
+     * @return 用户信息
+     */
+    @GetMapping("/admin/{userId}")
+    public Result<?> adminGetUserInfo(@PathVariable Long userId, HttpServletRequest request) {
+        // 从请求头中获取token
+        String token = request.getHeader("Authorization");
+        if (!StringUtils.hasText(token)) {
+            return Result.error(401, "未提供认证令牌");
+        }
+
+        // 解析token获取管理员信息
+        try {
+            // 如果token以Bearer 开头，需要去掉前缀
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            // 验证Token
+            DecodedJWT jwt = jwtUtil.verifyToken(token);
+            if (jwt == null) {
+                return Result.error(401, "认证令牌无效");
+            }
+
+            // 检查令牌是否过期
+            if (jwtUtil.isTokenExpired(token)) {
+                return Result.error(401, "认证令牌已过期");
+            }
+            
+            // 从token中获取userId
+            String adminIdStr = jwt.getClaim("userId").asString();
+            if (!StringUtils.hasText(adminIdStr)) {
+                return Result.error(400, "无法获取用户ID");
+            }
+            
+            Long adminId = Long.valueOf(adminIdStr);
+            
+            // 执行管理员查询用户信息操作
+            return userService.adminGetUserInfo(userId, adminId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(401, "认证失败");
+        }
+    }
 }

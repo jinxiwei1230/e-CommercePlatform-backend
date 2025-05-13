@@ -78,4 +78,12 @@ public interface UserService {
      * @return 更新结果
      */
     Result<User> adminUpdateUserInfo(AdminUserUpdateDTO adminUserUpdateDTO, Long adminId);
+
+    /**
+     * 管理员根据userId查询用户信息
+     * @param userId 要查询的用户ID
+     * @param adminId 管理员ID
+     * @return 查询结果
+     */
+    Result<?> adminGetUserInfo(Long userId, Long adminId);
 }
