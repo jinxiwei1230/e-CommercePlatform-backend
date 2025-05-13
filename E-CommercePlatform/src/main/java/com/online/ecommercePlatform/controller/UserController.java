@@ -6,6 +6,9 @@ import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.UserLoginDTO;
 import com.online.ecommercePlatform.dto.UserLoginResponseDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
+import com.online.ecommercePlatform.dto.UserQueryDTO;
+import com.online.ecommercePlatform.dto.PageResult;
+import com.online.ecommercePlatform.dto.UserListDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.dto.UserUpdateDTO;
 import com.online.ecommercePlatform.pojo.User;
@@ -200,5 +203,15 @@ public class UserController {
             e.printStackTrace();
             return Result.error(Result.UNAUTHORIZED, "认证失败");
         }
+    }
+
+    /**
+     * 获取用户列表，支持多条件筛选和分页
+     * @param queryDTO 查询参数
+     * @return 用户列表分页结果
+     */
+    @GetMapping("/list")
+    public Result<PageResult<UserListDTO>> listUsers(UserQueryDTO queryDTO) {
+        return userService.listUsers(queryDTO);
     }
 }

@@ -5,12 +5,14 @@ import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.UserLoginDTO;
 import com.online.ecommercePlatform.dto.UserLoginResponseDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
+import com.online.ecommercePlatform.dto.UserQueryDTO;
+import com.online.ecommercePlatform.dto.PageResult;
+import com.online.ecommercePlatform.dto.UserListDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
+import com.online.ecommercePlatform.dto.UserUpdateDTO;
 import com.online.ecommercePlatform.pojo.User;
 
 import java.util.List;
-import com.online.ecommercePlatform.dto.UserUpdateDTO;
-import com.online.ecommercePlatform.pojo.User;
 
 /**
  * 用户服务接口
@@ -61,4 +63,10 @@ public interface UserService {
      * @return 校验结果
      */
 
+    /**
+     * 获取用户列表
+     * @param queryDTO 查询参数
+     * @return 包含用户列表的分页结果
+     */
+    Result<PageResult<UserListDTO>> listUsers(UserQueryDTO queryDTO);
 }

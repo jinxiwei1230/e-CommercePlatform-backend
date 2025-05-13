@@ -161,4 +161,90 @@
         SELECT COUNT(*) FROM `User`
     </select>
     
+    <!-- 用户列表DTO映射 -->
+    <resultMap id="UserListMap" type="com.online.ecommercePlatform.dto.UserListDTO">
+        <id column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="is_vip" property="isVip"/>
+        <result column="role" property="role"/>
+        <result column="total_spent" property="totalSpent"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    
+    <!-- 分页查询用户列表，支持多条件筛选和排序 -->
+    <select id="listUsers" resultMap="UserListMap">
+        SELECT u.user_id, u.username, u.is_vip, u.role, u.create_time
+        FROM `User` u
+        <where>
+            <if test="username != null and username != ''">
+                AND u.username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="isVip != null">
+                AND u.is_vip = #{isVip}
+            </if>
+            <if test="role != null and role != ''">
+                AND u.role = #{role}
+            </if>
+        </where>
+        <choose>
+            <when test="sortBy != null and sortBy != ''">
+                <choose>
+                    <when test="sortBy == 'username'">
+                        ORDER BY u.username
+                    </when>
+                    <when test="sortBy == 'isVip'">
+                        ORDER BY u.is_vip
+                    </when>
+                    <when test="sortBy == 'role'">
+                        ORDER BY u.role
+                    </when>
+                    <when test="sortBy == 'totalSpent'">
+                        ORDER BY (SELECT IFNULL(SUM(o.total_amount), 0) FROM `Order` o WHERE o.user_id = u.user_id AND o.status = '已完成')
+                    </when>
+                    <when test="sortBy == 'createTime'">
+                        ORDER BY u.create_time
+                    </when>
+                    <otherwise>
+                        ORDER BY u.create_time
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="sortOrder != null and sortOrder == 'asc'">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                ORDER BY u.create_time DESC
+            </otherwise>
+        </choose>
+    </select>
+    
+    <!-- 统计满足条件的用户总数 -->
+    <select id="countUsers" resultType="java.lang.Long">
+        SELECT COUNT(*) 
+        FROM `User` u
+        <where>
+            <if test="username != null and username != ''">
+                AND u.username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="isVip != null">
+                AND u.is_vip = #{isVip}
+            </if>
+            <if test="role != null and role != ''">
+                AND u.role = #{role}
+            </if>
+        </where>
+    </select>
+    
+    <!-- 获取用户消费总金额 -->
+    <select id="getUserTotalSpent" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(total_amount), 0)
+        FROM `Order` 
+        WHERE user_id = #{userId} AND status = '已完成'
+    </select>
+    
 </mapper> 

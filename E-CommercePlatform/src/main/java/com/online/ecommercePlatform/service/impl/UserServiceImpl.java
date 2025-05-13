@@ -8,6 +8,9 @@ import com.online.ecommercePlatform.dto.UserLoginResponseDTO;
 import com.online.ecommercePlatform.dto.UserRegisterDTO;
 import com.online.ecommercePlatform.dto.UserUpdateDTO;
 import com.online.ecommercePlatform.dto.PasswordUpdateDTO;
+import com.online.ecommercePlatform.dto.UserQueryDTO;
+import com.online.ecommercePlatform.dto.PageResult;
+import com.online.ecommercePlatform.dto.UserListDTO;
 import com.online.ecommercePlatform.mapper.UserMapper;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.User;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -298,4 +302,53 @@ public class UserServiceImpl implements UserService {
      * 验证码校验
      */
     // ... existing code ...
+
+    /**
+     * 获取用户列表，支持多条件筛选和分页
+     */
+    @Override
+    public Result<PageResult<UserListDTO>> listUsers(UserQueryDTO queryDTO) {
+        // 参数校验和默认值设置
+        if (queryDTO.getPage() == null || queryDTO.getPage() < 1) {
+            queryDTO.setPage(1);
+        }
+        if (queryDTO.getPageSize() == null || queryDTO.getPageSize() < 1) {
+            queryDTO.setPageSize(10);
+        }
+
+        try {
+            // 设置分页参数
+            PageHelper.startPage(queryDTO.getPage(), queryDTO.getPageSize());
+            
+            // 执行查询
+            List<UserListDTO> userList = userMapper.listUsers(
+                    queryDTO.getUsername(),
+                    queryDTO.getIsVip(),
+                    queryDTO.getRole(),
+                    queryDTO.getSortBy(),
+                    queryDTO.getSortOrder()
+            );
+            
+            // 获取查询结果的分页信息
+            PageInfo<UserListDTO> pageInfo = new PageInfo<>(userList);
+            
+            // 补充用户的消费总金额
+            for (UserListDTO user : userList) {
+                BigDecimal totalSpent = userMapper.getUserTotalSpent(user.getUserId());
+                user.setTotalSpent(totalSpent);
+            }
+            
+            // 构造分页结果
+            PageResult<UserListDTO> pageResult = new PageResult<>();
+            pageResult.setTotal(pageInfo.getTotal());
+            pageResult.setPage(queryDTO.getPage());
+            pageResult.setPageSize(queryDTO.getPageSize());
+            pageResult.setRecords(userList);
+            
+            return Result.success(pageResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(500, "获取用户列表失败: " + e.getMessage());
+        }
+    }
 }

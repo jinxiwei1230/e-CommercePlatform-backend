@@ -1,9 +1,11 @@
 package com.online.ecommercePlatform.mapper;
 
+import com.online.ecommercePlatform.dto.UserListDTO;
 import com.online.ecommercePlatform.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -107,4 +109,41 @@ public interface UserMapper {
      * @return
      */
     List<User> findByPageWithCondition(User user);
+
+    /**
+     * 分页查询用户列表，支持多条件筛选和排序
+     * @param username 用户名（模糊搜索）
+     * @param isVip VIP状态
+     * @param role 用户角色
+     * @param sortBy 排序字段
+     * @param sortOrder 排序方式
+     * @return 用户列表
+     */
+    List<UserListDTO> listUsers(
+            @Param("username") String username,
+            @Param("isVip") Boolean isVip,
+            @Param("role") String role,
+            @Param("sortBy") String sortBy,
+            @Param("sortOrder") String sortOrder
+    );
+    
+    /**
+     * 统计满足条件的用户总数
+     * @param username 用户名（模糊搜索）
+     * @param isVip VIP状态
+     * @param role 用户角色
+     * @return 用户总数
+     */
+    Long countUsers(
+            @Param("username") String username,
+            @Param("isVip") Boolean isVip,
+            @Param("role") String role
+    );
+    
+    /**
+     * 获取用户消费总金额
+     * @param userId 用户ID
+     * @return 消费总金额
+     */
+    BigDecimal getUserTotalSpent(@Param("userId") Long userId);
 }
