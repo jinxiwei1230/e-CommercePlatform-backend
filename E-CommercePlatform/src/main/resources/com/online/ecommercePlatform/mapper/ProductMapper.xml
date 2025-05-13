@@ -228,6 +228,17 @@
     </insert>
 
     <select id="selectProductList" resultType="java.util.Map">
+        WITH RECURSIVE category_tree AS (
+            -- 初始查询：选中的类别
+            SELECT category_id
+            FROM Category
+            WHERE category_id = #{categoryId}
+            UNION ALL
+            -- 递归查询：所有子类别
+            SELECT c.category_id
+            FROM Category c
+            INNER JOIN category_tree ct ON c.parent_id = ct.category_id
+        )
         SELECT
             p.product_id AS productId,
             p.name,
@@ -251,7 +262,7 @@
                 AND p.name LIKE CONCAT('%', #{name}, '%')
             </if>
             <if test="categoryId != null">
-                AND p.category_id = #{categoryId}
+                AND p.category_id IN (SELECT category_id FROM category_tree)
             </if>
             <if test="minPrice != null">
                 AND p.price &gt;= #{minPrice}
