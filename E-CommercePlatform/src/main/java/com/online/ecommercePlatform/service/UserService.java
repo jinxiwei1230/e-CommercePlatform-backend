@@ -8,6 +8,7 @@ import com.online.ecommercePlatform.dto.UserRegisterDTO;
 import com.online.ecommercePlatform.dto.UserQueryDTO;
 import com.online.ecommercePlatform.dto.PageResult;
 import com.online.ecommercePlatform.dto.UserListDTO;
+import com.online.ecommercePlatform.dto.AdminUserUpdateDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.dto.UserUpdateDTO;
 import com.online.ecommercePlatform.pojo.User;
@@ -69,4 +70,12 @@ public interface UserService {
      * @return 包含用户列表的分页结果
      */
     Result<PageResult<UserListDTO>> listUsers(UserQueryDTO queryDTO);
+
+    /**
+     * 管理员更新用户信息
+     * @param adminUserUpdateDTO 用户更新信息
+     * @param adminId 管理员ID
+     * @return 更新结果
+     */
+    Result<User> adminUpdateUserInfo(AdminUserUpdateDTO adminUserUpdateDTO, Long adminId);
 }

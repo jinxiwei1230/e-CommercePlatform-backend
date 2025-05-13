@@ -11,6 +11,7 @@ import com.online.ecommercePlatform.dto.PasswordUpdateDTO;
 import com.online.ecommercePlatform.dto.UserQueryDTO;
 import com.online.ecommercePlatform.dto.PageResult;
 import com.online.ecommercePlatform.dto.UserListDTO;
+import com.online.ecommercePlatform.dto.AdminUserUpdateDTO;
 import com.online.ecommercePlatform.mapper.UserMapper;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.User;
@@ -350,5 +351,84 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return Result.error(500, "获取用户列表失败: " + e.getMessage());
         }
+    }
+
+    /**
+     * 管理员更新用户信息
+     */
+    @Override
+    public Result<User> adminUpdateUserInfo(AdminUserUpdateDTO adminUserUpdateDTO, Long adminId) {
+        // 1. 验证管理员权限
+        User admin = userMapper.findById(adminId);
+        if (admin == null || !"管理员".equals(admin.getRole())) {
+            return Result.error(403, "无管理员权限");
+        }
+        
+        // 2. 验证要修改的用户是否存在
+        Long userId = adminUserUpdateDTO.getUserId();
+        if (userId == null) {
+            return Result.error(400, "用户ID不能为空");
+        }
+        
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            return Result.error(404, "用户不存在");
+        }
+        
+        // 3. 验证用户名是否已被其他用户使用
+        String newUsername = adminUserUpdateDTO.getUsername();
+        if (StringUtils.hasText(newUsername) && !newUsername.equals(user.getUsername())) {
+            if (userMapper.existsByUsername(newUsername)) {
+                return Result.error(400, "用户名已存在");
+            }
+            user.setUsername(newUsername);
+        }
+        
+        // 4. 验证邮箱是否已被其他用户使用
+        String newEmail = adminUserUpdateDTO.getEmail();
+        if (StringUtils.hasText(newEmail) && !newEmail.equals(user.getEmail())) {
+            if (userMapper.existsByEmail(newEmail)) {
+                return Result.error(400, "邮箱已存在");
+            }
+            user.setEmail(newEmail);
+        }
+        
+        // 5. 验证手机号是否已被其他用户使用
+        String newPhone = adminUserUpdateDTO.getPhone();
+        if (StringUtils.hasText(newPhone) && !newPhone.equals(user.getPhone())) {
+            if (userMapper.existsByPhone(newPhone)) {
+                return Result.error(400, "手机号已存在");
+            }
+            user.setPhone(newPhone);
+        }
+        
+        // 6. 更新其他信息
+        if (StringUtils.hasText(adminUserUpdateDTO.getGender())) {
+            user.setGender(adminUserUpdateDTO.getGender());
+        }
+        
+        if (adminUserUpdateDTO.getAge() != null) {
+            user.setAge(adminUserUpdateDTO.getAge());
+        }
+        
+        if (adminUserUpdateDTO.getIsVip() != null) {
+            user.setIsVip(adminUserUpdateDTO.getIsVip());
+        }
+        
+        if (StringUtils.hasText(adminUserUpdateDTO.getRole())) {
+            user.setRole(adminUserUpdateDTO.getRole());
+        }
+        
+        // 7. 设置更新时间
+        user.setUpdateTime(LocalDateTime.now());
+        
+        // 8. 执行更新操作
+        userMapper.update(user);
+        
+        // 9. 清除敏感信息
+        user.setPassword(null);
+        
+        // 10. 返回更新后的用户信息
+        return Result.success(user);
     }
 }

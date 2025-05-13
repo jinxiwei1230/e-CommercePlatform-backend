@@ -9,6 +9,7 @@ import com.online.ecommercePlatform.dto.UserRegisterDTO;
 import com.online.ecommercePlatform.dto.UserQueryDTO;
 import com.online.ecommercePlatform.dto.PageResult;
 import com.online.ecommercePlatform.dto.UserListDTO;
+import com.online.ecommercePlatform.dto.AdminUserUpdateDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.dto.UserUpdateDTO;
 import com.online.ecommercePlatform.pojo.User;
@@ -213,5 +214,53 @@ public class UserController {
     @GetMapping("/list")
     public Result<PageResult<UserListDTO>> listUsers(UserQueryDTO queryDTO) {
         return userService.listUsers(queryDTO);
+    }
+
+    /**
+     * 管理员修改用户信息接口
+     * @param adminUserUpdateDTO 用户更新信息DTO
+     * @param request 用于获取用户认证信息的请求对象
+     * @return 更新结果，包含更新后的用户信息
+     */
+    @PutMapping("/admin/update")
+    public Result<User> adminUpdateUserInfo(@Valid @RequestBody AdminUserUpdateDTO adminUserUpdateDTO, HttpServletRequest request) {
+        // 从请求头中获取token
+        String token = request.getHeader("Authorization");
+        if (!StringUtils.hasText(token)) {
+            return Result.error(401, "未提供认证令牌");
+        }
+
+        // 解析token获取管理员信息
+        try {
+            // 如果token以Bearer 开头，需要去掉前缀
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            // 验证Token
+            DecodedJWT jwt = jwtUtil.verifyToken(token);
+            if (jwt == null) {
+                return Result.error(401, "认证令牌无效");
+            }
+
+            // 检查令牌是否过期
+            if (jwtUtil.isTokenExpired(token)) {
+                return Result.error(401, "认证令牌已过期");
+            }
+            
+            // 从token中获取userId
+            String userIdStr = jwt.getClaim("userId").asString();
+            if (!StringUtils.hasText(userIdStr)) {
+                return Result.error(400, "无法获取用户ID");
+            }
+            
+            Long adminId = Long.valueOf(userIdStr);
+            
+            // 执行管理员修改用户信息操作
+            return userService.adminUpdateUserInfo(adminUserUpdateDTO, adminId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(401, "认证失败");
+        }
     }
 }
