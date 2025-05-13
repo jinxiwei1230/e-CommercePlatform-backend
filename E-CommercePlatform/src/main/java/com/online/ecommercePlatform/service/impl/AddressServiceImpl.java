@@ -5,10 +5,12 @@ import com.online.ecommercePlatform.dto.AddressUpdateDTO;
 import com.online.ecommercePlatform.dto.PageDTO;
 import com.online.ecommercePlatform.mapper.AddressMapper;
 import com.online.ecommercePlatform.mapper.OperationLogMapper;
+import com.online.ecommercePlatform.mapper.UserMapper;
 import com.online.ecommercePlatform.pojo.Address;
 import com.online.ecommercePlatform.pojo.OperationLog;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Result;
+import com.online.ecommercePlatform.pojo.User;
 import com.online.ecommercePlatform.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ public class AddressServiceImpl implements AddressService {
     
     @Autowired
     private OperationLogMapper operationLogMapper;
+    
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public Result<PageBean<Address>> getAddressList(Long userId, PageDTO pageDTO) {
@@ -264,5 +269,51 @@ public class AddressServiceImpl implements AddressService {
             e.printStackTrace();
             return Result.error(Result.BAD_REQUEST, "设置默认地址失败: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Result<PageBean<Address>> adminGetAddressList(Long userId, Long adminId, PageDTO pageDTO) {
+        // 验证管理员权限
+        User admin = userMapper.findById(adminId);
+        if (admin == null || !"管理员".equals(admin.getRole())) {
+            return Result.error(Result.UNAUTHORIZED, "无管理员权限");
+        }
+        
+        // 验证目标用户是否存在
+        User targetUser = userMapper.findById(userId);
+        if (targetUser == null) {
+            return Result.error(Result.NOT_FOUND, "用户不存在");
+        }
+        
+        // 计算分页参数
+        Integer page = pageDTO.getPage();
+        Integer pageSize = pageDTO.getPageSize();
+        Integer offset = (page - 1) * pageSize;
+        
+        // 查询总记录数
+        Long total = addressMapper.countByUserId(userId);
+        
+        // 如果没有记录，直接返回空结果
+        if (total == 0) {
+            PageBean<Address> emptyPage = new PageBean<>(0L, List.of());
+            return Result.success(emptyPage);
+        }
+        
+        // 分页查询数据
+        List<Address> addresses = addressMapper.findByUserIdWithPage(userId, offset, pageSize);
+        
+        // 记录操作日志
+        OperationLog log = new OperationLog();
+        log.setUserId(adminId);
+        log.setAction("管理员查询用户地址");
+        log.setTargetTable("Address");
+        log.setTargetId(userId);
+        log.setDescription("管理员查询了用户ID: " + userId + " 的地址列表");
+        log.setResult("成功");
+        operationLogMapper.insert(log);
+        
+        // 封装结果
+        PageBean<Address> pageBean = new PageBean<>(total, addresses);
+        return Result.success(pageBean);
     }
 } 

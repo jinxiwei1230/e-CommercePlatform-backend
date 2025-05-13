@@ -13,6 +13,7 @@ import com.online.ecommercePlatform.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -202,5 +203,74 @@ public class AddressController {
         Result<?> result = addressService.setDefaultAddress(userId, addressId);
         
         return result;
+    }
+    
+    /**
+     * 管理员获取指定用户的地址列表（分页）
+     * @param userId 要查询的用户ID
+     * @param pageDTO 分页参数
+     * @param request HTTP请求
+     * @return 地址列表分页结果
+     */
+    @GetMapping("/admin/{userId}")
+    public Result<AddressListResponseDTO> adminGetAddressList(
+            @PathVariable Long userId,
+            PageDTO pageDTO,
+            HttpServletRequest request) {
+        
+        // 从请求头中获取token
+        String token = request.getHeader("Authorization");
+        if (!StringUtils.hasText(token)) {
+            return Result.error(Result.UNAUTHORIZED, "未提供认证令牌");
+        }
+
+        // 解析token获取管理员信息
+        try {
+            // 如果token以Bearer 开头，需要去掉前缀
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            // 验证Token
+            DecodedJWT jwt = jwtUtil.verifyToken(token);
+            if (jwt == null) {
+                return Result.error(Result.UNAUTHORIZED, "认证令牌无效");
+            }
+
+            // 检查令牌是否过期
+            if (jwtUtil.isTokenExpired(token)) {
+                return Result.error(Result.UNAUTHORIZED, "认证令牌已过期");
+            }
+            
+            // 从token中获取管理员ID
+            String adminIdStr = jwt.getClaim("userId").asString();
+            if (!StringUtils.hasText(adminIdStr)) {
+                return Result.error(Result.BAD_REQUEST, "无法获取用户ID");
+            }
+            
+            Long adminId = Long.valueOf(adminIdStr);
+            
+            // 调用服务查询地址列表
+            Result<PageBean<Address>> pageResult = addressService.adminGetAddressList(userId, adminId, pageDTO);
+            
+            // 处理失败情况
+            if (pageResult.getCode() != Result.SUCCESS) {
+                return Result.error(pageResult.getCode(), pageResult.getMessage());
+            }
+            
+            // 转换为前端需要的格式
+            PageBean<Address> pageBean = pageResult.getData();
+            AddressListResponseDTO responseDTO = AddressListResponseDTO.fromPageBean(
+                    pageBean.getTotal(),
+                    pageBean.getItems(),
+                    pageDTO.getPageSize(),
+                    pageDTO.getPage()
+            );
+            
+            return Result.success(responseDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(Result.UNAUTHORIZED, "认证失败: " + e.getMessage());
+        }
     }
 } 

@@ -60,4 +60,13 @@ public interface AddressService {
      * @return 设置结果
      */
     Result<?> setDefaultAddress(Long userId, Long addressId);
+    
+    /**
+     * 管理员查询用户地址列表（分页）
+     * @param userId 要查询的用户ID
+     * @param adminId 管理员ID
+     * @param pageDTO 分页参数
+     * @return 分页结果
+     */
+    Result<PageBean<Address>> adminGetAddressList(Long userId, Long adminId, PageDTO pageDTO);
 } 
