@@ -2,6 +2,7 @@ package com.online.ecommercePlatform.mapper;
 
 import com.online.ecommercePlatform.dto.CategorySalesStatsDTO;
 import com.online.ecommercePlatform.dto.ProductSalesStatsDTO;
+import com.online.ecommercePlatform.dto.TopCategorySalesStatsDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -60,6 +61,16 @@ public interface SalesStatsMapper {
      * @return 包含总销量、总金额和商品数的统计信息
      */
     Map<String, Object> selectOverallSalesStats(
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
+
+    /**
+     * 获取顶级类别销量统计
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @return 顶级类别销量统计列表
+     */
+    List<TopCategorySalesStatsDTO> getTopCategorySalesStats(
             @Param("startDate") Date startDate,
             @Param("endDate") Date endDate);
 } 

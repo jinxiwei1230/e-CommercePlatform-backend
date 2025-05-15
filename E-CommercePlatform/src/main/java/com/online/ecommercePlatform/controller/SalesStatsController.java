@@ -3,6 +3,7 @@ package com.online.ecommercePlatform.controller;
 import com.online.ecommercePlatform.dto.CategorySalesStatsDTO;
 import com.online.ecommercePlatform.dto.ProductSalesStatsDTO;
 import com.online.ecommercePlatform.dto.SalesStatsQueryDTO;
+import com.online.ecommercePlatform.dto.TopCategorySalesStatsDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.SalesStatsService;
@@ -62,13 +63,13 @@ public class SalesStatsController {
     }
 
     /**
-     * 获取类别销量统计
+     * 获取顶级类别销量统计
      * @param startDate 开始日期（可选，格式：yyyy-MM-dd）
      * @param endDate 结束日期（可选，格式：yyyy-MM-dd）
-     * @return 类别销量统计列表
+     * @return 顶级类别销量统计列表
      */
     @GetMapping("/categories")
-    public Result<List<CategorySalesStatsDTO>> getCategorySalesStats(
+    public Result<List<TopCategorySalesStatsDTO>> getTopCategorySalesStats(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         
@@ -77,7 +78,7 @@ public class SalesStatsController {
         queryDTO.setStartDate(startDate);
         queryDTO.setEndDate(endDate);
         
-        return salesStatsService.getCategorySalesStats(queryDTO);
+        return salesStatsService.getTopCategorySalesStats(queryDTO);
     }
 
     /**

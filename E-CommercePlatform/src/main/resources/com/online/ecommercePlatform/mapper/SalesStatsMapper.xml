@@ -125,4 +125,42 @@
         </where>
     </select>
 
+    <!-- 获取顶级类别销量统计 -->
+    <select id="getTopCategorySalesStats" resultType="com.online.ecommercePlatform.dto.TopCategorySalesStatsDTO">
+        WITH RECURSIVE SubCategories AS (
+            -- 基础查询：获取直接子分类
+            SELECT category_id, parent_id
+            FROM category
+            WHERE parent_id IN (
+                SELECT category_id 
+                FROM category 
+                WHERE parent_id = 0
+            )
+            UNION ALL
+            -- 递归查询：获取更深层级的子分类
+            SELECT c.category_id, c.parent_id
+            FROM category c
+            INNER JOIN SubCategories sc ON c.parent_id = sc.category_id
+        )
+        SELECT 
+            c.category_id as categoryId,
+            c.name as categoryName,
+            COALESCE(SUM(p.sales), 0) as totalSales
+        FROM category c
+        LEFT JOIN (
+            SELECT category_id FROM SubCategories
+            UNION ALL
+            SELECT category_id FROM category WHERE parent_id = 0
+        ) sub ON sub.category_id = c.category_id
+        LEFT JOIN product p ON p.category_id = sub.category_id
+        WHERE c.parent_id = 0
+        <if test="startDate != null">
+            AND p.update_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND p.update_time &lt;= #{endDate}
+        </if>
+        GROUP BY c.category_id, c.name
+        ORDER BY totalSales DESC
+    </select>
 </mapper> 

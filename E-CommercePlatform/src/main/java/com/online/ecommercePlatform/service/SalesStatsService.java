@@ -3,6 +3,7 @@ package com.online.ecommercePlatform.service;
 import com.online.ecommercePlatform.dto.CategorySalesStatsDTO;
 import com.online.ecommercePlatform.dto.ProductSalesStatsDTO;
 import com.online.ecommercePlatform.dto.SalesStatsQueryDTO;
+import com.online.ecommercePlatform.dto.TopCategorySalesStatsDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Result;
 
@@ -34,4 +35,11 @@ public interface SalesStatsService {
      * @return 包含总销量、总金额和商品数的统计信息
      */
     Result<Map<String, Object>> getOverallSalesStats(SalesStatsQueryDTO queryDTO);
+
+    /**
+     * 获取顶级类别销量统计
+     * @param queryDTO 查询参数
+     * @return 顶级类别销量统计列表
+     */
+    Result<List<TopCategorySalesStatsDTO>> getTopCategorySalesStats(SalesStatsQueryDTO queryDTO);
 } 

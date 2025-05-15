@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.online.ecommercePlatform.dto.CategorySalesStatsDTO;
 import com.online.ecommercePlatform.dto.ProductSalesStatsDTO;
 import com.online.ecommercePlatform.dto.SalesStatsQueryDTO;
+import com.online.ecommercePlatform.dto.TopCategorySalesStatsDTO;
 import com.online.ecommercePlatform.mapper.SalesStatsMapper;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Result;
@@ -119,6 +120,19 @@ public class SalesStatsServiceImpl implements SalesStatsService {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error(Result.SERVER_ERROR, "获取总体销量统计失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public Result<List<TopCategorySalesStatsDTO>> getTopCategorySalesStats(SalesStatsQueryDTO queryDTO) {
+        try {
+            List<TopCategorySalesStatsDTO> stats = salesStatsMapper.getTopCategorySalesStats(
+                queryDTO.getStartDate(),
+                queryDTO.getEndDate()
+            );
+            return Result.success(stats);
+        } catch (Exception e) {
+            return Result.error("获取顶级类别销量统计失败：" + e.getMessage());
         }
     }
 } 
