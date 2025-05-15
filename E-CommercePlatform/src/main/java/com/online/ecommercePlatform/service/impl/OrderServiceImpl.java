@@ -391,6 +391,102 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.getRoleByUserId(userId);
     }
 
+    @Override
+    public Result<?> category() {
+
+        HashMap<String, String> result = new HashMap<>();
+        //最多购买类别名称
+        FavoriteVo favoriteVo=orderMapper.categoryName();
+        result.put("category_name", favoriteVo.getName());
+        //该类别下单次数
+        String purchaseCount=orderMapper.purchcaseCount(favoriteVo.getCategoryId());
+        result.put("purchase_count", favoriteVo.getNum());
+        //该类别消费总金额
+        String totalSpent=orderMapper.totalSpent(favoriteVo.getCategoryId());
+        result.put("total_spent", totalSpent);
+        //占全部消费比例(%)
+        String percentage=orderMapper.percentage(totalSpent);
+        result.put("percentage", percentage);
+
+        return Result.success(result);
+    }
+
+    @Override
+    public Result<?> summary() {
+
+        HashMap<String, String> result = new HashMap<>();
+        //历史订单总数
+        String totalOrders =orderMapper.totalOrders();
+        result.put("total_orders", totalOrders);
+        //历史消费总金额
+        String totalSpent =orderMapper.totalMoney();
+        result.put("total_spent", totalSpent);
+        //平均每单金额
+        String avgOrderValue=orderMapper.avgOrderValue();
+        result.put("avg_order_value", avgOrderValue);
+        //首次下单日期
+        String firstOrderDate=orderMapper.firstOrderDate();
+        result.put("first_order_date", firstOrderDate);
+        //最近下单日期
+        String lastOrderDate=orderMapper.lastOrderDate();
+        result.put("last_order_date", lastOrderDate);
+
+        return Result.success(result);
+    }
+
+    @Override
+    public Result<?> orderStatus() {
+        HashMap<String, String> result = new HashMap<>();
+        //总订单
+        String totalOrders =orderMapper.totalOrders();
+        result.put("total_orders", totalOrders);
+        //已完成订单
+        String completed=orderMapper.orderStatus("已完成");
+        result.put("completed", completed);
+        //待支付订单
+        String pendingPayment=orderMapper.orderStatus("待支付");
+        result.put("pending_payment", pendingPayment);
+        //退换货订单
+        String refunded=orderMapper.orderStatus("已退款");
+        result.put("refunded", refunded);
+        //已取消订单
+        String cancelled=orderMapper.orderStatus("已取消");
+        result.put("cancelled", cancelled);
+        return Result.success(result);
+    }
+
+    @Override
+    public Result<?> salesOverview() {
+        HashMap<String, String> result = new HashMap<>();
+        //今日销售额
+        String todaySales =orderMapper.todaySales();
+        result.put("today_sales", todaySales);
+        //本月销售额
+        String monthSales=orderMapper.monthSales();
+        result.put("month_sales", monthSales);
+        //历史总销售额
+        String totalSpent =orderMapper.totalMoney();
+        result.put("total_spent", totalSpent);
+        return Result.success(result);
+    }
+
+    @Override
+    public Result<?> usersOverview() {
+        HashMap<String, String> result = new HashMap<>();
+
+        //今日活跃用户
+        String activeToday =orderMapper.activeToday();
+        result.put("active_today", activeToday);
+
+        //今日新增用户
+        String newToday =orderMapper.newToday();
+        result.put("new_today", newToday);
+        //总注册用户数
+        String totalRegistered=orderMapper.totalRegistered();
+        result.put("total_registered", totalRegistered);
+        return Result.success(result);
+    }
+
     // 模拟支付网关验证
     private boolean isValidTransaction(String transactionId) {
         return transactionId != null && transactionId.startsWith("tx");
