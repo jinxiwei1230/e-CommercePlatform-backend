@@ -66,7 +66,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 明确允许所有OPTIONS预检请求
                 .requestMatchers("/api/user/register", "/api/user/login", "/api/admin/login").permitAll() // 允许注册和登录
                 .requestMatchers("/api/products/**", "/api/categories/**").permitAll() // 允许公共产品和分类接口
-                .requestMatchers("/doc.html", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v3/api-docs/**").permitAll() // 允许Swagger文档
+                .requestMatchers("/doc.html", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v3/api-docs/**","/api/stats/**").permitAll() // 允许Swagger文档
                 .anyRequest().authenticated() // 其他所有请求都需要认证 (修改这里以强制认证其他接口)
             )
             .sessionManagement(session -> session
