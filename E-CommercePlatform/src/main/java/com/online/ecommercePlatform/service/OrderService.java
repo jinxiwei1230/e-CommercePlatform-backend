@@ -60,4 +60,14 @@ public interface OrderService {
      * 根据用户ID查询用户角色
      */
     String getRoleByUserId(Long userId);
+
+    Result<?> category();
+
+    Result<?> summary();
+
+    Result<?> orderStatus();
+
+    Result<?> salesOverview();
+
+    Result<?> usersOverview();
 }
