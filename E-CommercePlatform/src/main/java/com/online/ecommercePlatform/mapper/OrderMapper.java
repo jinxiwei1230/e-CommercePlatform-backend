@@ -164,4 +164,35 @@ public interface OrderMapper {
      * @return 影响的行数
      */
     int updateReviewStatus(@Param("orderId") Long orderId, @Param("reviewStatus") String reviewStatus);
+
+    
+    FavoriteVo categoryName();
+
+    String purchcaseCount(@Param("categoryId") String categoryId);
+
+    String totalSpent(@Param("categoryId") String categoryId);
+
+    String percentage(@Param("totalSpent") String totalSpent);
+
+    String totalOrders();
+
+    String totalMoney();
+
+    String avgOrderValue();
+
+    String firstOrderDate();
+
+    String lastOrderDate();
+
+    String orderStatus(@Param("status") String status);
+
+    String todaySales();
+
+    String monthSales();
+
+    String newToday();
+
+    String totalRegistered();
+
+    String activeToday();
 }
