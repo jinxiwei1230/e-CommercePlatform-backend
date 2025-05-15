@@ -1,9 +1,11 @@
 package com.online.ecommercePlatform.service.impl;
 
 import com.online.ecommercePlatform.dto.*;
+import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.mapper.OrderMapper;
 import com.online.ecommercePlatform.pojo.*;
 import com.online.ecommercePlatform.service.OrderService;
+import com.online.ecommercePlatform.vo.FavoriteVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
