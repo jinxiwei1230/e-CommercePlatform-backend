@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.online.ecommercePlatform.mapper.UserStatsMapper">
+    
+    <!-- 获取用户季度消费统计 -->
+    <select id="getUserQuarterlyConsumption" resultType="java.util.Map">
+        SELECT 
+            SUM(od.unit_price * od.quantity) as amount
+        FROM `order` o
+        JOIN orderdetail od ON o.order_id = od.order_id
+        WHERE o.user_id = #{userId}
+        AND YEAR(o.create_time) = #{year}
+        AND QUARTER(o.create_time) = #{quarter}
+    </select>
+
+    <!-- 获取用户订单状态统计 -->
+    <select id="getUserOrderStatusCounts" resultType="java.util.Map">
+        SELECT 
+            status,
+            COUNT(*) as count
+        FROM `order`
+        WHERE user_id = #{userId}
+        GROUP BY status
+    </select>
+
+</mapper> 
