@@ -42,7 +42,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/swagger-ui.html",    // Swagger UI
                         "/swagger-resources/**", // Swagger资源
                         "/webjars/**",         // Swagger Web依赖
-                        "/v3/api-docs/**"      // OpenAPI文档
+                        "/v3/api-docs/**" ,     // OpenAPI文档
+                        "/api/stats/**"
                 );
 
         // 可以继续添加其他拦截器配置...
