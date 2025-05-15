@@ -228,6 +228,66 @@
         FROM `Order`
         WHERE order_id = #{orderId}
     </select>
+
+    <select id="categoryName" resultType="com.online.ecommercePlatform.vo.FavoriteVo">
+        select count(*) as num, p.category_id,ca.name
+        from product as p
+                 left join orderdetail as od on od.product_id = p.product_id
+                 left join category as ca on ca.category_id=p.category_id
+        group by p.category_id
+        order by num desc
+            limit 1
+    </select>
+    <select id="purchcaseCount" resultType="java.lang.String">
+        select count(od.product_id) as num
+        from orderdetail as od
+                 left join product as p on p.product_id=od.product_id
+                 left join category as ca on  ca.category_id=p.category_id
+        where od.product_id=#{categoryId}
+    </select>
+    <select id="totalSpent" resultType="java.lang.String">
+        select sum(od.unit_price*od.quantity) as price
+        from orderdetail as od
+                 left join product as p on p.product_id=od.product_id
+                 left join category as ca on  ca.category_id=p.category_id
+        where ca.category_id=#{categoryId}
+    </select>
+    <select id="percentage" resultType="java.lang.String">
+        select round(#{totalSpent}/sum(od.unit_price*od.quantity),2)*100 from  orderdetail as od
+    </select>
+    <select id="totalOrders" resultType="java.lang.String">
+        select count(*) as num from  `order`
+    </select>
+    <select id="totalMoney" resultType="java.lang.String">
+        select sum(total_amount) as num from  `order`
+    </select>
+    <select id="avgOrderValue" resultType="java.lang.String">
+        select avg(total_amount) as num from  `order`
+    </select>
+    <select id="firstOrderDate" resultType="java.lang.String">
+        select create_time from  `order` order by  create_time asc limit 1
+    </select>
+    <select id="lastOrderDate" resultType="java.lang.String">
+        select create_time from  `order` order by  create_time desc limit 1
+    </select>
+    <select id="orderStatus" resultType="java.lang.String">
+        select count(*) as num from  `order` where status=#{status}
+    </select>
+    <select id="todaySales" resultType="java.lang.String">
+        select sum(total_amount) as num from  `order` where status='已完成' and TO_DAYS(create_time)=TO_DAYS(now())
+    </select>
+    <select id="monthSales" resultType="java.lang.String">
+        select sum(total_amount) as num from  `order` where status='已完成' and MONTH(create_time)=MONTH(now())
+    </select>
+    <select id="totalRegistered" resultType="java.lang.String">
+        select count(*) as num
+        from user where  role !='管理员'
+    </select>
+    <select id="activeToday" resultType="java.lang.String">
+        select count(*) as num
+        from user where TO_DAYS(update_time)=TO_DAYS(now()) and role !='管理员';
+    </select>
+
     
     <!-- 更新订单评价状态 -->
     <update id="updateReviewStatus">
