@@ -7,9 +7,11 @@ import com.online.ecommercePlatform.dto.ProductPreviewDTO;
 import com.online.ecommercePlatform.dto.OrderDetailDTO;
 import com.online.ecommercePlatform.pojo.*;
 import com.online.ecommercePlatform.pojo.Order;
+import com.online.ecommercePlatform.vo.FavoriteVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.*;
+
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
