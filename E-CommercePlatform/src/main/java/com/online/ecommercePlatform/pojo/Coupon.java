@@ -14,6 +14,8 @@ public class Coupon {
     private LocalDateTime startTime; // 生效时间
     private LocalDateTime endTime; // 失效时间
     private String status; // 状态（未使用 / 已使用 / 已过期）
+    private String genderFilter; // 性别筛选条件
+    private String regionFilter; // 地区筛选条件
     private LocalDateTime createTime; // 创建时间
     private LocalDateTime updateTime; // 信息更新时间
 }
