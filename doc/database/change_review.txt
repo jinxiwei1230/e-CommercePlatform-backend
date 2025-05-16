@@ -1,0 +1,13 @@
+-- 先删除外键约束
+ALTER TABLE `Review`
+DROP FOREIGN KEY `review_ibfk_3`;
+
+-- 修改order_id字段允许为NULL
+ALTER TABLE `Review`
+MODIFY COLUMN `order_id` bigint DEFAULT NULL;
+
+-- 重新添加外键约束，但允许NULL值
+ALTER TABLE `Review`
+ADD CONSTRAINT `review_ibfk_3`
+FOREIGN KEY (`order_id`) REFERENCES `Order` (`order_id`)
+ON DELETE CASCADE;
