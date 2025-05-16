@@ -10,21 +10,23 @@
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
         <result column="status" property="status"/>
+        <result column="gender_filter" property="genderFilter"/>
+        <result column="region_filter" property="regionFilter"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
     
     <!-- 通用字段列表 -->
     <sql id="Base_Column_List">
-        coupon_id, type, discount_value, min_order_amount, start_time, end_time, status, create_time, update_time
+        coupon_id, type, discount_value, min_order_amount, start_time, end_time, status, gender_filter, region_filter, create_time, update_time
     </sql>
     
     <!-- 插入新的优惠券 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="couponId">
         INSERT INTO Coupon (
-            type, discount_value, min_order_amount, start_time, end_time, status
+            type, discount_value, min_order_amount, start_time, end_time,gender_filter, region_filter
         ) VALUES (
-            #{type}, #{discountValue}, #{minOrderAmount}, #{startTime}, #{endTime}, #{status}
+            #{type}, #{discountValue}, #{minOrderAmount}, #{startTime}, #{endTime}, #{genderFilter}, #{regionFilter}
         )
     </insert>
     
@@ -38,6 +40,8 @@
             <if test="startTime != null">start_time = #{startTime},</if>
             <if test="endTime != null">end_time = #{endTime},</if>
             <if test="status != null">status = #{status}</if>
+            <if test="genderFilter != null">gender_filter = #{genderFilter},</if>
+            <if test="regionFilter != null">region_filter = #{regionFilter},</if>
         </set>
         WHERE coupon_id = #{couponId}
     </update>
@@ -102,6 +106,12 @@
             </if>
             <if test="endTime != null">
                 AND end_time &lt;= #{endTime}
+            </if>
+            <if test="genderFilter != null">
+                AND gender_filter &gt;= #{genderFilter}
+            </if>
+            <if test="regionFilter != null">
+                AND region_filter &gt;= #{regionFilter}
             </if>
         </where>
         ORDER BY create_time DESC
