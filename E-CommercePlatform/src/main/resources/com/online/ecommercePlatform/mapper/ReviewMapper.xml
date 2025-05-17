@@ -28,40 +28,26 @@
         <result column="create_time" property="createTime"/>
     </resultMap>
     
-    <!-- 未评价商品DTO映射 -->
+    <!-- 未评价商品DTO映射（简化版，只包含商品ID） -->
     <resultMap id="UnreviewedProductMap" type="com.online.ecommercePlatform.dto.UnreviewedProductDTO">
         <result column="product_id" property="productId"/>
-        <result column="product_name" property="productName"/>
-        <result column="product_image" property="productImage"/>
-        <result column="price" property="price"/>
-        <result column="order_id" property="orderId"/>
-        <result column="order_number" property="orderNumber"/>
-        <result column="order_time" property="orderTime"/>
     </resultMap>
 
-    <!-- 查询已完成但未评价的订单商品列表 -->
+    <!-- 查询已完成的订单商品列表（尚未在评价表中有记录） -->
     <select id="selectUnreviewedProducts" resultMap="UnreviewedProductMap">
         SELECT 
-            p.product_id, 
-            p.name as product_name, 
-            MAX(pi.image_url) as product_image, 
-            p.price, 
-            o.order_id, 
-            o.order_id as order_number, 
-            MAX(o.update_time) as order_time
+            p.product_id
         FROM 
             `Order` o
             JOIN `OrderDetail` od ON o.order_id = od.order_id
             JOIN `Product` p ON od.product_id = p.product_id
-            LEFT JOIN `ProductImage` pi ON p.product_id = pi.product_id AND pi.is_main = 1
             LEFT JOIN `Review` r ON o.user_id = r.user_id AND p.product_id = r.product_id AND o.order_id = r.order_id
         WHERE 
             o.user_id = #{userId} 
             AND o.status = '已完成'
-            AND o.review_status = '未评价'
             AND r.review_id IS NULL
         GROUP BY 
-            p.product_id, o.order_id, p.name, p.price
+            p.product_id
         ORDER BY 
             MAX(o.update_time) DESC
     </select>
@@ -113,6 +99,18 @@
             `Review` r
             JOIN `Product` p ON r.product_id = p.product_id
             JOIN `User` u ON r.user_id = u.user_id
+        WHERE 
+            r.user_id = #{userId}
+        ORDER BY 
+            r.create_time DESC
+    </select>
+    
+    <!-- 查询用户的评价ID列表（简化版） -->
+    <select id="selectUserReviewIds" resultType="com.online.ecommercePlatform.dto.ReviewSimpleDTO">
+        SELECT 
+            r.review_id as reviewId
+        FROM 
+            `Review` r
         WHERE 
             r.user_id = #{userId}
         ORDER BY 
@@ -175,6 +173,18 @@
             user_id = #{userId} 
             AND product_id = #{productId} 
             AND order_id = #{orderId}
+    </select>
+    
+    <!-- 检查用户是否已对该商品评价（不关联订单） -->
+    <select id="checkReviewExistsWithoutOrder" resultType="int">
+        SELECT 
+            COUNT(*)
+        FROM 
+            `Review`
+        WHERE 
+            user_id = #{userId} 
+            AND product_id = #{productId} 
+            AND order_id IS NULL
     </select>
     
     <!-- 统计指定商品的评价总数 -->

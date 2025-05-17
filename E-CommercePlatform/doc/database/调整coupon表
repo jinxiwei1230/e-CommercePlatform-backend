@@ -1,0 +1,3 @@
+ALTER TABLE coupon
+ADD COLUMN gender_filter VARCHAR(255),
+ADD COLUMN region_filter VARCHAR(255);

@@ -86,7 +86,7 @@ public class OrderController {
     /**
      * 确认支付
      */
-    @PostMapping("/order/{orderId}/payment/confirm")
+    @PostMapping("/{orderId}/payment/confirm")
     public Result<PaymentConfirmResponseDTO> confirmPayment(HttpServletRequest request,
                                                             @PathVariable Long orderId,
                                                             @RequestBody PaymentConfirmRequestDTO confirmRequest) {

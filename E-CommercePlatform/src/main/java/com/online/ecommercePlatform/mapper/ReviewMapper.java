@@ -1,6 +1,7 @@
 package com.online.ecommercePlatform.mapper;
 
 import com.online.ecommercePlatform.dto.ReviewResponseDTO;
+import com.online.ecommercePlatform.dto.ReviewSimpleDTO;
 import com.online.ecommercePlatform.dto.UnreviewedProductDTO;
 import com.online.ecommercePlatform.pojo.Review;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,9 +16,9 @@ import java.util.List;
 public interface ReviewMapper {
     
     /**
-     * 查询用户已完成但未评价的订单商品列表
+     * 查询用户已完成且尚未有评价记录的订单商品列表
      * @param userId 用户ID
-     * @return 未评价商品列表
+     * @return 可评价商品列表
      */
     List<UnreviewedProductDTO> selectUnreviewedProducts(@Param("userId") Long userId);
     
@@ -41,6 +42,13 @@ public interface ReviewMapper {
      * @return 评价列表
      */
     List<ReviewResponseDTO> selectByUserId(@Param("userId") Long userId);
+    
+    /**
+     * 查询用户的评价ID列表（简化版）
+     * @param userId 用户ID
+     * @return 评价ID列表
+     */
+    List<ReviewSimpleDTO> selectUserReviewIds(@Param("userId") Long userId);
     
     /**
      * 根据ID查询评价详情
@@ -80,6 +88,14 @@ public interface ReviewMapper {
      * @return 评价数量
      */
     int checkReviewExists(@Param("userId") Long userId, @Param("productId") Long productId, @Param("orderId") Long orderId);
+    
+    /**
+     * 检查用户是否已对该商品评价（不关联订单）
+     * @param userId 用户ID
+     * @param productId 商品ID
+     * @return 评价数量
+     */
+    int checkReviewExistsWithoutOrder(@Param("userId") Long userId, @Param("productId") Long productId);
     
     /**
      * 统计指定商品的评价总数

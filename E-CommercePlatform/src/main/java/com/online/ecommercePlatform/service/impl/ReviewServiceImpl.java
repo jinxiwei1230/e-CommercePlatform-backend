@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.ReviewDTO;
 import com.online.ecommercePlatform.dto.ReviewResponseDTO;
+import com.online.ecommercePlatform.dto.ReviewSimpleDTO;
 import com.online.ecommercePlatform.dto.UnreviewedProductDTO;
 import com.online.ecommercePlatform.mapper.OrderMapper;
 import com.online.ecommercePlatform.mapper.ReviewMapper;
@@ -37,8 +38,17 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public Long submitReview(ReviewDTO reviewDTO, Long userId) {
-        // 检查是否已评价过该订单商品
-        int count = reviewMapper.checkReviewExists(userId, reviewDTO.getProductId(), reviewDTO.getOrderId());
+        // 检查是否已评价过该订单商品（需要考虑orderId可能为null的情况）
+        Long orderId = reviewDTO.getOrderId();
+        int count = 0;
+        if (orderId != null) {
+            // 如果有orderId，检查是否已评价过该订单商品
+            count = reviewMapper.checkReviewExists(userId, reviewDTO.getProductId(), orderId);
+        } else {
+            // 如果没有orderId，检查是否已评价过该商品（不关联订单）
+            count = reviewMapper.checkReviewExistsWithoutOrder(userId, reviewDTO.getProductId());
+        }
+        
         if (count > 0) {
             return null; // 已经评价过，返回空值表示失败
         }
@@ -47,15 +57,17 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = new Review();
         review.setUserId(userId);
         review.setProductId(reviewDTO.getProductId());
-        review.setOrderId(reviewDTO.getOrderId());
+        review.setOrderId(orderId); // 可以是null
         review.setRating(reviewDTO.getRating());
         review.setContent(reviewDTO.getContent());
         
         // 保存评价
         reviewMapper.insert(review);
         
-        // 更新订单的评价状态为"已评价"
-        orderMapper.updateReviewStatus(reviewDTO.getOrderId(), "已评价");
+        // 仅当orderId不为null时更新订单的评价状态
+        if (orderId != null) {
+            orderMapper.updateReviewStatus(orderId, "已评价");
+        }
         
         return review.getReviewId();
     }
@@ -92,6 +104,12 @@ public class ReviewServiceImpl implements ReviewService {
         pageBean.setItems(page.getResult());
         
         return pageBean;
+    }
+    
+    @Override
+    public List<ReviewSimpleDTO> getUserReviewIds(Long userId) {
+        // 直接查询用户所有评价ID
+        return reviewMapper.selectUserReviewIds(userId);
     }
 
     @Override

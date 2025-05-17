@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.online.ecommercePlatform.dto.Result;
 import com.online.ecommercePlatform.dto.ReviewDTO;
 import com.online.ecommercePlatform.dto.ReviewResponseDTO;
+import com.online.ecommercePlatform.dto.ReviewSimpleDTO;
 import com.online.ecommercePlatform.dto.UnreviewedProductDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.service.ReviewService;
@@ -30,9 +31,9 @@ public class ReviewController {
     private JwtUtil jwtUtil;
 
     /**
-     * 获取用户已完成但未评价的订单商品列表
+     * 获取用户已完成且尚未有评价记录的订单商品列表
      * @param request HTTP请求对象
-     * @return 未评价商品列表
+     * @return 可评价商品列表
      */
     @GetMapping("/unreviewedProducts")
     public Result<List<UnreviewedProductDTO>> getUnreviewedProducts(HttpServletRequest request) {
@@ -61,7 +62,10 @@ public class ReviewController {
         if (userId == null) {
             return Result.error(Result.UNAUTHORIZED, "用户未登录或登录已过期");
         }
-
+        
+        // 如果未提供orderId，则设置为null（之前是设为0）
+        // 不做处理，保持为null
+        
         Long reviewId = reviewService.submitReview(reviewDTO, userId);
         if (reviewId == null) {
             return Result.error(Result.BAD_REQUEST, "您已经评价过该订单商品");
@@ -107,6 +111,23 @@ public class ReviewController {
 
         PageBean<ReviewResponseDTO> pageBean = reviewService.getUserReviews(userId, pageNum, pageSize);
         return Result.success(pageBean);
+    }
+
+    /**
+     * 获取用户自己的评价ID列表（简化版，不分页，用于评价权限验证）
+     * @param request HTTP请求对象
+     * @return 评价ID列表
+     */
+    @GetMapping("/user/ids")
+    public Result<List<ReviewSimpleDTO>> getUserReviewIds(HttpServletRequest request) {
+        // 获取当前登录用户ID
+        Long userId = getUserIdFromToken(request);
+        if (userId == null) {
+            return Result.error(Result.UNAUTHORIZED, "用户未登录或登录已过期");
+        }
+
+        List<ReviewSimpleDTO> list = reviewService.getUserReviewIds(userId);
+        return Result.success(list);
     }
 
     /**

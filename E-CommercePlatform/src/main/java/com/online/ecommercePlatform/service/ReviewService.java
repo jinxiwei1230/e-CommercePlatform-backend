@@ -2,6 +2,7 @@ package com.online.ecommercePlatform.service;
 
 import com.online.ecommercePlatform.dto.ReviewDTO;
 import com.online.ecommercePlatform.dto.ReviewResponseDTO;
+import com.online.ecommercePlatform.dto.ReviewSimpleDTO;
 import com.online.ecommercePlatform.dto.UnreviewedProductDTO;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Review;
@@ -45,6 +46,13 @@ public interface ReviewService {
      * @return 评价分页列表
      */
     PageBean<ReviewResponseDTO> getUserReviews(Long userId, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取用户自己的评价ID列表（简化版，不分页）
+     * @param userId 用户ID
+     * @return 评价ID列表
+     */
+    List<ReviewSimpleDTO> getUserReviewIds(Long userId);
 
     /**
      * 修改用户已提交的评价
