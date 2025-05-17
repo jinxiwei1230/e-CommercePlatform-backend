@@ -46,12 +46,16 @@
         WHERE coupon_id = #{couponId}
     </update>
     
-    <!-- 根据ID查询优惠券 -->
+    <!-- 根据用户ID查询优惠券 -->
     <select id="findById" resultMap="CouponMap">
-        SELECT 
-            <include refid="Base_Column_List"/>
-        FROM Coupon
-        WHERE coupon_id = #{id}
+        SELECT
+            c.type,c.discount_value,c.min_order_amount,c.start_time,c.end_time,c.gender_filter,c.region_filter
+        FROM Coupon c
+        LEFT JOIN Address a ON c.region_filter = a.city
+        LEFT JOIN User u on u.user_id=a.user_id
+        WHERE u.user_id = #{id}
+        ORDER BY c.create_time DESC
+
     </select>
     
     <!-- 根据ID删除优惠券 -->
@@ -108,10 +112,10 @@
                 AND end_time &lt;= #{endTime}
             </if>
             <if test="genderFilter != null">
-                AND gender_filter &gt;= #{genderFilter}
+                AND gender_filter = #{genderFilter}
             </if>
             <if test="regionFilter != null">
-                AND region_filter &gt;= #{regionFilter}
+                AND region_filter = #{regionFilter}
             </if>
         </where>
         ORDER BY create_time DESC
@@ -120,5 +124,16 @@
     <!-- 统计优惠券总数 -->
     <select id="count" resultType="int">
         SELECT COUNT(*) FROM Coupon
+    </select>
+
+    <!-- 根据用户ID查询优惠券 -->
+    <select id="findByUserId" resultMap="CouponMap">
+        SELECT
+            c.coupon_id, c.type, c.discount_value, c.min_order_amount, c.start_time, c.end_time, c.status, c.gender_filter, c.region_filter, c.create_time, c.update_time
+        FROM Coupon c
+        JOIN User u ON (c.gender_filter = u.gender OR c.gender_filter IS NULL)
+        JOIN Address a ON (a.user_id = u.user_id AND (c.region_filter = a.city OR c.region_filter IS NULL))
+        WHERE u.user_id = #{userId}
+        ORDER BY c.create_time DESC
     </select>
 </mapper> 
