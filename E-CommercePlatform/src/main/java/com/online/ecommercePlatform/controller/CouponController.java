@@ -1,23 +1,32 @@
 package com.online.ecommercePlatform.controller;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.online.ecommercePlatform.pojo.Coupon;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.pojo.Result;
 import com.online.ecommercePlatform.service.CouponService;
+import com.online.ecommercePlatform.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * 优惠券控制器
  */
 @RestController
-@RequestMapping("/coupon")
+@RequestMapping("/api/coupon")
 public class CouponController {
 
     @Autowired
     private CouponService couponService;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /**
      * 新增优惠券
@@ -133,6 +142,59 @@ public class CouponController {
             return Result.success(pageBean);
         } catch (Exception e) {
             return Result.error(e.getMessage());
+        }
+    }
+    
+    /**
+     * 查询当前登录用户的优惠券（分页）
+     * @param request HTTP请求对象
+     * @param pageNum 页码
+     * @param pageSize 每页条数
+     * @return 当前用户的优惠券分页结果
+     */
+    @GetMapping("/user/coupons")
+    public Result<PageBean<Coupon>> getCurrentUserCoupons(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        try {
+            // 获取当前登录用户ID
+            Long userId = getUserIdFromToken(request);
+            if (userId == null) {
+                return Result.error("用户未登录或登录已过期");
+            }
+            
+            PageBean<Coupon> pageBean = couponService.getUserCouponsByPage(userId, pageNum, pageSize);
+            return Result.success(pageBean);
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
+    
+    /**
+     * 从请求头中解析并验证token，获取用户ID
+     * @param request HTTP请求对象
+     * @return 用户ID，如果验证失败则返回null
+     */
+    private Long getUserIdFromToken(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (!StringUtils.hasText(token)) {
+            return null;
+        }
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            DecodedJWT jwt = jwtUtil.verifyToken(token);
+            if (jwt == null || jwtUtil.isTokenExpired(token)) {
+                return null;
+            }
+
+            String userIdStr = jwt.getClaim("userId").asString();
+            return StringUtils.hasText(userIdStr) ? Long.valueOf(userIdStr) : null;
+        } catch (Exception e) {
+            return null;
         }
     }
 } 
