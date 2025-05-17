@@ -67,4 +67,13 @@ public interface CouponService {
      * @return 分页结果
      */
     PageBean<Coupon> getCouponsByPage(int page, int pageSize, Coupon coupon);
+    
+    /**
+     * 分页查询用户的优惠券
+     * @param userId 用户ID
+     * @param page 页码
+     * @param pageSize 每页条数
+     * @return 分页结果
+     */
+    PageBean<Coupon> getUserCouponsByPage(Long userId, int page, int pageSize);
 } 
