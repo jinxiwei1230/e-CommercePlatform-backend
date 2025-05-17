@@ -73,4 +73,11 @@ public interface CouponMapper {
      * @return 优惠券总数
      */
     int count();
+
+    /**
+     * 根据用户ID查询优惠券
+     * @param userId 用户ID
+     * @return 优惠券列表
+     */
+    List<Coupon> findByUserId(@Param("userId") Long userId);
 } 
