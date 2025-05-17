@@ -153,4 +153,28 @@ public class CouponServiceImpl implements CouponService {
         
         return pageBean;
     }
+    
+    /**
+     * 分页查询用户的优惠券
+     * @param userId 用户ID
+     * @param page 页码
+     * @param pageSize 每页条数
+     * @return 分页结果
+     */
+    @Override
+    public PageBean<Coupon> getUserCouponsByPage(Long userId, int page, int pageSize) {
+        // 设置分页参数
+        PageHelper.startPage(page, pageSize);
+        
+        // 执行查询
+        // 使用CouponMapper中的findByUserId方法查询用户的优惠券
+        Page<Coupon> couponPage = (Page<Coupon>) couponMapper.findByUserId(userId);
+        
+        // 封装结果
+        PageBean<Coupon> pageBean = new PageBean<>();
+        pageBean.setItems(couponPage.getResult());
+        pageBean.setTotal(couponPage.getTotal());
+        
+        return pageBean;
+    }
 } 
