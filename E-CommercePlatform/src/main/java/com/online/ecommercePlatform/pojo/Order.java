@@ -21,6 +21,7 @@ public class Order {
     private Long couponId; //订单使用的优惠券id
     private Long addressId;
     private BigDecimal discountAmount; //订单折扣
+    private BigDecimal freight; //订单运费
     private String remark; // 备注
     private LocalDateTime createTime; // 创建时间
     private LocalDateTime updateTime; // 状态更新时间

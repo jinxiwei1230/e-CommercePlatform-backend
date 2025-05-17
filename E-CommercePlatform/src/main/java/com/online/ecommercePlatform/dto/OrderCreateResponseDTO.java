@@ -10,6 +10,7 @@ public class OrderCreateResponseDTO {
     private Long orderId;
     private BigDecimal totalAmount;
     private BigDecimal discountAmount;
+    private BigDecimal freight;  // 订单运费
     private String paymentUrl;
     private String status;
 }

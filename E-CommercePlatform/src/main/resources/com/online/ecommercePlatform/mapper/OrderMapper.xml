@@ -11,6 +11,7 @@
         <result column="payment_method" property="paymentMethod"/>
         <result column="coupon_id" property="couponId"/>
         <result column="discount_amount" property="discountAmount"/>
+        <result column="freight" property="freight"/>
         <result column="review_status" property="reviewStatus"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -18,7 +19,7 @@
     
     <!-- 通用字段列表 -->
     <sql id="Base_Column_List">
-        order_id, user_id, total_amount, status, payment_method, coupon_id, discount_amount, review_status, create_time, update_time
+        order_id, user_id, total_amount, status, payment_method, coupon_id, discount_amount, freight, review_status, create_time, update_time
     </sql>
 
 

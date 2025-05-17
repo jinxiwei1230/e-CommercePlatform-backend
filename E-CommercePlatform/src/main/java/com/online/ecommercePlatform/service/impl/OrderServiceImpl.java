@@ -92,11 +92,16 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        // 计算总金额
+        // 计算总金额和运费
         BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal freight = BigDecimal.ZERO;
         for (CheckoutItemDTO item : checkoutItems) {
-            totalAmount = totalAmount.add(item.getUnitPrice().multiply(new BigDecimal(item.getQuantity())));
+            BigDecimal subtotal = item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()));
+            item.setSubtotal(subtotal);  //计算每个商品总价
+            totalAmount = totalAmount.add(subtotal);  //计算全部商品总价
+            freight = freight.add(item.getFreight() != null ? item.getFreight() : BigDecimal.ZERO);
         }
+        totalAmount = totalAmount.add(freight);  //将运费加入总金额
 
         // 应用优惠券
         BigDecimal discountAmount = BigDecimal.ZERO;
@@ -127,6 +132,7 @@ public class OrderServiceImpl implements OrderService {
         order.setCouponId(couponId);
         order.setAddressId(request.getAddressId()); // 设置 addressId
         order.setDiscountAmount(discountAmount);
+        order.setFreight(freight);  // 设置运费
         order.setPaymentUrl("https://payment.example.com/pay?order_id=" + order.getOrderId());
 
         System.out.println(order.toString());
@@ -159,6 +165,7 @@ public class OrderServiceImpl implements OrderService {
         response.setOrderId(order.getOrderId());
         response.setTotalAmount(totalAmount);
         response.setDiscountAmount(discountAmount);
+        response.setFreight(freight);  // 在响应中添加运费
         response.setPaymentUrl("https://payment.example.com/pay?order_id=" + order.getOrderId());
         response.setStatus("待支付");
         return response;
@@ -329,6 +336,12 @@ public class OrderServiceImpl implements OrderService {
 
         if (!"已支付".equals(order.getStatus()) && !"已发货".equals(order.getStatus())) {
             throw new RuntimeException("订单状态不支持退款");
+        }
+
+        // 恢复库存
+        List<OrderDetail> details = orderMapper.getOrderDetailsByOrderId(orderId);
+        for (OrderDetail detail : details) {
+            orderMapper.restoreProductStockAndSales(detail.getProductId(), detail.getQuantity());
         }
 
         // 创建退款申请
