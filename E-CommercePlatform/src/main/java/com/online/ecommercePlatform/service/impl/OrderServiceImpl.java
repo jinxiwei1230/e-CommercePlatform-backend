@@ -47,8 +47,8 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal freight = BigDecimal.ZERO;
         for (CheckoutItemDTO item : checkoutItems) {
             BigDecimal subtotal = item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()));
-            item.setSubtotal(subtotal);
-            totalAmount = totalAmount.add(subtotal);
+            item.setSubtotal(subtotal);  //计算每个商品总价
+            totalAmount = totalAmount.add(subtotal);  //计算全部商品总价
             freight = freight.add(item.getFreight() != null ? item.getFreight() : BigDecimal.ZERO);
         }
 

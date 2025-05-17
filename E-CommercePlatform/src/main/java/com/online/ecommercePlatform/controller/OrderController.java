@@ -34,7 +34,6 @@ public class OrderController {
         }
         System.out.println("-------userId--------");
         System.out.println(userId);
-
         try {
             CheckoutResponseDTO response = orderService.checkout(userId, checkoutRequest);
             return Result.success(response);
