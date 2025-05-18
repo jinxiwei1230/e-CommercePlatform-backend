@@ -139,10 +139,12 @@
             c.coupon_id, c.type, c.discount_value, c.min_order_amount, c.start_time, c.end_time, c.gender_filter, c.region_filter, c.create_time, c.update_time
         FROM Coupon c
         JOIN User u ON (c.gender_filter = u.gender OR c.gender_filter IS NULL)
-        JOIN Address a ON (a.user_id = u.user_id AND (c.region_filter = a.city OR c.region_filter IS NULL))
+        JOIN Address a ON (a.user_id = u.user_id AND (c.region_filter = a.state OR c.region_filter IS NULL))
         WHERE u.user_id = #{userId}
         ORDER BY c.create_time DESC
     </select>
+
+
 <!--    <select id="findByUserId" resultMap="CouponMap">-->
 <!--        SELECT-->
 <!--            c.coupon_id, c.type, c.discount_value, c.min_order_amount, c.start_time, c.end_time, c.create_time, c.update_time-->

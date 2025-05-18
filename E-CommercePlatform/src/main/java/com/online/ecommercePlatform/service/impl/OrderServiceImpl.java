@@ -74,6 +74,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderCreateResponseDTO createOrder(Long userId, OrderCreateRequestDTO request) {
+//        根据传入的购物车ID列表 cartIds 来生成一个用于查询购物车商品的字符串 cartIdsStr
         List<Long> cartIds = request.getCartIds();
         String cartIdsStr = cartIds.isEmpty() ? "SELECT cart_id FROM Cart WHERE user_id = " + userId :
                 cartIds.stream().map(String::valueOf).collect(Collectors.joining(","));
@@ -108,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
         Long couponId = request.getCouponId();
         if (couponId != null) {
             List<Coupon> coupons = orderMapper.getAvailableCoupons(userId, totalAmount);
+//            使用 Java 8 的 Stream API，从可用的优惠券列表中筛选出用户指定的优惠券（通过 couponId 匹配）
             Coupon selectedCoupon = coupons.stream()
                     .filter(c -> c.getCouponId().equals(couponId))
                     .findFirst()
@@ -120,6 +122,7 @@ public class OrderServiceImpl implements OrderService {
             } else if ("固定金额".equals(selectedCoupon.getType())) {
                 discountAmount = new BigDecimal(selectedCoupon.getDiscountValue().toString());
             }
+//            从订单总金额中减去计算出的折扣金额，得到最终的订单总金额。
             totalAmount = totalAmount.subtract(discountAmount);
             orderMapper.updateCouponStatus(userId,couponId);
         }
