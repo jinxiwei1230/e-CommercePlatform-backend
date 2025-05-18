@@ -36,7 +36,8 @@ public class CouponController {
     @PostMapping("/add")
     public Result<Coupon> add(@RequestBody Coupon coupon) {
         try {
-            Coupon createdCoupon = couponService.createCoupon(coupon);
+            // 创建优惠券并自动分发
+            Coupon createdCoupon = couponService.createCouponAndDistribute(coupon);
             return Result.success(createdCoupon);
         } catch (Exception e) {
             return Result.error(e.getMessage());

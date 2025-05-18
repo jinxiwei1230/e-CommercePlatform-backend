@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
                 discountAmount = new BigDecimal(selectedCoupon.getDiscountValue().toString());
             }
             totalAmount = totalAmount.subtract(discountAmount);
-            orderMapper.updateCouponStatus(couponId);
+            orderMapper.updateCouponStatus(userId,couponId);
         }
         // 创建订单
         Order order = new Order();

@@ -14,6 +14,8 @@ import java.util.List;
 @Mapper
 public interface CouponMapper {
 
+    List<Long> selectEligibleUserIds(@Param("genderFilter") String genderFilter, @Param("regionFilter") String regionFilter);
+
     /**
      * 插入新的优惠券
      * @param coupon 优惠券对象

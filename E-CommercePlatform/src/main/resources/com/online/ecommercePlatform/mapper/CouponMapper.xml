@@ -9,7 +9,6 @@
         <result column="min_order_amount" property="minOrderAmount"/>
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
-        <result column="status" property="status"/>
         <result column="gender_filter" property="genderFilter"/>
         <result column="region_filter" property="regionFilter"/>
         <result column="create_time" property="createTime"/>
@@ -18,8 +17,17 @@
     
     <!-- 通用字段列表 -->
     <sql id="Base_Column_List">
-        coupon_id, type, discount_value, min_order_amount, start_time, end_time, status, gender_filter, region_filter, create_time, update_time
+        coupon_id, type, discount_value, min_order_amount, start_time, end_time, gender_filter, region_filter, create_time, update_time
     </sql>
+
+<!--    筛选满足条件的用户-->
+    <select id="selectEligibleUserIds" resultType="long">
+        SELECT u.user_id
+        FROM `User` u
+                 LEFT JOIN Address a ON u.user_id = a.user_id AND a.is_default = TRUE
+        WHERE (u.gender = #{genderFilter} OR #{genderFilter} IS NULL OR #{genderFilter} = '')
+          AND (a.state = #{regionFilter} OR #{regionFilter} IS NULL OR #{regionFilter} = '')
+    </select>
     
     <!-- 插入新的优惠券 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="couponId">
@@ -39,7 +47,6 @@
             <if test="minOrderAmount != null">min_order_amount = #{minOrderAmount},</if>
             <if test="startTime != null">start_time = #{startTime},</if>
             <if test="endTime != null">end_time = #{endTime},</if>
-            <if test="status != null">status = #{status}</if>
             <if test="genderFilter != null">gender_filter = #{genderFilter},</if>
             <if test="regionFilter != null">region_filter = #{regionFilter},</if>
         </set>
@@ -96,9 +103,9 @@
             <if test="type != null and type != ''">
                 AND type = #{type}
             </if>
-            <if test="status != null and status != ''">
-                AND status = #{status}
-            </if>
+<!--            <if test="status != null and status != ''">-->
+<!--                AND status = #{status}-->
+<!--            </if>-->
             <if test="discountValue != null">
                 AND discount_value = #{discountValue}
             </if>
@@ -129,11 +136,21 @@
     <!-- 根据用户ID查询优惠券 -->
     <select id="findByUserId" resultMap="CouponMap">
         SELECT
-            c.coupon_id, c.type, c.discount_value, c.min_order_amount, c.start_time, c.end_time, c.status, c.gender_filter, c.region_filter, c.create_time, c.update_time
+            c.coupon_id, c.type, c.discount_value, c.min_order_amount, c.start_time, c.end_time, c.gender_filter, c.region_filter, c.create_time, c.update_time
         FROM Coupon c
         JOIN User u ON (c.gender_filter = u.gender OR c.gender_filter IS NULL)
         JOIN Address a ON (a.user_id = u.user_id AND (c.region_filter = a.city OR c.region_filter IS NULL))
         WHERE u.user_id = #{userId}
         ORDER BY c.create_time DESC
     </select>
+<!--    <select id="findByUserId" resultMap="CouponMap">-->
+<!--        SELECT-->
+<!--            c.coupon_id, c.type, c.discount_value, c.min_order_amount, c.start_time, c.end_time, c.create_time, c.update_time-->
+<!--        FROM Coupon c-->
+<!--                 JOIN CouponDistribution cd ON c.coupon_id = cd.coupon_id-->
+<!--        WHERE cd.user_id = #{userId}-->
+<!--          AND cd.status = '未使用'-->
+<!--        ORDER BY c.create_time DESC-->
+<!--        LIMIT #{pageSize} OFFSET #{offset}-->
+<!--    </select>-->
 </mapper> 

@@ -43,7 +43,7 @@
         SELECT c.coupon_id, c.type, c.discount_value, c.min_order_amount
         FROM Coupon c
                  JOIN CouponDistribution cd ON c.coupon_id = cd.coupon_id
-        WHERE cd.user_id = #{userId} AND c.status = '未使用'
+        WHERE cd.user_id = #{userId} AND cd.status = '未使用'
           AND c.start_time &lt;= NOW() AND c.end_time &gt;= NOW()
           AND c.min_order_amount &lt;= #{totalAmount}
     </select>
@@ -91,10 +91,17 @@
     </delete>
 
     <!-- 更新优惠券状态 -->
+<!--    <update id="updateCouponStatus">-->
+<!--        UPDATE Coupon-->
+<!--        SET status = '已使用', update_time = NOW()-->
+<!--        WHERE coupon_id = #{couponId} AND status = '未使用'-->
+<!--    </update>-->
     <update id="updateCouponStatus">
-        UPDATE Coupon
-        SET status = '已使用', update_time = NOW()
-        WHERE coupon_id = #{couponId} AND status = '未使用'
+        UPDATE CouponDistribution
+        SET status = '已使用'
+        WHERE coupon_id = #{couponId}
+          AND user_id = #{userId}
+          AND status = '未使用'
     </update>
 
     <!-- 查询订单状态 -->

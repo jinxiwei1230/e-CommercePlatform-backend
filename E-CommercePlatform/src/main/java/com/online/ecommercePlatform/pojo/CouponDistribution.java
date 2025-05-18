@@ -14,5 +14,6 @@ public class CouponDistribution {
     private Long userId; // 用户 ID（外键关联用户表）
     private String genderFilter; // 性别筛选条件
     private String regionFilter; // 地区筛选条件
+    private String status; // 状态（未使用 / 已使用 / 已过期）
     private LocalDateTime createTime; // 发放时间
 }

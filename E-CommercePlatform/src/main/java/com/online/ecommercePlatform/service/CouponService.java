@@ -11,11 +11,18 @@ import java.util.List;
 public interface CouponService {
 
     /**
+     * 新增优惠券
+     * @param coupon 优惠券对象
+     * @return 创建结果
+     */
+    Coupon createCouponAndDistribute(Coupon coupon);
+
+    /**
      * 创建优惠券
      * @param coupon 优惠券对象
      * @return 创建后的优惠券
      */
-    Coupon createCoupon(Coupon coupon);
+//    Coupon createCoupon(Coupon coupon);
 
     /**
      * 更新优惠券信息
@@ -76,4 +83,6 @@ public interface CouponService {
      * @return 分页结果
      */
     PageBean<Coupon> getUserCouponsByPage(Long userId, int page, int pageSize);
+
+
 } 

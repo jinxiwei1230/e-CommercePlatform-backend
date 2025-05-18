@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.online.ecommercePlatform.mapper.CouponDistributionMapper;
 import com.online.ecommercePlatform.mapper.CouponMapper;
 import com.online.ecommercePlatform.pojo.Coupon;
+import com.online.ecommercePlatform.pojo.CouponDistribution;
 import com.online.ecommercePlatform.pojo.PageBean;
 import com.online.ecommercePlatform.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,20 +34,52 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     @Transactional
-    public Coupon createCoupon(Coupon coupon) {
-        // 设置初始状态为未使用
-        if (coupon.getStatus() == null) {
-            coupon.setStatus("未使用");
-        }
-        
-        // 设置创建时间
-        if (coupon.getCreateTime() == null) {
-            coupon.setCreateTime(LocalDateTime.now());
-        }
-        
+    public Coupon createCouponAndDistribute(Coupon coupon) {
+        // 1. 保存优惠券
+        coupon.setCreateTime(LocalDateTime.now());
+        coupon.setUpdateTime(LocalDateTime.now());
         couponMapper.insert(coupon);
+
+        // 2. 根据性别和地区筛选用户
+        String genderFilter = coupon.getGenderFilter();
+        String regionFilter = coupon.getRegionFilter();
+        List<Long> eligibleUserIds = couponMapper.selectEligibleUserIds(genderFilter, regionFilter);
+        System.out.println("-------------------------------------------");
+        System.out.println("genderFilter: " + genderFilter);
+        System.out.println("regionFilter: " + regionFilter);
+        System.out.println("eligibleUserIds: " + eligibleUserIds);
+        System.out.println("-------------------------------------------");
+        
+        // 3. 为每个符合条件的用户创建分发记录
+        for (Long userId : eligibleUserIds) {
+            CouponDistribution distribution = new CouponDistribution();
+            distribution.setCouponId(coupon.getCouponId());
+            distribution.setUserId(userId);
+            distribution.setStatus("未使用");
+            distribution.setGenderFilter(genderFilter);
+            distribution.setRegionFilter(regionFilter);
+            distribution.setCreateTime(LocalDateTime.now());
+            distributionMapper.insert(distribution);
+        }
+
         return coupon;
     }
+//    @Override
+//    @Transactional
+//    public Coupon createCoupon(Coupon coupon) {
+//        // 设置初始状态为未使用
+//        if (coupon.getStatus() == null) {
+//            coupon.setStatus("未使用");
+//        }
+//
+//        // 设置创建时间
+//        if (coupon.getCreateTime() == null) {
+//            coupon.setCreateTime(LocalDateTime.now());
+//        }
+//
+//        couponMapper.insert(coupon);
+//        return coupon;
+//    }
 
     /**
      * 更新优惠券信息

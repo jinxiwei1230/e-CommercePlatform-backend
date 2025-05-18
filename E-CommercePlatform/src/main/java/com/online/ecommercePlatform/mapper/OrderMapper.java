@@ -74,7 +74,7 @@ public interface OrderMapper {
     /**
      * 更新优惠券状态
      */
-    int updateCouponStatus(@Param("couponId") Long couponId);
+    int updateCouponStatus(@Param("userId") Long userId,@Param("couponId") Long couponId);
 
     /**
      * 查询订单状态

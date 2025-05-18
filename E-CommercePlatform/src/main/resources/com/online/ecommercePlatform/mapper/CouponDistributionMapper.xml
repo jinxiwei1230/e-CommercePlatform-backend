@@ -6,8 +6,7 @@
         <id column="distribution_id" property="distributionId"/>
         <result column="coupon_id" property="couponId"/>
         <result column="user_id" property="userId"/>
-        <result column="gender_filter" property="genderFilter"/>
-        <result column="region_filter" property="regionFilter"/>
+        <result column="status" property="status"/>
         <result column="create_time" property="createTime"/>
         
         <!-- 用户关联对象 -->
@@ -25,21 +24,20 @@
             <result column="type" property="type"/>
             <result column="discount_value" property="discountValue"/>
             <result column="min_order_amount" property="minOrderAmount"/>
-            <result column="status" property="status"/>
         </association>
     </resultMap>
     
     <!-- 通用字段列表 -->
     <sql id="Base_Column_List">
-        distribution_id, coupon_id, user_id, gender_filter, region_filter, create_time
+        distribution_id, coupon_id, user_id, status, create_time
     </sql>
     
     <!-- 插入新的优惠券发放记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="distributionId">
         INSERT INTO CouponDistribution (
-            coupon_id, user_id, gender_filter, region_filter
+            coupon_id, user_id, status
         ) VALUES (
-            #{couponId}, #{userId}, #{genderFilter}, #{regionFilter}
+            #{couponId}, #{userId}, #{status}
         )
     </insert>
     
