@@ -1,0 +1,11 @@
+-- 第一步：从Coupon表中移除status字段
+ALTER TABLE Coupon DROP COLUMN status;
+
+-- 第二步：在CouponDistribution表中添加status字段
+ALTER TABLE CouponDistribution 
+ADD COLUMN status ENUM('未使用', '已使用', '已过期') NOT NULL DEFAULT '未使用' 
+AFTER user_id;
+
+-- 第三步：更新现有分发记录的状态（如果有的话）
+-- 假设所有已存在的分发记录都是"未使用"状态
+UPDATE CouponDistribution SET status = '未使用';
