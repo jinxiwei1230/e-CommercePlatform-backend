@@ -15,6 +15,6 @@ public class UserListDTO {
     private String username;      // 用户名
     private Boolean isVip;        // 是否为VIP用户
     private String role;          // 用户角色
-    private BigDecimal totalSpent;// 购物总金额
+    private Integer totalSpent;   // 购物总次数
     private LocalDateTime createTime; // 创建时间
 } 

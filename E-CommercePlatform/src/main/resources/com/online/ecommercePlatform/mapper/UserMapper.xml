@@ -242,9 +242,16 @@
     
     <!-- 获取用户消费总金额 -->
     <select id="getUserTotalSpent" resultType="java.math.BigDecimal">
-        SELECT IFNULL(SUM(total_amount), 0)
-        FROM `Order` 
-        WHERE user_id = #{userId} AND status = '已完成'
+        SELECT SUM(total_amount) 
+        FROM `Order`
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 获取用户购物总次数 -->
+    <select id="getUserTotalOrders" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM `Order`
+        WHERE user_id = #{userId}
     </select>
     
 </mapper> 

@@ -333,10 +333,10 @@ public class UserServiceImpl implements UserService {
             // 获取查询结果的分页信息
             PageInfo<UserListDTO> pageInfo = new PageInfo<>(userList);
             
-            // 补充用户的消费总金额
+            // 补充用户的购物总次数
             for (UserListDTO user : userList) {
-                BigDecimal totalSpent = userMapper.getUserTotalSpent(user.getUserId());
-                user.setTotalSpent(totalSpent);
+                Integer totalOrders = userMapper.getUserTotalOrders(user.getUserId());
+                user.setTotalSpent(totalOrders); // 变量名保持 totalSpent，但含义已变为总次数
             }
             
             // 构造分页结果
