@@ -210,6 +210,7 @@ public class ProductServiceImpl implements ProductService {
         if (queryDTO.getCategoryId() == null) {
             // 查询所有商品
             return productMapper.findAllProducts(
+                    queryDTO.getName(), //添加 name 参数
                     queryDTO.getMinPrice(),
                     queryDTO.getMaxPrice(),
                     queryDTO.getSortByOrDefault(),
@@ -218,6 +219,7 @@ public class ProductServiceImpl implements ProductService {
         } else {
             // 查询特定分类商品
             return productMapper.findByCategory(
+                    queryDTO.getName(), //添加 name 参数
                     queryDTO.getCategoryId(),
                     queryDTO.getMinPrice(),
                     queryDTO.getMaxPrice(),
@@ -238,6 +240,7 @@ public class ProductServiceImpl implements ProductService {
         if (queryDTO.getCategoryId() == null) {
             // 统计所有商品
             return productMapper.countAllProducts(
+                    queryDTO.getName(),
                     queryDTO.getMinPrice(),
                     queryDTO.getMaxPrice()
             );
@@ -245,6 +248,7 @@ public class ProductServiceImpl implements ProductService {
             // 统计特定分类商品
             return productMapper.countByCategory(
                     queryDTO.getCategoryId(),
+                    queryDTO.getName(),
                     queryDTO.getMinPrice(),
                     queryDTO.getMaxPrice()
             );

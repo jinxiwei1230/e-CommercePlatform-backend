@@ -100,6 +100,9 @@
         FROM Product p
         LEFT JOIN ProductImage pi ON p.product_id = pi.product_id AND pi.is_main = true
         WHERE p.category_id IN (SELECT category_id FROM category_tree)
+        <if test="name != null and name != ''">
+            AND p.name LIKE CONCAT('%', #{name}, '%')
+        </if>
         <if test="minPrice != null">
             AND p.price &gt;= #{minPrice}
         </if>
@@ -135,6 +138,9 @@
         SELECT COUNT(*)
         FROM Product p
         WHERE p.category_id IN (SELECT category_id FROM category_tree)
+        <if test="name != null and name != ''">
+            AND p.name LIKE CONCAT('%', #{name}, '%')
+        </if>
         <if test="minPrice != null">
             AND p.price &gt;= #{minPrice}
         </if>
@@ -157,6 +163,9 @@
         FROM Product p
         LEFT JOIN ProductImage pi ON p.product_id = pi.product_id AND pi.is_main = true
         WHERE 1=1
+        <if test="name != null and name != ''">
+            AND p.name LIKE CONCAT('%', #{name}, '%')
+        </if>
         <if test="minPrice != null">
             AND p.price &gt;= #{minPrice}
         </if>
@@ -178,6 +187,9 @@
         SELECT COUNT(*)
         FROM Product p
         WHERE 1=1
+        <if test="name != null and name != ''">
+            AND p.name LIKE CONCAT('%', #{name}, '%')
+        </if>
         <if test="minPrice != null">
             AND p.price &gt;= #{minPrice}
         </if>

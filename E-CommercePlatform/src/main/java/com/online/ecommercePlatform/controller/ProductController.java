@@ -66,6 +66,7 @@ public class ProductController {
      * @param categoryId 商品类别ID（路径变量）
      * @param page 当前页码，默认为1
      * @param pageSize 每页显示数量，默认为10
+     * @param name 商品名称（可选）
      * @param sortBy 排序字段（可选）
      * @param sortOrder 排序方式（asc/desc，可选）
      * @param minPrice 最低价格筛选（可选）
@@ -77,6 +78,7 @@ public class ProductController {
             @PathVariable String categoryId,
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String name,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String sortOrder,
             @RequestParam(required = false) BigDecimal minPrice,
@@ -113,6 +115,7 @@ public class ProductController {
             queryDTO.setSortOrder(sortOrder);
             queryDTO.setMinPrice(minPrice);
             queryDTO.setMaxPrice(maxPrice);
+            queryDTO.setName(name);// 添加 name 参数
 
             List<ProductDTO> products = productService.getProductsByCategory(queryDTO);
             Long total = (long) productService.countProductsByCategory(queryDTO); // 注意类型转换

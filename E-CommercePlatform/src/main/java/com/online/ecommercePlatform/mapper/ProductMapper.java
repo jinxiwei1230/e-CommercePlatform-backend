@@ -52,7 +52,8 @@ public interface ProductMapper {
      * @param sortOrder 排序方式（可选）
      * @return 商品DTO列表
      */
-    List<ProductDTO> findByCategory(@Param("categoryId") Long categoryId,
+    List<ProductDTO> findByCategory(@Param("name") String name,
+                                    @Param("categoryId") Long categoryId,
                                     @Param("minPrice") BigDecimal minPrice,
                                     @Param("maxPrice") BigDecimal maxPrice,
                                     @Param("sortBy") String sortBy,
@@ -66,6 +67,7 @@ public interface ProductMapper {
      * @return 商品数量
      */
     Integer countByCategory(@Param("categoryId") Long categoryId,
+                            @Param("name") String name,
                             @Param("minPrice") BigDecimal minPrice,
                             @Param("maxPrice") BigDecimal maxPrice);
 
@@ -77,10 +79,11 @@ public interface ProductMapper {
      * @param sortOrder 排序方式（可选）
      * @return 商品DTO列表
      */
-    List<ProductDTO> findAllProducts(@Param("minPrice") BigDecimal minPrice,
-                                  @Param("maxPrice") BigDecimal maxPrice,
-                                  @Param("sortBy") String sortBy,
-                                  @Param("sortOrder") String sortOrder);
+    List<ProductDTO> findAllProducts(@Param("name") String name,
+                                     @Param("minPrice") BigDecimal minPrice,
+                                     @Param("maxPrice") BigDecimal maxPrice,
+                                     @Param("sortBy") String sortBy,
+                                     @Param("sortOrder") String sortOrder);
 
     /**
      * 统计所有商品数量（不限定分类）
@@ -88,7 +91,8 @@ public interface ProductMapper {
      * @param maxPrice 最高价格（可选）
      * @return 商品数量
      */
-    Integer countAllProducts(@Param("minPrice") BigDecimal minPrice,
+    Integer countAllProducts(@Param("name") String name,
+                             @Param("minPrice") BigDecimal minPrice,
                              @Param("maxPrice") BigDecimal maxPrice);
 
 
