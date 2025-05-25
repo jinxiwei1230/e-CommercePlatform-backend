@@ -146,4 +146,11 @@ public interface UserMapper {
      * @return 消费总金额
      */
     BigDecimal getUserTotalSpent(@Param("userId") Long userId);
+
+    /**
+     * 获取用户购物总次数
+     * @param userId 用户ID
+     * @return 购物总次数
+     */
+    Integer getUserTotalOrders(@Param("userId") Long userId);
 }
