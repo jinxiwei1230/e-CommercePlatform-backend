@@ -17,4 +17,4 @@ public class UserListDTO {
     private String role;          // 用户角色
     private BigDecimal totalSpent;// 购物总金额
     private LocalDateTime createTime; // 创建时间
-} 
+}

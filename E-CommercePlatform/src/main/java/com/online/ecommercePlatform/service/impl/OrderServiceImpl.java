@@ -7,6 +7,7 @@ import com.online.ecommercePlatform.pojo.*;
 import com.online.ecommercePlatform.service.OrderService;
 import com.online.ecommercePlatform.vo.FavoriteVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +24,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public CheckoutResponseDTO checkout(Long userId, CheckoutRequestDTO request) {
@@ -35,11 +40,15 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("购物车商品不存在");
         }
 
-        // 检查库存
+        // 检查并预占库存（使用 Redis）
         for (CheckoutItemDTO item : checkoutItems) {
             if (item.getQuantity() > item.getStock()) {
                 throw new RuntimeException("商品 " + item.getName() + " 库存不足");
             }
+            // 在 Redis 中记录预占库存
+            String key = "product:" + item.getProductId() + ":reserved";
+            redisTemplate.opsForValue().increment(key, item.getQuantity());
+            redisTemplate.expire(key, 15, TimeUnit.MINUTES); // 15 分钟过期
         }
 
         // 计算总金额和运费
@@ -85,12 +94,30 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("购物车商品不存在");
         }
 
-        // 检查库存并更新
+//        // 检查库存并更新
+//        for (CheckoutItemDTO item : checkoutItems) {
+//            int updated = orderMapper.updateProductStockAndSales(item.getProductId(), item.getQuantity());
+//            if (updated == 0) {
+//                throw new RuntimeException("商品 " + item.getName() + " 库存不足");
+//            }
+//        }
+        // 检查预占库存并扣减实际库存
         for (CheckoutItemDTO item : checkoutItems) {
+            String key = "product:" + item.getProductId() + ":reserved";
+            Object value = redisTemplate.opsForValue().get(key);
+            Long reserved = value != null ? Long.valueOf(value.toString()) : 0L;
+            if (reserved < item.getQuantity()) {
+                throw new RuntimeException("商品 " + item.getName() + " 预占库存不足");
+            }
+
+            // 扣减实际库存
             int updated = orderMapper.updateProductStockAndSales(item.getProductId(), item.getQuantity());
             if (updated == 0) {
                 throw new RuntimeException("商品 " + item.getName() + " 库存不足");
             }
+
+            // 清除预占库存
+            redisTemplate.opsForValue().decrement(key, item.getQuantity());
         }
 
         // 计算总金额和运费

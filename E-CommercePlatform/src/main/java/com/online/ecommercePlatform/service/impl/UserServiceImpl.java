@@ -335,7 +335,7 @@ public class UserServiceImpl implements UserService {
             
             // 补充用户的消费总金额
             for (UserListDTO user : userList) {
-                BigDecimal totalSpent = userMapper.getUserTotalSpent(user.getUserId());
+                 BigDecimal totalSpent = userMapper.getUserTotalSpent(user.getUserId());
                 user.setTotalSpent(totalSpent);
             }
             
