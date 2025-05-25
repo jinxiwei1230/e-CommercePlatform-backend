@@ -90,7 +90,6 @@ CREATE TABLE Coupon (
     min_order_amount DECIMAL(10,2) NOT NULL,  -- 最低使用金额
     start_time DATETIME NOT NULL,  -- 生效时间
     end_time DATETIME NOT NULL,  -- 失效时间
-    status ENUM('未使用', '已使用', '已过期') NOT NULL,  -- 状态
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 更新时间
 );
@@ -151,6 +150,7 @@ CREATE TABLE CouponDistribution (
     user_id BIGINT NOT NULL,  -- 用户 ID
     gender_filter VARCHAR(10),  -- 性别筛选条件
     region_filter VARCHAR(50),  -- 地区筛选条件
+    status ENUM('未使用', '已使用', '已过期') NOT NULL,  -- 状态
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 发放时间
     FOREIGN KEY (coupon_id) REFERENCES Coupon(coupon_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES `User`(user_id) ON DELETE CASCADE

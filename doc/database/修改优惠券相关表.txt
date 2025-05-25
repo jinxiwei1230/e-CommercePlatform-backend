@@ -9,3 +9,17 @@ AFTER user_id;
 -- 第三步：更新现有分发记录的状态（如果有的话）
 -- 假设所有已存在的分发记录都是"未使用"状态
 UPDATE CouponDistribution SET status = '未使用';
+
+
+
+
+
+-- 向 Coupon 表添加字段
+ALTER TABLE Coupon
+ADD COLUMN gender_filter VARCHAR(10) AFTER end_time,
+ADD COLUMN region_filter VARCHAR(50) AFTER gender_filter;
+
+-- 从 CouponDistribution 表删除字段
+ALTER TABLE CouponDistribution
+DROP COLUMN gender_filter,
+DROP COLUMN region_filter;
